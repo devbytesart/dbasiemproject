@@ -1,0 +1,12 @@
+# requirements.txt
+requests
+Flask
+psutil
+lz4
+numpy
+pandas
+reportlab
+seaborn
+flasgger
+markdown
+# zstandard

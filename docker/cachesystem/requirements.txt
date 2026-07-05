@@ -1,0 +1,7 @@
+# requirements.txt
+requests
+psutil
+portalocker
+python-dateutil
+lz4
+# zstandard

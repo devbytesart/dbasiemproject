@@ -1,0 +1,9 @@
+# requirements.txt
+requests
+docker
+psutil
+docker
+lz4
+bcrypt
+PyJWT
+# zstandard

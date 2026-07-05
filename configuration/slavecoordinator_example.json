@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "last_modified": "2024-10-2215:14:09",
+    "infrastructure": {
+        "id": "slavecoordinator1",
+        "type": "slavecoordinator",
+        "image": "ttdantett/siem_slavecoordinator",
+        "queue": {
+            "max_queue_size": 15,
+            "backup_file": "data_backup_2.txt"
+        },
+        "logger": {
+            "log_level": "debug",
+            "log_path": "slavecoordinator_mon.log",
+            "max_queue_size": 4096,
+            "max_file": 50,
+            "max_file_size": 1048576,
+            "enable_print": true,
+            "enable_queue": true,
+            "enable_file": true
+        },
+        "bridge": {
+            "enabled": true
+        },
+        "webhook": {
+            "port": 8443,
+            "host": "slavecoordinator1",
+            "auth_token": "my_secure_token",
+            "certs": {
+                "certfile": "certs/server.crt",
+                "keyfile": "certs/server.key"
+            }
+        },
+        "volumes": {
+            "dockervolume1": {
+                "bind": "/data/",
+                "mode": "rw"
+            }
+        },
+        "storage": {
+            "path": "/data/storage/slavecoordinator1"
+        },
+        "sub-infrastructure": {
+            "logcollectors": [],
+            "logparsers": [],
+            "logindexers": [],
+            "cachesystems": [],
+            "dedicatedindexsearchmotors": [],
+            "indexsearchmotors": [],
+            "userinterfaces": []
+        }
+    }
+}

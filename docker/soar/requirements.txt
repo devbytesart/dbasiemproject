@@ -1,0 +1,12 @@
+# requirements.txt
+requests
+psutil
+python-dateutil
+lz4
+msgspec
+# zstandard
+ijson
+# APScheduler
+cryptography
+schedule
+dateparser

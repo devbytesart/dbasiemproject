@@ -1,0 +1,175 @@
+<!-- 
+
+Copyright 2026 ttdantett DevBytesArt
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: ttdantett
+Title: SIEM PROJECT
+DOCUMENT: soar
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOAR</title>
+
+    <link rel="stylesheet" href="static/css/theme.css">
+    <link rel="stylesheet" href="static/css/help.css">
+    <link rel="stylesheet" href="static/css/soar.css">
+    <link rel="stylesheet" href="static/css/suggestions.css">
+    <!-- Fomantic UI CSS -->
+    <link rel="stylesheet" href="static/css/semantic.min.css">
+    <!-- DataTables CSS (compatible with Fomantic UI) -->
+    <link rel="stylesheet" href="static/css/semanticui.min.css">
+    <!-- File CSS externe -->
+    <!-- <link rel="stylesheet" href="static/style.css"> -->
+    <link rel="stylesheet" href="static/css/inputs.css">
+    <!-- jQuery -->
+    <script src="static/javascript/external/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="static/javascript/external/jquery.dataTables.min.js"></script>
+    <!-- DataTables Semantic UI integration -->
+    <script src="static/javascript/external/dataTables.semanticui.min.js"></script>
+    <!-- Fomantic UI JS -->
+    <script src="static/javascript/external/semantic.min.js"></script>
+    <!-- Graph -->
+    <script src="static/javascript/external/chart.umd.min.js"></script>
+    <script type="module" src="static/javascript/external/chart.min.js"></script>   
+    <script src="static/javascript/external/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <!-- Export -->
+    <script src="static/javascript/external/html2canvas.min.js"></script>
+
+    <!-- Fichiers JS externes -->
+    <script src="/static/javascript/utils.js"></script>
+    <script src="/static/javascript/help.js"></script>
+    <script src="/static/javascript/table_class.js"></script>
+    <script src="/static/javascript/graph_class.js"></script>
+    <script src="/static/javascript/result_interpreter.js"></script>
+    <script src="/static/javascript/soarcard.js"></script>
+    <script src="/static/javascript/dropdownlist.js"></script>
+    <script src="/static/javascript/tags.js"></script>
+    <!-- <script src="/static/javascript/datetimepicker.js"></script> -->
+    <script src="/static/javascript/column-selector.js"></script>
+    <script src="/static/javascript/table.js"></script>
+    <script src="/static/javascript/graph.js"></script>
+    <script src="/static/javascript/widgets.js"></script>
+    <script src="/static/javascript/dashboard_class.js"></script>
+    <script src="/static/javascript/suggestions_cmd.js"></script>
+    <script src="/static/javascript/soar.js"></script>
+    <!-- <script src="/static/javascript/app.js"></script> -->
+    <script src="static/javascript/external/jsoneditor.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.6/jsoneditor.min.css">
+
+    <script src="/static/javascript/external/chartjs-plugin-datalabels.js"></script>
+
+</head>
+<body>
+    <div class="layout">
+        <aside id="menu">
+            <!-- Left menu -->
+            {% include "menu.html" %}
+        </aside>
+
+        <main id="content">
+            <!-- Header -->
+            {% include "header.html" %}
+
+            <!-- Central Content zone -->
+            <div class="workspace">
+                <button id="commandbutton" class="ui button collapsible" style="margin-bottom: 10px;margin-top: -10px;">Show/Hide Panel</button>
+                <form id="commandForm" class="ui form collapsed-content" style="display: block;">
+
+                    <div class="fields">
+                        <div class="field">
+                            <div id="selectindex"></div>
+                        </div>
+                        <div class="field">
+                            <div id="selecttenant"></div>
+                        </div>
+                        <div class="field">
+                            <div id="selectinstance"></div>
+                        </div>
+                        <div class="field">
+                            <div id="selectname"></div>
+                        </div>
+                        <div class="field">
+                            <div id="loadingSpinner" class="ui active inline loader" style="display: none;"><h4 id="loadingSpinnerLabel" style="margin-left: 50px;width:200px;"></h4></div>
+                        </div>
+                    </div>
+
+                    <div class="search-container">
+                            
+                        <div class="field">
+                            <button type="button" class="ui button" title="Play all" onclick="playAllFunctions()">▶️</button>
+                            <button type="button" class="ui button" title="Replay all" onclick="playAllFunctions(true)">🔁</button>
+                            <button type="button" class="ui button" title="Stop execution" onclick="stopExecution()">🟥</button>
+                            <button type="button" class="ui button" title="Import" onclick="showImportPopup()">⬇️</button>
+                            <button type="button" class="ui button" title="Export" onclick="exportContext()">⬆️</button>
+                            <button type="button" class="ui button red" title="Delete all" onclick="eraseContext()">🗑️</button>
+                            <button type="submit" class="styled-button" style="width: 55%;">Launch</button>
+                            <!-- Button/checkbox -->
+                            <div style="margin-top: 10px;">
+                                <label class="toggle-container">
+                                    <input type="checkbox" id="soarModeCheckbox">
+                                    <span class="toggle-slider"></span>
+                                    Playbook Mode
+                                </label>
+                            </div>
+                            <!-- Popup modale -->
+                            <div id="import-popup" style="
+                                display: none;
+                                position: fixed; 
+                                top: 0; left: 0; right: 0; bottom: 0;
+                                background: rgba(0,0,0,0.6);
+                                justify-content: center; 
+                                align-items: center;
+                                z-index: 9999;
+                            ">
+                                <div id="drop-zone" style="
+                                    background: white;
+                                    border: 2px dashed #aaa;
+                                    padding: 40px;
+                                    text-align: center;
+                                    border-radius: 10px;
+                                    width: 300px;
+                                ">
+                                    <p>Drag/Drop your file here<br>or click here to load it.</p>
+                                    <button onclick="hideImportPopup()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="command-line" contenteditable="true" id="commandQuery" style="border: 1px solid #ccc; padding: 5px;" placeholder="Command..."></div>
+                        </div>
+                    </div>
+                </form>
+                <!-- <div id="suggestions"></div> -->
+
+                <div class="results-container" style="height: calc(100% - 30px); overflow-y: auto;">
+                    <div id="result"></div>
+                </div>
+            </div>
+        </main>
+        <aside id="menu">
+            <h3>JSON View</h3>
+            <!-- JSON Viewer Section -->
+            <div id="json-viewer">
+                <div id="jsoneditor"></div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

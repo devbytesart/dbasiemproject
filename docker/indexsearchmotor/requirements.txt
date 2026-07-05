@@ -1,0 +1,10 @@
+# requirements.txt
+requests
+psutil
+portalocker
+python-dateutil
+lz4
+pandas
+reportlab
+seaborn
+# zstandard

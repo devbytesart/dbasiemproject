@@ -1,0 +1,123 @@
+<!-- 
+
+Copyright 2026 ttdantett DevBytesArt
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: ttdantett
+Title: SIEM PROJECT
+DOCUMENT: configuration
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Use local library  files -->
+    <title>Configuration Editor</title>
+    <link rel="stylesheet" type="text/css" href="static/css/theme.css">
+    <link rel="stylesheet" type="text/css" href="static/css/inputs.css">
+     <script src="static/javascript/external/jquery-3.6.0.min.js"></script>
+    <script src="static/javascript/external/jsoneditor.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.6/jsoneditor.min.css">
+
+</head>
+<body>
+    <div class="layout">
+        <aside id="menu">
+                <!-- Left menu -->
+                {% include "menu.html" %}
+
+                <label for="configuration-path">Configuration Path:</label>
+                <select id="configuration-path">
+                    <option value="uiconfiguration" {% if selected_option == 'uiconfiguration' %}selected{% endif %}>User Interface Configuration</option>
+                    <option value="globalconfiguration" {% if selected_option == 'globalconfiguration' %}selected{% endif %}>Global Configuration</option>
+                    <option value="globalauthorisation" {% if selected_option == 'globalauthorisation' %}selected{% endif %}>Global Privileges</option>
+                    <!-- Add other options if needed -->
+                </select>
+        </aside>
+
+        <main id="content" size="">
+            <!-- Header -->
+            {% include "header.html" %}
+
+            <!-- JSON Viewer Section -->
+            <div id="json-viewer">
+                <div id="jsoneditor"></div>
+                <br/>
+                <button id="save-button"class="styled-button" style="height:8%;width:100%;">Save JSON Data</button>
+            </div>
+        </main>
+
+        <aside id="menu">
+            <div id="group-element-selector-globalconfiguration">
+                <h4>Select Element Type</h4>
+                <select id="element-selector-globalconfiguration">
+                    <option value="">-- Select Element --</option>
+                    <option value="slavecoordinators">Slave coordinators</option>
+                    <option value="mastercoordinators">Master coordinators</option>
+                    <option value="logcollectors">Log Collectors</option>
+                    <option value="logparsers">Log Parsers</option>
+                    <option value="logindexers">Log Indexers</option>
+                    <option value="cachesystems">Cache Systems</option>
+                    <option value="userinterfaces">User Interfaces</option>
+                    <option value="indexsearchmotors">Index Search Motor</option>
+                    <option value="dedicatedindexsearchmotors">Dedicated Index Search Motor</option>
+                    <option value="authenticators">Authenticator</option>
+                    <option value="soar">SOAR</option>
+                </select>
+            </div>
+
+            <div id="group-element-selector-globalauthorisation">
+                <h4>Select Permissions</h4>
+                <select id="element-selector-globalauthorisation">
+                    <option value="">-- Select Element --</option>
+                    <option value="users">Users</option>
+                    <option value="resources">Resources</option>
+                    <option value="roles">Roles</option>
+                </select> 
+            </div>
+
+            <!-- Slave Coordinator Selection -->
+            <div id="slave-selector">
+                <h4>Select a Slave Coordinator</h4>
+                <select id="slave-coordinator">
+                    <option value="">-- Select a Slave Coordinator --</option>
+                </select>
+            </div>
+
+            <!-- Slave Coordinator Selection -->
+            <div id="authenticator-selector">
+                <h4>Select an Authenticator</h4>
+                <select id="authenticator">
+                    <option value="">-- Select an Authenticator --</option>
+                </select>
+            </div>
+
+            <!-- Form Fields Section -->
+            <div id="form-fields"></div>
+
+            <!-- Add Element Button -->
+            <button id="add-element-button" class="styled-button" style="height:8%;width:100%;">Add Element</button>
+
+        </aside>
+    </div>
+
+    <!-- JavaScript for JSON Editor -->
+    <script>
+        // Load JSON data passed from Flask
+        var json_data = {{ json_data|safe }};
+    </script>
+    <script src="static/javascript/configuration.js"></script>
+
+</body>
+</html>

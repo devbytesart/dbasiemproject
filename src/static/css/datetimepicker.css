@@ -1,0 +1,169 @@
+/*
+
+Copyright 2026 ttdantett DevBytesArt
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+author: ttdantett
+project: siem project
+DOCUMENT: datetime picker
+
+*/
+
+
+.date-time-picker {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    max-width: 300px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fefefe;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Header of date picker */
+.date-time-picker .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.date-time-picker h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.date-time-picker button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #007BFF;
+    transition: color 0.3s;
+}
+
+.date-time-picker button:hover {
+    color: #0056b3;
+}
+
+.date-time-picker button:focus {
+    outline: none;
+}
+
+/* Inputs and select in the date picker */
+.date-time-picker input,
+.date-time-picker select {
+    width: calc(50% - 5px);
+    margin-right: 10px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fafafa;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus and hover inputs and select */
+.date-time-picker input:hover,
+.date-time-picker select:hover {
+    border-color: #888;
+}
+
+.date-time-picker input:focus,
+.date-time-picker select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Field datetime-local */
+.date-time-picker input[type="datetime-local"] {
+    width: 87%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fafafa;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus and hover for datetime-local */
+.date-time-picker input[type="datetime-local"]:hover {
+    border-color: #888;
+}
+
+.date-time-picker input[type="datetime-local"]:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Field type number */
+.date-time-picker input[type="number"] {
+    flex: 1;
+    margin-right: 10px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fafafa;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus and hover for number */
+.date-time-picker input[type="number"]:hover {
+    border-color: #888;
+}
+
+.date-time-picker input[type="number"]:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Select (preset) */
+.date-time-picker select {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fafafa;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus  and hover for select */
+.date-time-picker select:hover {
+    border-color: #888;
+}
+
+.date-time-picker select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Container for select and inputs */
+.number-preset {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Disabling */
+.date-time-picker input:disabled,
+.date-time-picker select:disabled {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    color: #aaa;
+    cursor: not-allowed;
+}

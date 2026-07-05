@@ -1,0 +1,189 @@
+/*
+
+Copyright 2026 ttdantett DevBytesArt
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+author: ttdantett
+project: siem project
+DOCUMENT: style
+
+*/
+
+/* Header et Footer */
+header {
+    background-color: green;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+footer {
+    background-color: green;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+/* Formular elements */
+.ui.form .fields {
+    display: flex;
+    gap: 10px;  
+    max-width: 30%;
+}
+
+.ui.form .field {
+    flex: 1;
+}
+
+.ui.segment {
+    margin-bottom: 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 80%;
+}
+
+.ui.input {
+    width: 80%;    
+}
+
+/* Table style */
+.table-container {
+    margin-top: 20px;
+}
+
+/* Style for the loader */
+#loadingSpinner {
+    display: inline-block;
+    margin-left: 10px; /* Space for search buttons */
+}
+
+.graph-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+}
+
+.ui-graph  {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#pagination {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#pagination button, #pagination input, #pagination select {
+    background-color: #1678c2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#pagination button:hover {
+    background-color: #1678c2;
+}
+
+#pagination input {
+    max-width: 60px;
+    text-align: center;
+    cursor: default;
+}
+
+
+#pagination #totalpages, #pagination #totalitems, #pagination #startindex, #pagination #endindex {
+    margin-left: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/*********** Suggestions ***********/
+
+
+/* Style of search container */
+.search-container {
+    position: relative;
+    width: 80%;  
+    margin: 50px 0; 
+    font-family: Arial, sans-serif;
+}
+
+/* Style of search bar */
+#searchQuery {
+    width: 100%; 
+    font-size: 18px;
+    outline: none;
+    padding: 12px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: #fff;
+    z-index: 0; /* Ensure suggestions below search bar */
+}
+
+/* Container for suggestions */
+#suggestions {
+    position: absolute;
+    bottom: 100%; 
+    width: 100%; 
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 100; /* Ensure display in front */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px 4px 0 0;
+    max-height: 150px; 
+    overflow-y: auto; 
+}
+
+/* Style of suggestions element  */
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+/* Change style when over */
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Last element without bordure */
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Style of focus */
+.suggestion-item.active {
+    background-color: #e0e0e0;
+    font-weight: bold;
+}
