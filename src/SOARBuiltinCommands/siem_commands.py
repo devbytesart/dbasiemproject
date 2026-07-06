@@ -30,7 +30,7 @@ import json, base64, time
 ###     SIEM PART
 ##############################################################
 
-def siem_search(self: Any, instance: str, query: str, indices: list, tenants: list, technologies: list, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar", all_pages: bool=False):
+def siem_search(self: Any, query: str, indices: list, tenants: list, technologies: list, instance: str=None, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar", all_pages: bool=False, token: str=None):
     """
     Search for events in the SIEM system with indexsearchmotor instance
     params: 
@@ -41,6 +41,7 @@ def siem_search(self: Any, instance: str, query: str, indices: list, tenants: li
     - technologies: list => list of technologies to search
     - start_time: str => start time of the search (format: YYYY-MM-DDT HH:MM:SS)
     - end_time: str => end time of the search (format: YYYY-MM-DDT HH:MM:SS)
+    - token : str => token of the user if instance vault is not set
     """
     try:
         if self.indexsearchmotor is None or self.authenticator is None:
@@ -53,12 +54,15 @@ def siem_search(self: Any, instance: str, query: str, indices: list, tenants: li
         # print("Start time: " + start_time)
         # print("End time: " + end_time)
         # Connexion to the authenticator to receive the token
-        print("instance:", str(instance), str(type(instance)))
+        # print("instance:", str(instance), str(type(instance)))
         print("vault", str(self.vault), " list", str(self.vault.list_keys()))
         credentials = self.vault.get(instance)
         print("credentials: ", str(credentials))
         # Get session token
-        session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
+        if instance is None:
+            session_token = token
+        else:
+            session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
         # Create data
         request = {
             "session_token": session_token,
@@ -129,56 +133,68 @@ def siem_create_log(self: Any, index: str, tenant: str, technology: str, name: s
         raise Exception(f"Failed to create log {traceback.format_exc()}")
 
 
-def siem_get_available_indices(self: Any, instance: str):
+def siem_get_available_indices(self: Any, instance: str=None, token:str=None):
     """
     Get the available indices in the SIEM system
     params:
     - instance: str => instance of the SIEM system
+    - token: str => token of the user (must be used if instance empty)
     """
     try:
         if self.indexsearchmotor is None or self.authenticator is None:
             return []
-        # Connexion to the authenticator to receive the token
-        credentials = self.vault.get(instance)
-        session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
+        if instance is None:
+            session_token = token
+        else:
+            # Connexion to the authenticator to receive the token
+            credentials = self.vault.get(instance)
+            session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
         # Make researches
         print("Get available indices.... ")
         return self.indexsearchmotor.get_available_indices(session_token)
     except:
         raise Exception("Indexsearchmotor or Authenticator instance not found")
     
-def siem_get_available_tenants(self: Any, instance: str):
+def siem_get_available_tenants(self: Any, instance: str=None, token:str=None):
     """
     Get the available tenants in the SIEM system
     params:
     - instance: str => instance of the SIEM system
+    - token: str => token of the user (must be used if instance empty)
     """
     try:
         if self.indexsearchmotor is None or self.authenticator is None:
             return []
-        # Connexion to the authenticator to receive the token
-        credentials = self.vault.get(instance)
-        # Authentication
-        session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
+        if instance is None:
+            session_token = token
+        else:
+            # Connexion to the authenticator to receive the token
+            credentials = self.vault.get(instance)
+            # Authentication
+            session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
         # Research
         return self.indexsearchmotor.get_available_tenants(session_token)
     except:
         raise Exception("Indexsearchmotor instance not found")
     
 
-def siem_get_available_technologies(self: Any, instance: str):
+def siem_get_available_technologies(self: Any, instance: str=None, token: str=None):
     """
     Get the available technologies in the SIEM system
     params:
     -  instance: str => instance of the vault for index list
+    - token: str => token of the user (must be used if instance empty)
     """
     try:
         if self.indexsearchmotor is None or self.authenticator is None:
             return []
-        # Connexion to the authenticator to receive the token
-        credentials = self.vault.get(instance)
-        # Authentication
-        session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
+        if instance is None:
+            session_token = token
+        else:
+            # Connexion to the authenticator to receive the token
+            credentials = self.vault.get(instance)
+            # Authentication
+            session_token = self.authenticator.sign_in(credentials["username"], credentials["password"])
         # Research
         return self.indexsearchmotor.get_available_technologies(session_token)
     except:
@@ -187,6 +203,7 @@ def siem_get_available_technologies(self: Any, instance: str):
 
 def siem_generate_report(self:Any, instance:str, name:str, template_name: str, index:list, tenant:list, technology:list, format_report:str="pdf", portrait:bool=True, save: bool=True, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar_report", raw: bool=False):
     # TODO change all the system of template storage index, tenant, ... fix them
+    # TODO add token to replace instance
     """ 
     Generate a report based on the template name of the report
     params:

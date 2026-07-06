@@ -304,7 +304,7 @@ class CommandLoader:
                             print("Play the command not in playbook mode")
                             # result = func(**typed_params)
                             # self.commands["soar_play_context"]["function"](history_name, instance, index, tenant, command_id, display)
-                            self.commands["soar_set_context"]["function"](history_name, instance, index, tenant, command_name, typed_params, author, command_id, False, display)
+                            self.commands["soar_set_context"]["function"](history_name, index, tenant, command_name, typed_params, author, instance, command_id, False, display, session_token)
                             print("handle_soar_command self id:", id(self))
                         else:
                             print("Play the command in playbook mode")

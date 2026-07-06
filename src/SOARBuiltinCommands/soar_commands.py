@@ -105,12 +105,14 @@ def soar_save_context(self: Any, name: str, index: str, tenant: str, playbook: b
         raise Exception("Failed to save history")
     
 
-def soar_load_context(self: Any, name: str, instance: str, index: list, tenant: list, playbook=False):
+def soar_load_context(self: Any, name: str, index: list, tenant: list, playbook=False, instance: str=None, token: str=None):
     """
     Load the history of the SOAR instance
     params:
     - name: str => name of the playbook
     - tenant: str => tenant of the playbook
+    - token: str (None) => token if instance is None
+    - instance: str (None) => instance vault to use to have the permissions of the instance 
     """
     # TODO if result == [] and not {"type": "table", ... } -> no right to save the context
     # TODO maybe change the return of search and manage errors in search
@@ -143,7 +145,10 @@ def soar_load_context(self: Any, name: str, instance: str, index: list, tenant: 
             index = [index]
         if not isinstance(tenant, list):
             tenant = [tenant]
-        res = self.commands["siem_search"]["function"](instance, query, index, tenant, ["soar"], "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
+        if instance is None:
+            res = self.commands["siem_search"]["function"](query, index, tenant, ["soar"], None, "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), token=token)
+        else:
+            res = self.commands["siem_search"]["function"](query, index, tenant, ["soar"], instance, "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
         print("soar_load_context res:", str(res))
         # If any results user has the right to load the context
         if res != [] and res != "[]":
@@ -401,7 +406,7 @@ def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: 
             raise Exception("Failed to create context")
 
 
-def soar_set_context(self:Any, name:str, instance: str, index: str, tenant:str,  command: str, params: dict, author:str, command_id: int=None, playbook: bool=False, display=True):
+def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, params: dict, author:str, instance: str=None, command_id: int=None, playbook: bool=False, display=True, token=None):
     """ Add a command to a playbook or a context
     params:
     - name: str => name of the context/playbook
@@ -415,11 +420,15 @@ def soar_set_context(self:Any, name:str, instance: str, index: str, tenant:str, 
     - playbook: bool => if True, the command is added to a playbook, else to a context
     - context_name: str => name of the context/playbook
     - display: bool => if display the result in the playbook
+    - token: str(None) => Token of the user is instance is empty
     """
     try:
 
         # TODO add author to the context
         # TODO check if variables are added to the context
+        # Check instance
+        if instance is None or instance == "" or instance == "None" or instance == "undefined":
+            instance = None
         # Check name
         if name is None or name == "" or name == "None" or name == "none" or name == "undefined":
             name = "Main"
@@ -433,10 +442,14 @@ def soar_set_context(self:Any, name:str, instance: str, index: str, tenant:str, 
         # Load context/playbook
         ## If playbook
         if playbook:
+            # TODO change token here too
             self.commands["soar_load_context"]["function"](name, instance, index, tenant, True)
         ## else context
         else:
-            self.commands["soar_load_context"]["function"](name, instance, index, tenant)
+            if token is not None:
+                self.commands["soar_load_context"]["function"](name, index, tenant, token=token)
+            else:
+                self.commands["soar_load_context"]["function"](name, index, tenant, instance=instance)
         # print("soar_set_context context:", str(self.context))
         ## If playbook:
         # TODO find a more clean way to do this
