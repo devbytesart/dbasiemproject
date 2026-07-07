@@ -106,6 +106,7 @@ def detection_create_rule(self:Any, name: str, type: str, severity: str, version
         # What to do with others information
         # Interpret loopback
         _start = dateparser.parse(loopback)
+        _start = _start.strftime("%Y-%m-%d %H:%M:%S.%f")
         # SIEM Search
         results = self.commands["siem_search"]["function"](instance, query, index, tenant, technology, start_time=_start)
         # Create detection alert

@@ -27,7 +27,7 @@ document: soar
         variables: {}
     };
     let jsonEditorInstance = null;
-    let indexInput, tenantInput, vaultInput, historyInput;
+    let indexInput, tenantInput, historyInput; //vaultInput, 
 
 
     // Export Function
@@ -271,7 +271,7 @@ document: soar
         var name = historyInput.getSelectedValues()[0] || "Main";
         var index= indexInput.getSelectedValues()[0] || "";
         var tenant= tenantInput.getSelectedValues()[0] || "";
-        var instance= vaultInput.getSelectedValues()[0] || "";
+        // var instance= vaultInput.getSelectedValues()[0] || "";
         var soarModeEnabled = $('#soarModeCheckbox').is(':checked');
         replayCommand(null, `soar_play_context name=${name} instance=${instance} index=${index} tenant=${tenant} playbook=${soarModeEnabled}`, false);
 
@@ -324,7 +324,7 @@ async function replayCommand(id = null, fallbackCommand = null, display = true) 
 
     const index = indexInput.getSelectedValues()[0] || "";
     const tenant = tenantInput.getSelectedValues()[0] || "";
-    const vault = vaultInput.getSelectedValues()[0] || "";
+    // const vault = vaultInput.getSelectedValues()[0] || "";
     const historyName = historyInput.getSelectedValues()[0] || "";
     // const display = window.__displayFlag === true;
 
@@ -340,7 +340,7 @@ async function replayCommand(id = null, fallbackCommand = null, display = true) 
                 playbook_mode: soarModeEnabled,
                 index,
                 tenant,
-                vault,
+                // vault,
                 history: historyName,
                 display
             })
@@ -373,11 +373,11 @@ $(document).ready(function () {
     // Instantiate TagInputList
     indexInput = new TagInputList("Index", "/search_available_index", "selectindex", false, {}, 'GET');
     tenantInput = new TagInputList("Tenant", "/search_available_tenant", "selecttenant", false, {}, 'GET');
-    vaultInput = new TagInputList("Vault Instance", "/search_available_vault_instances", "selectinstance", false, {}, 'GET');
+    // vaultInput = new TagInputList("Vault Instance", "/search_available_vault_instances", "selectinstance", false, {}, 'GET');
     historyInput = new TagInputList("Context Name", "/get_history_list", "selectname", false, () => ({
         index: indexInput.getSelectedValues()[0] || "",
         tenant: tenantInput.getSelectedValues()[0] || "",
-        vault: vaultInput.getSelectedValues()[0] || ""
+        // vault: vaultInput.getSelectedValues()[0] || ""
     }), 'GET');
 
 
@@ -386,7 +386,7 @@ const urlParams = new URLSearchParams(window.location.search);
 // Collect parameters
 const paramIndex = urlParams.get("index");
 const paramTenant = urlParams.get("tenant");
-const paramVault = urlParams.get("vault");
+// const paramVault = urlParams.get("vault");
 const paramHistory = urlParams.get("history");
 
 const promises = [];
@@ -422,25 +422,26 @@ if (paramTenant) {
 }
 
 // VAULT
-if (paramVault) {
-    vaultInput.setSelectedValues(paramVault);
-} else {
-    promises.push(
-        vaultInput.loadData().then(() => {
-            if (selectedVault && vaultInput.suggestions.includes(selectedVault)) {
-                vaultInput.setSelectedValues(selectedVault);
-            } else if (vaultInput.suggestions.length > 0) {
-                vaultInput.setSelectedValues(vaultInput.suggestions[0]);
-            }
-        })
-    );
-}
+// if (paramVault) {
+//     vaultInput.setSelectedValues(paramVault);
+// } else {
+//     promises.push(
+//         vaultInput.loadData().then(() => {
+//             if (selectedVault && vaultInput.suggestions.includes(selectedVault)) {
+//                 vaultInput.setSelectedValues(selectedVault);
+//             } else if (vaultInput.suggestions.length > 0) {
+//                 vaultInput.setSelectedValues(vaultInput.suggestions[0]);
+//             }
+//         })
+//     );
+// }
 
 // HISTORY - wait for the others to be changed
 Promise.all(promises).then(() => {
     if (paramHistory) {
         historyInput.setSelectedValues(paramHistory);
-        command = "soar_load_context name=" + paramHistory + " index=" + indexInput.getSelectedValues()[0] + " tenant=" + tenantInput.getSelectedValues()[0] + " instance=" + vaultInput.getSelectedValues()[0]
+        command = "soar_load_context name=" + paramHistory + " index=" + indexInput.getSelectedValues()[0] + " tenant=" + tenantInput.getSelectedValues()[0]
+        //  + " instance=" + vaultInput.getSelectedValues()[0]
         replayCommand(null, command, false);
     } else {
         historyInput.loadData().then(() => {
@@ -456,13 +457,14 @@ Promise.all(promises).then(() => {
     // Update URL on changes
     indexInput.onChange(values => {updateURLParam('index', values[0] || '');onChangeUpdateHistory();});
     tenantInput.onChange(values => {updateURLParam('tenant', values[0] || '');onChangeUpdateHistory();});
-    vaultInput.onChange(values => {updateURLParam('vault', values[0] || '');onChangeUpdateHistory();});
+    // vaultInput.onChange(values => {updateURLParam('vault', values[0] || '');onChangeUpdateHistory();});
     historyInput.onChange(values => {
         console.log("History changed to: " + values[0]);
         updateURLParam('history', values[0] || '')
         // Reload suggestions of historic on each modification
         // TODO change load_playbook if playbook selected
-        command = "soar_load_context name=" + values[0] + " index=" + indexInput.getSelectedValues()[0] + " tenant=" + tenantInput.getSelectedValues()[0] + " instance=" + vaultInput.getSelectedValues()[0]
+        command = "soar_load_context name=" + values[0] + " index=" + indexInput.getSelectedValues()[0] + " tenant=" + tenantInput.getSelectedValues()[0]
+        //  + " instance=" + vaultInput.getSelectedValues()[0]
         replayCommand(null, command, false);
     });
 
@@ -472,7 +474,7 @@ Promise.all(promises).then(() => {
         const command = "soar_load_context name=" + isChecked +
             " index=" + indexInput.getSelectedValues()[0] +
             " tenant=" + tenantInput.getSelectedValues()[0] +
-            " instance=" + vaultInput.getSelectedValues()[0];
+            // " instance=" + vaultInput.getSelectedValues()[0];
 
         replayCommand(null, command, false);
     });
@@ -482,8 +484,8 @@ Promise.all(promises).then(() => {
         const name = document.getElementById("selectname")?.value || "";
         const index = document.getElementById("selectindex")?.value || "";
         const tenant = document.getElementById("selecttenant")?.value || "";
-        const vault = document.getElementById("selectinstance")?.value || "";
-        const command = `soar_load_history name=${name} index=${index} tenant=${tenant} instance=${vault}`;
+        // const vault = document.getElementById("selectinstance")?.value || "";
+        const command = `soar_load_history name=${name} index=${index} tenant=${tenant} `; //instance=${vault}
         $('#commandQuery').text(command);
         window.__displayFlag = true;
         $('#commandForm').trigger('submit');
@@ -508,7 +510,7 @@ function onChangeUpdateHistory() {
     historyInput.setQueryParams(() => ({
         index: indexInput.getSelectedValues()[0] || "",
         tenant: tenantInput.getSelectedValues()[0] || "",
-        vault: vaultInput.getSelectedValues()[0] || ""
+        // vault: vaultInput.getSelectedValues()[0] || ""
     }));
 
     historyInput.loadData().then(() => {

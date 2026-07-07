@@ -308,7 +308,7 @@ class CommandLoader:
                             print("handle_soar_command self id:", id(self))
                         else:
                             print("Play the command in playbook mode")
-                            self.commands["soar_set_context"]["function"](history_name, instance, index, tenant, command_name, typed_params, author, command_id, True, display)
+                            self.commands["soar_set_context"]["function"](history_name, index, tenant, command_name, typed_params, author, instance, command_id, True, display, session_token)
                     except Exception as e:
                         self.logger.log("error", f"Error executing command '{cmd_str}': {traceback.format_exc()}")
                         param = cmd_str.split()[1:] if len(cmd_str.split()) > 0 else "",
@@ -322,7 +322,7 @@ class CommandLoader:
                 return copy.deepcopy(self.context)
             # If no command found, just play the id
             # TODO this function will not work
-            return self.commands["soar_play_context"]["function"](history_name, instance, index, tenant, command_id, display)
+            return self.commands["soar_play_context"]["function"](history_name, instance, index, tenant, command_id, display, session_token)
         except Exception:
             self.logger.log("error", f"Failed to handle SOAR command: {traceback.format_exc()}")
             # TODO add current id in case of error of playbook

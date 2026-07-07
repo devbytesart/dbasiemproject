@@ -187,7 +187,7 @@ def soar_reset_context(self:Any, reset_next_id = True):
         raise Exception("Failed to reset history answer")
 
 
-def soar_list_playbook(self:Any, instance:str, index: list, tenant:list):
+def soar_list_playbook(self:Any, instance:str, index: list, tenant:list, token:str=None):
     """ List the playbook on the indexsearchmotor in the index and tenant 
     params:
     - index: list => list of index
@@ -341,7 +341,7 @@ def soar_play_context(self: Any, name: str, instance: str, index: str, tenant: s
             raise Exception("Failed to launch playbook")
 
 
-def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: str, var_name:str="None"):
+def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: str, var_name:str="None", token:str=None):
     """Play the a sub playbook in background for the current context
     params: 
     - name: str => name of the playbook
@@ -351,6 +351,9 @@ def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: 
     - var_name: str = >name of the variable to store the context (random if empty)
     """
     try:
+        # Check instance
+        if instance is None or instance == "" or instance == "None" or instance == "undefined":
+            instance = None
         print("soar_play_playbook context:", str(self.context))
         if var_name == "None":
             var_name = name + "_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
@@ -443,7 +446,7 @@ def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, 
         ## If playbook
         if playbook:
             # TODO change token here too
-            self.commands["soar_load_context"]["function"](name, instance, index, tenant, True)
+            self.commands["soar_load_context"]["function"](name, index, tenant, True, instance=instance, token=token)
         ## else context
         else:
             if token is not None:
