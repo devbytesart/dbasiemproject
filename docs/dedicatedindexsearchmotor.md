@@ -74,3 +74,5 @@ If cache storage is configured in the configuration file, the cache system is us
 This mecanism will increase the efficiency of the researches on data of big size as data is stored in the memory on cache system. 
 
 However, as the cache system is on the network, this cache can be a bottleneck or slows the entire researches. It is to be used and tested depending on the case. 
+
+**Avoid using cache system in index read and write because the cache will save only the first value and if the log is modified as it is the case for the SOAR playbook/context, dashboard and report templates, the siem will display the first value and not the last modifications.**

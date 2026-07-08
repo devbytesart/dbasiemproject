@@ -70,19 +70,28 @@ class Graph {
     }
 
     static determineOptimalTimeUnit(timestamps) {
-        const timeDiffs = timestamps.slice(1).map((label, index) =>
-            (new Date(label) - new Date(timestamps[index]))
-        );
+        if (!timestamps || timestamps.length < 2) return 'day';
+
+        const timeDiffs = [];
+        for (let i = 1; i < timestamps.length; i++) {
+            const diff = new Date(timestamps[i]) - new Date(timestamps[i - 1]);
+            if (!isNaN(diff)) {
+                timeDiffs.push(diff);
+            }
+        }
+
+        if (timeDiffs.length === 0) return 'day';
+
         const avgDiff = timeDiffs.reduce((a, b) => a + b, 0) / timeDiffs.length;
 
         if (avgDiff < 1000) return 'millisecond';
-        else if (avgDiff < 60000) return 'second';
-        else if (avgDiff < 3600000) return 'minute';
-        else if (avgDiff < 86400000) return 'hour';
-        else if (avgDiff < 604800000) return 'day';
-        else if (avgDiff < 2592000000) return 'week';
-        else if (avgDiff < 7776000000) return 'month';
-        else if (avgDiff < 31536000000) return 'quarter';
+        if (avgDiff < 60000) return 'second';
+        if (avgDiff < 3600000) return 'minute';
+        if (avgDiff < 86400000) return 'hour';
+        if (avgDiff < 604800000) return 'day';
+        if (avgDiff < 2592000000) return 'week';
+        if (avgDiff < 7776000000) return 'month';
+        if (avgDiff < 31536000000) return 'quarter';
         return 'year';
     }
 
@@ -109,23 +118,36 @@ class Graph {
         const labelKey = Object.keys(parsedData[0])[0];
         const labels = parsedData.map(item => item[labelKey]);
 
-        const isDate = !isNaN(Date.parse(labels[0]));
+        // 1 Check if date
+        const isDate = labels.length > 0 && !isNaN(Date.parse(labels[0]));
+        let axis_x = labels;
 
+        if (isDate) {
+            try {
+                axis_x = Graph.determineOptimalTimeUnit(labels);
+            } catch (e) {
+                console.error("Error during time unit calculation :", e);
+                axis_x = 'day'; 
+            }
+        }
+
+        // 2. Configuration axis
         const xScaleConfig = isDate
             ? {
                 type: 'time',
                 time: {
-                    unit: Graph.determineOptimalTimeUnit(labels),
+                    unit: axis_x,
+                    // Adapted for majority adapters Chart.js (Luxon/Date-fns)
                     displayFormats: {
                         millisecond: 'HH:mm:ss.SSS',
                         second: 'HH:mm:ss',
                         minute: 'HH:mm',
                         hour: 'HH:mm',
-                        day: 'MM/dd',
-                        week: 'MM/dd',
-                        month: 'MMM YYYY',
+                        day: 'dd/MM',     
+                        week: 'dd/MM',
+                        month: 'MMM yyyy', 
                         quarter: '[Q]Q - yyyy',
-                        year: 'YYYY'
+                        year: 'yyyy'
                     }
                 },
                 ticks: { maxTicksLimit: 10 }
