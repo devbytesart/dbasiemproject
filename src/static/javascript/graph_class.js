@@ -72,6 +72,8 @@ class Graph {
     static determineOptimalTimeUnit(timestamps) {
         if (!timestamps || timestamps.length < 2) return 'day';
 
+        const totalDuration = new Date(timestamps[timestamps.length - 1]) - new Date(timestamps[0]);
+
         const timeDiffs = [];
         for (let i = 1; i < timestamps.length; i++) {
             const diff = new Date(timestamps[i]) - new Date(timestamps[i - 1]);
@@ -84,8 +86,8 @@ class Graph {
 
         const avgDiff = timeDiffs.reduce((a, b) => a + b, 0) / timeDiffs.length;
 
-        if (avgDiff < 1000) return 'millisecond';
-        if (avgDiff < 60000) return 'second';
+        if (avgDiff < 1000 && totalDuration < 60000) return 'millisecond';
+        if (avgDiff < 60000 && totalDuration < 3600000) return 'second';
         if (avgDiff < 3600000) return 'minute';
         if (avgDiff < 86400000) return 'hour';
         if (avgDiff < 604800000) return 'day';
@@ -120,14 +122,14 @@ class Graph {
 
         // 1 Check if date
         const isDate = labels.length > 0 && !isNaN(Date.parse(labels[0]));
-        let axis_x = labels;
+        let timeUnit = 'day';
 
         if (isDate) {
             try {
                 axis_x = Graph.determineOptimalTimeUnit(labels);
             } catch (e) {
                 console.error("Error during time unit calculation :", e);
-                axis_x = 'day'; 
+                timeUnit = 'day';
             }
         }
 
@@ -136,7 +138,7 @@ class Graph {
             ? {
                 type: 'time',
                 time: {
-                    unit: axis_x,
+                    unit: timeUnit,
                     // Adapted for majority adapters Chart.js (Luxon/Date-fns)
                     displayFormats: {
                         millisecond: 'HH:mm:ss.SSS',
@@ -150,20 +152,28 @@ class Graph {
                         year: 'yyyy'
                     }
                 },
-                ticks: { maxTicksLimit: 10 }
+                ticks: { 
+                    maxTicksLimit: 10,
+                    autoSkip: true
+                 }
             }
             : {
-                ticks: { autoSkip: true, maxTicksLimit: 10 }
+                ticks: { 
+                    autoSkip: true, 
+                    maxTicksLimit: 10 }
             };
 
         const seriesKeys = Object.keys(parsedData[0]).filter(key => key !== labelKey);
 
-        const datasets = seriesKeys.map((key, index) => ({
-            label: key,
-            data: parsedData.map(item => item[key] !== null ? parseFloat(item[key]) : 0),
-            borderWidth: 2,
-            fill: false
-        }));
+        const datasets = seriesKeys.map((key, index) => {
+            const color = Graph.generateColor(index);
+            return {
+                label: key,
+                data: parsedData.map(item => item[key] !== null ? parseFloat(item[key]) : 0),
+                borderWidth: 2,
+                fill: false
+            };
+        });
 
         const config = {
             type: chartType,
@@ -176,7 +186,8 @@ class Graph {
                     legend: { display: true },
                     datalabels: {
                         display: false,
-                        color: 'black',
+                        borderColor: color,
+                        backgroundColor: color,
                         font: { size: 10 }
                     }
                 }

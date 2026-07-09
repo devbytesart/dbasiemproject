@@ -38,10 +38,10 @@ class OperationCount(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [ self.keyword + " by <field> over <count>"]
+        return [ self.keyword + " by <field>"]
 
     def parse_operation(self, operation: str):
-        """ Analyse statistic operation of type 'stats count b <field>'. """
+        """ Analyse statistic operation of type 'stats count by <field>'. """
         count_match = re.match(self.keyword + r"\s+by\s+(\w+(?:\s*,\s*\w+)*)", operation)
         if count_match:
             return count_match.group(1).split(',')
@@ -52,7 +52,7 @@ class OperationCount(OperationBase):
         """Count occurences specified fields for a sublist of data."""
         local_count_dict = defaultdict(int)
         for record in sub_data:
-            key = tuple(record.get(field, None) for field in fields)  # Générer la clé
+            key = tuple(record.get(field, None) for field in fields)  # Generate key
             local_count_dict[key] += 1
         # Add local account to global dictionary
         with self.lock:
@@ -120,8 +120,8 @@ class OperationCount(OperationBase):
         <!-- Count Values Section -->
         <button class="ui button collapsible">Count Values</button>
         <div class="ui segment collapsed-content">
-            <p>The count operation allows you to count distinct values per field. You can count multiple fields simultaneously using <code>| {self.keyword} by [field1, field2, ...] over [countField]</code>.</p>
+            <p>The count operation allows you to count distinct values per field. You can count multiple fields simultaneously using <code>| {self.keyword} by [field1, field2, ...]</code>.</p>
             <h3>Example:</h3>
-            <pre><code class="hljs">!search duser:administrator | {self.keyword} by duser,name over count</code></pre>
+            <pre><code class="hljs">!search duser:administrator | {self.keyword} by duser,name</code></pre>
         </div>
         """

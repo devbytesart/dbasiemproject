@@ -51,6 +51,7 @@ COPY ../src/OperationRender.py /app/
 COPY ../src/OperationVariable.py /app/
 COPY ../src/OperationTransform.py /app/
 COPY ../src/OperationAdvancedCondition.py /app/
+COPY ../src/OperationOrder.py /app/
 COPY ../src/ReportManager.py /app/
 COPY ../src/certs/server.crt /app/certs/
 COPY ../src/certs/server.key /app/certs/

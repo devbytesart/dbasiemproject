@@ -34,6 +34,7 @@ from OperationRender import *
 from OperationVariable import *
 from OperationAdvancedCondition import *
 from OperationTransform import *
+from OperationOrder import *
 from ParameterLoader import *
 from ReportManager import *
 import UtilsEnum as uenum
@@ -135,7 +136,7 @@ class IndexSearchMotor(ServiceBase):
             self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             # Careful to the order of operator which is very important
             # TODO find a way to not be dependant of the order
-            self.operations = [OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True, True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3)), OperationCount(int(self.max_threads/3)), OperationProject(), OperationRender(), OperationVariable(self, int(self.max_threads/3)), OperationTransform()]
+            self.operations = [OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True, True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3)), OperationCount(int(self.max_threads/3)), OperationOrder(int(self.max_threads/3)), OperationProject(), OperationRender(), OperationVariable(self, int(self.max_threads/3)), OperationTransform()]
             # Reporting
             self.report_manager = ReportManager(self.logger, self, self.authenticatorsReq)
             return True
@@ -628,6 +629,7 @@ class IndexSearchMotor(ServiceBase):
                     <li>Select</li>
                     <li>Project</li>
                     <li>Counts By</li>
+                    <li>Order by</li>
                     <li>Render</li>
                     <li>Transform</li>
                     <li>Variable</li>
