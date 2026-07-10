@@ -322,7 +322,7 @@ function showSlaveCoordinatorForm() {
     // Call createType for each required fields
     createType("text", "id");
     createType("text", "host");
-    createType("text", "image", true, "siem_slavecoordinator");
+    createType("text", "image", true, "ttdantett/siem_slavecoordinator");
     // WEBREQUESTER
     createType("number", "timeout", 120, false, ["webrequester"]);
     createType("text", "proxy", "", false, ["webrequester"]);
@@ -355,7 +355,7 @@ function showLogCollectorForm() {
     $("#form-fields").empty();
     createType("text", "id", "logcollector1");
     createType("text", "type", "logcollector", true);
-    createType("text", "image", "siem_logcollector", true);
+    createType("text", "image", "ttdantett/siem_logcollector", true);
     createType("text", "collector_type", "receiver", false);
 
     // WEBREQUESTER
@@ -412,7 +412,7 @@ function showSOARForm() {
     $("#form-fields").empty();
     createType("text", "id", "soar1");
     createType("text", "type", "soar", true);
-    createType("text", "image", "siem_soar", true);
+    createType("text", "image", "ttdantett/siem_soar", true);
 
     // WEBREQUESTER
     createType("number", "timeout", 120, false, ["webrequester"]);
@@ -486,7 +486,7 @@ function showLogParserForm() {
     // Racine
     createType("text", "id", "logparser1");
     createType("text", "type", "logparser", true);
-    createType("text", "image", "siem_logparser", true);
+    createType("text", "image", "ttdantett/siem_logparser", true);
     // createType("text", "delimiter", "(CEF:0\\|.*|CEF:1\\|.*)");
     createType("text", "tenant", "Tenant - Customer 1");
 
@@ -583,7 +583,7 @@ function showLogIndexerForm() {
     // Racine
     createType("text", "id", "logindexer1");
     createType("text", "type", "logindexer", true);
-    createType("text", "image", "siem_logindexer", true);
+    createType("text", "image", "ttdantett/siem_logindexer", true);
     // READ WRITE POLICY
     createType("boolean", "write", false, false,["read_write"]);
     // createType("boolean", "primary", true, false);
@@ -668,7 +668,7 @@ function showIndexSearchMotorForm() {
     // Racine
     createType("text", "id", "indexsearchmotor1");
     createType("text", "type", "indexsearchmotor", true);
-    createType("text", "image", "siem_indexsearchmotor", true);
+    createType("text", "image", "ttdantett/siem_indexsearchmotor", true);
     createType("number", "max_threads", 16);
 
     // WEBREQUESTER
@@ -711,7 +711,7 @@ function showAuthenticatorForm() {
     // Racine
     createType("text", "id", "authenticator1");
     createType("text", "type", "authenticator", true);
-    createType("text", "image", "siem_authenticator", true);
+    createType("text", "image", "ttdantett/siem_authenticator", true);
 
     // WEBREQUESTER
     createType("number", "timeout", 120, false, ["webrequester"]);
@@ -756,7 +756,7 @@ function showDedicatedIndexSearchMotorForm() {
     // Racine
     createType("text", "id", "dedicatedindexsearchmotor1");
     createType("text", "type", "dedicatedindexsearchmotor", true);
-    createType("text", "image", "siem_dedicatedindexsearchmotor", true);
+    createType("text", "image", "ttdantett/siem_dedicatedindexsearchmotor", true);
     createType("boolean", "primary", true, false);
     createType("text", "group", "dedicatedindexsearchmotor1", false);
 
@@ -825,7 +825,7 @@ function showUserInterfaceForm() {
     // Racine
     createType("text", "id", "userinterface1");
     createType("text", "type", "userinterface", true);
-    createType("text", "image", true, "siem_userinterface");
+    createType("text", "image", true, "ttdantett/siem_userinterface");
 
     // WEBREQUESTER
     createType("number", "timeout", 120, false, ["webrequester"]);
@@ -889,7 +889,7 @@ function showCacheSystemForm() {
     // Racine
     createType("text", "id", "cachesystem1");
     createType("text", "type", "cachesystem", true);
-    createType("text", "image", "siem_cachesystem", true);
+    createType("text", "image", "ttdantett/siem_cachesystem", true);
 
     // WEBREQUESTER
     createType("number", "timeout", 120, false, ["webrequester"]);

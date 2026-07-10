@@ -52,7 +52,9 @@ class DedicatedIndexSearchMotor(ServiceBase):
                 "shutdown": self.handle_shutdown, 
                 "get_available_indices": self.handle_get_available_indices, 
                 "get_available_tenants": self.handle_get_available_tenants, 
-                "get_available_technologies": self.handle_get_available_technologies})
+                "get_available_technologies": self.handle_get_available_technologies,
+                "retrieve_monitoring": self.handle_retrieve_monitoring
+                })
             self._start_microservices()
         except:
             self.logger.log("error", "Error during initialization of DedicatedIndexSearchMotor: " + str(traceback.format_exc()))

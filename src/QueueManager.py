@@ -56,14 +56,14 @@ class QueueManager:
     def get_stats(self):
         stats_log = {
             "current_queue_size": self.data_queue.qsize(),
-            "avg_enqueue": self.avg_enqueue,
-            "avg_dequeue": self.avg_dequeue,
-            "avg_time_enqueue": self.avg_time_enqueue,
-            "avg_time_dequeue": self.avg_time_dequeue,
-            "avg_nb_saved": self.avg_nb_save,
-            "avg_nb_restore": self.avg_nb_restore,
-            "avg_time_save_time": self.avg_time_save_file,
-            "avg_time_restore_time": self.avg_time_restore_file
+            "avg_enqueue": float(self.avg_enqueue),
+            "avg_dequeue": float(self.avg_dequeue),
+            "avg_time_enqueue": float(self.avg_time_enqueue),
+            "avg_time_dequeue": float(self.avg_time_dequeue),
+            "avg_nb_saved": float(self.avg_nb_save),
+            "avg_nb_restore": float(self.avg_nb_restore),
+            "avg_time_save_time": float(self.avg_time_save_file),
+            "avg_time_restore_time": float(self.avg_time_restore_file)
         }
         return stats_log
 
@@ -139,15 +139,15 @@ class QueueManager:
             start_time = time.time()
             # TODO change this in case of problem
             self.data_queue.put_nowait(data + self.delimiter)
-            self.avg_time_enqueue += (time.time() - start_time) / 2
-            self.avg_enqueue += len(data) / 2
+            self.avg_time_enqueue = float(self.avg_time_enqueue + (time.time() - start_time) / 2)
+            self.avg_enqueue = float(self.avg_enqueue + len(data) / 2)
             return True
         except queue.Full:
             if force:
                 start_time = time.time()
                 self.save_to_file(data)
-                self.avg_time_save_file += (time.time() - start_time) / 2
-                self.avg_nb_save += len(data) / 2
+                self.avg_time_save_file = float(self.avg_time_save_file + (time.time() - start_time) / 2)
+                self.avg_nb_save = float(self.avg_nb_save + len(data) / 2)
             return False
 
     def dequeue(self, count):
@@ -159,9 +159,9 @@ class QueueManager:
                     elements.extend(self.data_queue.get_nowait())
                 except queue.Empty:
                     break
-            self.avg_time_dequeue += (time.time() - start_time) / 2
+            self.avg_time_dequeue = float(self.avg_time_dequeue + (time.time() - start_time) / 2)
             # TODO check if this is correct -> len(elements) ??
-            self.avg_dequeue += len(elements) / 2
+            self.avg_dequeue = float(self.avg_dequeue + len(elements) / 2)
             return bytes(elements)
         except queue.Empty:
             return {}

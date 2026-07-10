@@ -47,6 +47,7 @@ class LogIndexer(ServiceBase):
                 "configure": self.handle_set_config, 
                 "configuration": self.configurator.get_config, 
                 "retrieve_logs": self.handle_retrieve_logs, 
+                "retrieve_monitoring": self.handle_retrieve_monitoring,
                 "shutdown": self.handle_shutdown, 
                 "get_history": self.handle_get_history, 
                 "download_data": self.handle_download_data})
@@ -174,14 +175,17 @@ class LogIndexer(ServiceBase):
     def _start_threads_services(self):
         """Launch threads for each log service."""
         for log_service_id in range(len(self.logservices)):
-            self.logger.log("info", f"Starting thread for log service " + str(self.logservices[log_service_id]))
-            thread = threading.Thread(
-                target=self._initialize_log_service,
-                args=(log_service_id,)
-            )
-            thread.daemon = True  # Ensures threads exit when the main program exits
-            self.threads_services.append(thread)
-            thread.start()
+            try:
+                self.logger.log("info", f"Starting thread for log service " + str(self.logservices[log_service_id]))
+                thread = threading.Thread(
+                    target=self._initialize_log_service,
+                    args=(log_service_id,)
+                )
+                thread.daemon = True  # Ensures threads exit when the main program exits
+                self.threads_services.append(thread)
+                thread.start()
+            except:
+                self.logger.log("error",f"Error during launch logservice {traceback.format_exc()}")
 
     def _initialize_log_service(self, log_service_id):
         # For mapping

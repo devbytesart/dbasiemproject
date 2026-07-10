@@ -139,21 +139,21 @@ class Webhook:
                     content_length = int(self.headers['Content-Length'])
                     post_data = self.rfile.read(content_length)
                     if self.headers.get('Content-Encoding') == utils.COMPRESSION_EXTENSION:
-                        # print("Received compressed data..." + str(post_data))
+                        print("Received compressed data..." + str(post_data))
                         post_data = utils.decompress_data(post_data)
-                        # print("Received decompressed data after decompress..." + str(post_data))
+                        print("Received decompressed data after decompress..." + str(post_data))
                         if self.headers.get('Content-Type') == 'application/json':
                             post_data = post_data.decode("utf-8")
-                            # print("Received compressed JSON data:", str(post_data))
+                            print("Received compressed JSON data:", str(post_data))
                     callback_response = self.server.callback(post_data)
-                    # print("Calllback response:", str(callback_response))
+                    print("Calllback response:", str(callback_response))
                     if not isinstance(callback_response, bytes):
                         response_data = json.dumps(callback_response).encode('utf-8')
                     else:
                         response_data = callback_response
-                    # print("Response data:", str(response_data))
+                    print("Response data:", str(response_data))
                     compressed_response = utils.compress_data(response_data)
-                    # print("Compressed response:", str(compressed_response))
+                    print("Compressed response:", str(compressed_response))
                     if not compressed_response:
                         raise ValueError("Failed to compress data.")
                     self.send_response(200)

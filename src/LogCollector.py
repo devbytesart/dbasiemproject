@@ -35,12 +35,25 @@ class LogCollector(ServiceBase):
     def __init__(self, config_file='logcollectorConfig.json', configuration = None):
         self.configurator = Configurator(config_file, configuration)
         self.load_configuration()
-        # self.resource_monitor = ResourceMonitor(self.id)
         self.logger = Logger(self.id, self.monitoring_log_level, self.monitoring_log_path, self.monitoring_max_queue_size, self.monitoring_max_file, self.monitoring_max_file_size, self.monitoring_enable_print, self.monitoring_enable_queue, self.monitoring_enable_file)
+        # self.resource_monitor = ResourceMonitor(self.id)
         try:
             self.queue_manager = QueueManager(self.max_queue_size, self.backup_file, self.backup_max_file, self.max_backup_file_size, b"$$$BREAK$$$")
-            self.cmdhandler = CMDHandler({"configure":self.handle_set_config, "configuration":self.configurator.get_config, "retrieve_logs": self.handle_retrieve_logs, "shutdown": self.handle_shutdown, "retrieve_monitoring": self.logger.retrieve_monitoring})
-            self.webhook =  Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
+            # self.logger = Logger(self.id, self.log_collector_type, self.monitoring_log_level, self.monitoring_log_path, self.monitoring_max_queue_size, self.monitoring_max_file, self.monitoring_max_file_size, self.monitoring_enable_print, self.monitoring_enable_queue, self.monitoring_enable_file)
+            self.cmdhandler = CMDHandler({
+                "configure":self.handle_set_config, 
+                "configuration":self.configurator.get_config,
+                "retrieve_logs": self.handle_retrieve_logs,
+                "shutdown": self.handle_shutdown, 
+                "retrieve_monitoring": self.handle_retrieve_monitoring
+                })
+            # self.webhook =  Webhook(
+            #     self.webhook_host, 
+            #     self.webhook_port, 
+            #     self.cmdhandler.handle_json, 
+            #     self.webhook_token, 
+            #     self.webhook_certfile,
+            #     self.webhook_keyfile)
             # Statistics
             self.avg_enqueue_time = 0
             self.avg_dequeue_time = 0
@@ -57,6 +70,8 @@ class LogCollector(ServiceBase):
                 self.receiver_listener.start()
             elif self.log_collector_type == "file_reader":
                 self.process_file_by_delimiter(self.file_reader_path,  self.file_reader_delimiter)
+            # start microservice
+            self._start_microservices()
         except:
             self.logger.log("error", f"Error during initialisation of logcollector : {traceback.format_exc()}")
 
@@ -115,6 +130,7 @@ class LogCollector(ServiceBase):
             #     self.logger.log("error", "Queue did not empty in the expected time.")
             #     return False
             self.webhook.stop()
+            self.logger.log("info",f"Stop logcollector microservice")
             return True
         except:
             self.logger.log("error", f"Error during restart of logcollector :  {traceback.format_exc()}")
@@ -129,6 +145,7 @@ class LogCollector(ServiceBase):
             elif self.log_collector_type == "file_reader":
                 self.process_file_by_delimiter(self.file_reader_path, self.file_reader_delimiter)
             self.logger = Logger(self.id, self.monitoring_log_level, self.monitoring_log_path, self.monitoring_max_queue_size, self.monitoring_max_file, self.monitoring_max_file_size, self.monitoring_enable_print, self.monitoring_enable_queue, self.monitoring_enable_file)
+            self.logger.log("info",f"Start logcollector micoservice")
             return True
         except:
             self.logger.log("error", f"Error during restart of logcollector : {traceback.format_exc()}")
@@ -157,21 +174,16 @@ class LogCollector(ServiceBase):
                 # Statistics logcollector
                 stats = {
                     "name" : "statistics_monitoring",
-                    "type":"logcollector_statistics",
-                    "avg_lc_enqueue_time": self.avg_enqueue_time,
-                    "avg_lc_dequeue_time": self.avg_dequeue_time,
-                    "avg_lc_file_save_time": self.avg_file_save_time,
-                    "avg_lc_file_restore_time": self.avg_file_restore_time,
-                    "avg_lc_eps": self.count / (time.time() - self.start_count)
+                    "type":"logcollector_statistics"
+                    # "avg_lc_enqueue_time": float(self.avg_enqueue_time),
+                    # "avg_lc_dequeue_time": float(self.avg_dequeue_time),
+                    # "avg_lc_file_save_time": float(self.avg_file_save_time),
+                    # "avg_lc_file_restore_time": float(self.avg_file_restore_time),
+                    # "avg_lc_eps": float(self.count / (time.time() - self.start_count))
                 }
                 stats.update(self.queue_manager.get_stats())
-                self.logger.log("debug", stats)
-                # Statistics monitoring container 
-                # stats_res = {
-                #     "type":"logcollector_resources"
-                # }
-                # stats_res.update(self.resource_monitor.get_container_info())
-                # self.logger.log("info", stats_res)
+                # TODO statistics are wrong to correct + stats dict generate decimal that create errors
+                # self.logger.log("debug", stats)
                 self.count = 0
                 self.start_count = time.time()
                 time.sleep(10)
@@ -184,7 +196,7 @@ class LogCollector(ServiceBase):
             self.count += 1
             for line in re.split(self.receiver_delimiter, data):
                 if self.queue_manager.enqueue(line):
-                    self.avg_enqueue_time += (time.time() - start_time) / 2
+                    self.avg_enqueue_time += float((time.time() - start_time) / 2)
             # TODO check if error in here. If not erase the 2 following lines
             # else:
             #     file_time = time.time() - start_time
@@ -221,7 +233,7 @@ class LogCollector(ServiceBase):
         try:
             start_time = time.time()
             elements = self.queue_manager.dequeue(data["size"])
-            self.avg_dequeue_time += (time.time() - start_time) / 2
+            self.avg_dequeue_time += float((time.time() - start_time) / 2)
             return elements
         except:
             self.logger.log("error", f"Failed to dequeue data: {traceback.format_exc()}")

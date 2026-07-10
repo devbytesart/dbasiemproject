@@ -159,7 +159,7 @@
                 "max_queue_size": 8192,
                 "max_file": 50,
                 "max_file_size": 1073741824,
-                "enable_print": "false",
+                "enable_print": true,
                 "enable_queue": true,
                 "enable_file": true
               },
@@ -406,7 +406,7 @@
             {
               "id": "logindexer3",
               "type": "logindexer",
-              "image": "siem_logindexer",
+              "image": "ttdantett/siem_logindexer",
               "read_write": {
                 "write": "false"
               },
@@ -485,7 +485,7 @@
                   "timeout": 120
                 },
                 {
-                  "id": "mon_logcollector2",
+                  "id": "mon_parser",
                   "host": "logparser1",
                   "port": 5100,
                   "auth_token": "my_secure_token",
@@ -516,7 +516,7 @@
                 },
                 {
                   "id": "mon_logindexer3",
-                  "host": "logparser1",
+                  "host": "logindexer3",
                   "port": 5202,
                   "auth_token": "my_secure_token",
                   "primary": true,
@@ -800,7 +800,7 @@
             {
               "id": "dedicatedindexsearchmotor3",
               "type": "dedicatedindexsearchmotor",
-              "image": "siem_dedicatedindexsearchmotor",
+              "image": "ttdantett/siem_dedicatedindexsearchmotor",
               "primary": "false",
               "group": "dedicatedindexsearchmotor3",
               "webrequester": {

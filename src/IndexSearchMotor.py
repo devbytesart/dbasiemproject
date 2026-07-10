@@ -59,7 +59,8 @@ class IndexSearchMotor(ServiceBase):
                 "get_help": self.handle_get_help, 
                 "reset_research_timeout": self.handle_reset_research_timeout,
                 "generate_report": self.handle_generate_report,
-                "download_document": self.handle_download_document
+                "download_document": self.handle_download_document,
+                "retrieve_monitoring": self.handle_retrieve_monitoring
                 })
             #self.webhook =  Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             # Store result final and intermediate results

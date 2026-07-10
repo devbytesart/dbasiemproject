@@ -26,6 +26,7 @@ from logging import Handler
 from datetime import datetime
 from shutil import move
 import os
+from decimal import Decimal
 
 
 class Logger:
@@ -65,7 +66,7 @@ class Logger:
             return 4
         else:
             return 5
-        
+   
     def _log_level_priority_file(self, log_level):
         if log_level == "debug":
             return logging.DEBUG
@@ -98,11 +99,22 @@ class Logger:
         else:
             logger.error(f"Invalid level of log: {level} | Message: {message}")
 
+    # def clean_decimals(self, obj):
+    #     """ Parcourt récursivement un objet pour remplacer les Decimal par des float """
+    #     if isinstance(obj, dict):
+    #         return {k: self.clean_decimals(v) for k, v in obj.items()}
+    #     elif isinstance(obj, list):
+    #         return [self.clean_decimals(i) for i in obj]
+    #     elif isinstance(obj, Decimal):
+    #         return float(obj)
+    #     return obj
+
     def log(self, log_level, message, tenant="siem_monitoring"):
         try:
             if self._log_level_priority(self.log_level) <= self._log_level_priority(log_level) and message is not None:
                 if type(message) is not dict:
                     message = {"message": str(message)}
+                # message = self.clean_decimals(message)
                 # Create log
                 # TODO add a parameter to enable or disable output on console
                 # TODO duplicata of function for define the id
