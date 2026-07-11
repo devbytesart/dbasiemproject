@@ -60,8 +60,9 @@ class SOARVault:
         return self.vault.get(key)
 
     def list_keys(self):
+        # TODO Find a better solution to hide password and sensitive fields
         return [
-            {k: v for k, v in self.vault[instance].items() if k != "password"}
+            {k: v for k, v in self.vault[instance].items() if k != "password" and k!= "apikey"}
             for instance in self.vault
         ]
 

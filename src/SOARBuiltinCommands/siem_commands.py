@@ -30,15 +30,16 @@ import json, base64, time
 ###     SIEM PART
 ##############################################################
 
-def siem_search(self: Any, query: str, indices: list, tenants: list, technologies: list, instance: str=None, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar", all_pages: bool=False, token: str=None):
+def siem_search(self: Any, query: str, index: list, tenant: list, technology: list= [], instance: str=None, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar", all_pages: bool=False, token: str=None):
     """
     Search for events in the SIEM system with indexsearchmotor instance
+    ex: !search <field>:<value> | !counts by <field> | !order by <field> asc | !render pie by field over count
     params: 
     - instance: str => instance of the SIEM system
     - query: str => query to search
-    - indices: list => list of indices to search
-    - tenants: list => list of tenants to search
-    - technologies: list => list of technologies to search
+    - index: list => list of indices to search
+    - tenant: list => list of tenants to search
+    - technology: list => list of technologies to search (None)
     - start_time: str => start time of the search (format: YYYY-MM-DDT HH:MM:SS)
     - end_time: str => end time of the search (format: YYYY-MM-DDT HH:MM:SS)
     - token : str => token of the user if instance vault is not set
@@ -55,9 +56,9 @@ def siem_search(self: Any, query: str, indices: list, tenants: list, technologie
         # print("End time: " + end_time)
         # Connexion to the authenticator to receive the token
         # print("instance:", str(instance), str(type(instance)))
-        print("vault", str(self.vault), " list", str(self.vault.list_keys()))
+        #print("vault", str(self.vault), " list", str(self.vault.list_keys()))
         credentials = self.vault.get(instance)
-        print("credentials: ", str(credentials))
+        #print("credentials: ", str(credentials))
         # Get session token
         if instance is None:
             session_token = token
@@ -67,9 +68,9 @@ def siem_search(self: Any, query: str, indices: list, tenants: list, technologie
         request = {
             "session_token": session_token,
             "query": query,
-            "index": indices,
-            "tenant": tenants,
-            "technology": technologies,
+            "index": index,
+            "tenant": tenant,
+            "technology": technology,
             "startTime": start_time,
             "endTime": end_time,
             "current_id": current_id,

@@ -1384,6 +1384,9 @@ class UserInterface(ServiceBase):
                 context = "dashboard_help"
             elif "/configuration" in referer_url:
                 return render_template('help_configuration.html')
+            elif "/soar" in referer_url:
+                context = self.soarsReq.get_help()
+                context = context.replace("\\n", "").replace("\\\"", '"')
             else:
                 context = "general_help"
             # Display the template related to the right context

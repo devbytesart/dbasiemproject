@@ -105,13 +105,13 @@ def soar_save_context(self: Any, name: str, index: str, tenant: str, playbook: b
         raise Exception("Failed to save history")
     
 
-def soar_load_context(self: Any, name: str, index: list, tenant: list, playbook=False, instance: str=None, token: str=None):
+def soar_load_context(self: Any, name: str, index: list, tenant: list, playbook=False, instance: str=None, session_token: str=None):
     """
     Load the history of the SOAR instance
     params:
     - name: str => name of the playbook
     - tenant: str => tenant of the playbook
-    - token: str (None) => token if instance is None
+    - session_token: str (None) => token if instance is None
     - instance: str (None) => instance vault to use to have the permissions of the instance 
     """
     # TODO if result == [] and not {"type": "table", ... } -> no right to save the context
@@ -146,7 +146,7 @@ def soar_load_context(self: Any, name: str, index: list, tenant: list, playbook=
         if not isinstance(tenant, list):
             tenant = [tenant]
         if instance is None:
-            res = self.commands["siem_search"]["function"](query, index, tenant, ["soar"], None, "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), token=token)
+            res = self.commands["siem_search"]["function"](query, index, tenant, ["soar"], None, "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), token=session_token)
         else:
             res = self.commands["siem_search"]["function"](query, index, tenant, ["soar"], instance, "2020-01-01 00:00:00", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
         print("soar_load_context res:", str(res))
@@ -187,7 +187,7 @@ def soar_reset_context(self:Any, reset_next_id = True):
         raise Exception("Failed to reset history answer")
 
 
-def soar_list_playbook(self:Any, instance:str, index: list, tenant:list, token:str=None):
+def soar_list_playbook(self:Any, instance:str, index: list, tenant:list, session_token:str=None):
     """ List the playbook on the indexsearchmotor in the index and tenant 
     params:
     - index: list => list of index
@@ -341,7 +341,7 @@ def soar_play_context(self: Any, name: str, instance: str, index: str, tenant: s
             raise Exception("Failed to launch playbook")
 
 
-def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: str, var_name:str="None", token:str=None):
+def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: str, var_name:str="None", session_token:str=None):
     """Play the a sub playbook in background for the current context
     params: 
     - name: str => name of the playbook
@@ -409,7 +409,7 @@ def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: 
             raise Exception("Failed to create context")
 
 
-def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, params: dict, author:str, instance: str=None, command_id: int=None, playbook: bool=False, display=True, token=None):
+def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, params: dict, author:str, instance: str=None, command_id: int=None, playbook: bool=False, display=True, session_token=None):
     """ Add a command to a playbook or a context
     params:
     - name: str => name of the context/playbook
@@ -423,7 +423,7 @@ def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, 
     - playbook: bool => if True, the command is added to a playbook, else to a context
     - context_name: str => name of the context/playbook
     - display: bool => if display the result in the playbook
-    - token: str(None) => Token of the user is instance is empty
+    - session_token: str(None) => Token of the user is instance is empty
     """
     try:
 
@@ -446,11 +446,11 @@ def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, 
         ## If playbook
         if playbook:
             # TODO change token here too
-            self.commands["soar_load_context"]["function"](name, index, tenant, True, instance=instance, token=token)
+            self.commands["soar_load_context"]["function"](name, index, tenant, True, instance=instance, session_token=session_token)
         ## else context
         else:
-            if token is not None:
-                self.commands["soar_load_context"]["function"](name, index, tenant, token=token)
+            if session_token is not None:
+                self.commands["soar_load_context"]["function"](name, index, tenant, session_token=session_token)
             else:
                 self.commands["soar_load_context"]["function"](name, index, tenant, instance=instance)
         # print("soar_set_context context:", str(self.context))
@@ -471,6 +471,9 @@ def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, 
                     key: utils.replace_var(value, self.context["history"], self.context["variables"]) if isinstance(value, str) else value
                     for key, value in params.items()
                 }
+                # TODO specify somewhere that the token is automatically replaced
+                if "session_token" in params_updated:
+                    params_updated["session_token"] = session_token
                 # Launch command
                 result = self.commands[command]["function"](**params_updated)
                 status = "success"
@@ -782,3 +785,19 @@ def soar_import_context(self:Any, imported:str):
     except:
         self.logger.log("error", f"Failed to import SOAR Context {traceback.format_exc()}")
         raise 
+
+
+def soar_get_help(self: Any, filter:str =None):
+    """
+    Get list of commands from the SOAR with description, parameters and examples (if precised)
+    - filter: str (None) => Search text to limit the output 
+    """
+    try:
+        commands = []
+        for com in self.commands.keys():
+            if filter in com:
+                commands.append(self.commands[com])
+        return str(commands)
+    except:
+        self.logger.log("error",f"Failed to get help {traceback.format_exc()}")
+        raise

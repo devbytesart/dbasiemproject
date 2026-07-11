@@ -30,7 +30,7 @@ import json
 # TODO change this function to adapt dynamically
 def vault_set_basic_credential(self: Any, id: str, username: str, password: str):
     """
-    Add basic credential to authenticatte in the vault
+    Add basic credential to authenticate in the vault
     params: 
     - id: str => id of the instance
     - username: str => username of the user
@@ -38,9 +38,20 @@ def vault_set_basic_credential(self: Any, id: str, username: str, password: str)
     """
     try:
         self.vault.set(id, {"type": "basic", "id": id, "username": username, "password": password})
-        # self.vault[id] = {"type": "basic", "id": id, "username": username, "password": password}
     except:
         raise Exception(f"Error while setting basic credential {traceback.format_exc()}")
+
+def vault_set_ollama_credential(self:Any, id:str, url:str, apikey:str = ""):
+    """
+    Add credentials to authenticate to a Ollama LLM
+    -id: str => id of the instance
+    - url: str => url of the web services
+    - apikey: str (None) => apikey to connect to the webservices
+    """
+    try:
+        self.vault.set(id, {"type": "apikey", "id": id, "url": url, "apikey": apikey})
+    except:
+        raise Exception(f"Error while setting Ollama credential {traceback.format_exc()}")
 
 def vault_list_credentials(self: Any):
     """

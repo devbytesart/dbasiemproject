@@ -59,7 +59,8 @@ class SOAR(ServiceBase):
                 "soar_load_history": self.handle_load_history,
                 "soar_erase_history": self.handle_erase_history,
                 # "soar_load_variables": self.handle_load_variables,
-                "get_available_vault_instances": self.handle_get_available_vault_instances
+                "get_available_vault_instances": self.handle_get_available_vault_instances,
+                "get_help": self.handle_get_help
             })
             # Create Encryption
             if not os.path.exists(self.encryption_key_path) and not os.path.exists(self.encryption_iv_path):
@@ -427,10 +428,44 @@ class SOAR(ServiceBase):
             instances.append(vault_name["id"])
         return instances
 
+    def handle_get_help(self, data):
+            """ Provide help for all commands loaded on the SOAR """
+            try:
+                # 1. Inject search bar at the beginning of the help section
+                help = """
+                    <div style="margin-bottom: 15px; width: 100%;">
+                    <input type="text" placeholder="Filter commands ..." 
+                        oninput="
+                            var filterText = this.value.toLowerCase();
+                            var blocks = document.querySelectorAll('.command-block');
+                            blocks.forEach(function(block) {
+                                var cmdName = block.getAttribute('data-name').toLowerCase();
+                                block.style.display = cmdName.includes(filterText) ? '' : 'none';
+                            });
+                        "
+                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                    </div>
+                """
+                # 2. Generate list commands
+                for command_name in self.command_loader.commands.keys():
+                    command = self.command_loader.commands[command_name]
+                    param_defs = command.get("params", [])
+                    help += f'<div class="command-block" data-name="{command_name}">'
+                    help += """<button class="ui button collapsible">""" + command_name + """</button>
+                                <div class="ui segment collapsed-content">"""
+                    help += str(command["description"].replace("\n","<br/>")) + "<br/>"
+                    help += "<b>parameters</b><br/>"
+                    json_structure = json.dumps(param_defs, indent=4).replace(" ", "&nbsp;").replace("\n", "<br/>")
+                    help += f"<pre style='white-space: pre-wrap'><code>{json_structure}</code></pre><br/></div>"
+                    help += '</div>' 
+                return help
+            except:
+                self.logger.log("error",f"Failed to load help {traceback.format_exc()}")
+                raise 
+
     def run(self):
         while self.running:
             time.sleep(1)
-
 
 if __name__ == "__main__":
     config_loader = ConfigLoader()
