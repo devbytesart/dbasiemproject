@@ -54,6 +54,10 @@ The application provides several features such as:
 
 ![SOAR](./docs/media/soar_screenshot.png)
 
+### AI Agentic (beta testing)
+
+![Agentic](./docs/media/soar_agentic_example.jpg)
+
 ## Key Features
 
 This software has some key features:
@@ -218,6 +222,36 @@ python MasterCoordinator.py
 ```
 
 An example of a master coordinator is available on ["Master coordinator configuration"](./configuration/mastercoordinator_example.json)
+
+### Configuration agent AI (beta version - under testing process)
+
+Use the following command to install ollama in docker and install the qwen model
+
+```
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+or 
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+Add in ollama the network internal_network
+```
+ docker network connect internal_network ollama
+```
+
+Create in the instance of the SOAR the key for the llm
+```
+vault_set_ollama_credential
+```
+
+And finally use simple question to llm with the command:
+```
+ai_llm_query_ollama
+```
+
+Or ask for agentic to launch commands with:
+```
+ai_agentic_query_ollama
+```
 
 ## Preconfigured architecture
 

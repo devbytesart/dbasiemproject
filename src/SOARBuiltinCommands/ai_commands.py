@@ -258,7 +258,7 @@ def ai_agentic_query_ollama(self, instance: str, query: str, tenant: str, index:
             "- !search <condition1> and <condition2> or <condition3> | !order by <field>\n"
             "- !search <condition> | !transform <field> as substring(:5) | !counts by <field>_substring5\n\n"
             "INCORRECT example (render without counts before it, avoid this):\n"
-            "- !search * | !render bar by <field>   <-- missing !counts before !render, this will not work"
+            "- !search * | !render bar by <field> over count   <-- missing !counts before !render, this will not work"
         ),
     }
 
