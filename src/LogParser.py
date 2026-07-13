@@ -31,6 +31,8 @@ import traceback
 import random
 import copy
 import re
+import UtilsIndexing as uindex
+import Utils as utils
 from datetime import datetime, timezone
 from ServiceBase import *
 from Configurator import *
@@ -64,7 +66,7 @@ class LogParser(ServiceBase):
                 "retrieve_logs": self.handle_retrieve_logs, 
                 "retrieve_mapping": self.handle_retrieve_mapping, 
                 "shutdown":self.handle_shutdown, 
-                "retrieve_monitoring": self.logger.retrieve_monitoring})
+                "retrieve_monitoring": self.handle_retrieve_monitoring})
             self.queue_manager = QueueManager(self.max_queue_size, self.backup_file, self.max_backup_file, self.max_backup_file_size)
             # self.webhook =  Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             # self.collector_requester = WebRequester(self.logcollector_host, self.logcollector_port, self.logcollector_token, slave_reverse=self.slave_reverse)
@@ -157,6 +159,7 @@ class LogParser(ServiceBase):
         try:
             self.running = False
             self.main_thread.join()
+            self.logger.log("info",f"Stop threads services parser {self.id}")
         except:
             self.logger.log("error", f"Error during stop of logparser : {traceback.format_exc()}")
 
@@ -167,6 +170,7 @@ class LogParser(ServiceBase):
             self.main_thread = threading.Thread(target=self.run)
             # self.main_thread.daemon = True
             self.main_thread.start()
+            self.logger.log("info",f"Start thrads services parser {self.id}")
         except:
             self.logger.log("error", f"Error during start of logparser : {traceback.format_exc()}")
 
@@ -183,15 +187,12 @@ class LogParser(ServiceBase):
             # Wait for the queue to be empty
             # TODO find a way to stop the queue manager or make it wait for the queue to be empty or send the file
             # Stop the webhook
-            print("Stop webhook")
             # Arrêter le webhook
             # TODO troubleshoot this part. The stopping of the webhook stop the container
             # if hasattr(self, 'webhook') and self.webhook:
-            print("Stopping webhook...")
             self.webhook.stop()
-            print("Webhook stopped.")
+            self.logger.log("info",f"Stop microservices weebhook stopped {self.id}")
             # self.webhook.stop()
-            print("AFTER STOP WEBHOOK")
             return True
         except:
             self.logger.log("error", f"Error during stopping microservices : {traceback.format_exc()}")
@@ -210,7 +211,7 @@ class LogParser(ServiceBase):
             # self.main_thread = threading.Thread(target=self.run)
             # # self.main_thread.daemon = True
             # self.main_thread.start()
-            print("ALL SERVICES STARTED")
+            self.logger.log("info",f"All services started parser {self.id}")
             return True
         except:
             self.logger.log("error", f"Error during starting microservices : {traceback.format_exc()}")
@@ -296,6 +297,7 @@ class LogParser(ServiceBase):
             # MAPPER
             # TODO
             # self.mapper = self.load_plugin(self.mapper_folder,self.mapper_name,LPMapperInterface)  
+            self.logger.log("debug",f"Plugins parser loaded {self.id}")
         except:
             self.logger.log("error", "Error loading plugins:" + traceback.format_exc())
 
@@ -440,7 +442,8 @@ class LogParser(ServiceBase):
     def prepare_id(self):
         try:
             # TODO change it
-            id = (str(time.time()) + str(random.random())).replace(".","")
+            #id = (str(time.time()) + str(random.random())).replace(".","")
+            id = uindex.create_random_id()
             return id
         except:
             self.logger.log("error",f"Error while preparing id: " + {traceback.format_exc()})

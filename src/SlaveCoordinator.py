@@ -57,7 +57,7 @@ class SlaveCoordinator(ServiceBase):
                 "configure":self.handle_set_config, 
                 "configuration":self.configurator.get_config, 
                 "shutdown": self.handle_shutdown, 
-                "retrieve_monitoring": self.logger.retrieve_monitoring, 
+                "retrieve_monitoring": self.handle_retrieve_monitoring, 
                 "forwarded_request":self.handle_forwarded_request, 
                 "get_global_configuration": self.handle_get_global_configuration, 
                 "set_global_configuration": self.handle_set_global_configuration, 
@@ -136,11 +136,12 @@ class SlaveCoordinator(ServiceBase):
                 "type": "slavecoordinator_monitoring"
             }
             # Resources monitoring
-            for res_mon in self.resources_monitors:
-                try:
-                    self.logger.log("info", self.resources_monitors[res_mon].get_container_info())
-                except:
-                    self.logger.log("error", f"Failed to retrieve monitoring data: {traceback.format_exc()}")
+            # TODO troubleshoot this part, Decimal crash the SOAR
+            # for res_mon in self.resources_monitors:
+            #     try:
+            #         self.logger.log("info", self.resources_monitors[res_mon].get_container_info())
+            #     except:
+            #         self.logger.log("error", f"Failed to retrieve monitoring data: {traceback.format_exc()}")
             time.sleep(10)
 
     def _stop_microservices(self):
@@ -149,6 +150,7 @@ class SlaveCoordinator(ServiceBase):
             self.resources_monitor.stop()
             # Stop the webhook
             self.webhook.stop()        
+            self.logger.log("info",f"Stop microservices Slavecoordinator {self.id}")
             return True
         except:
             self.logger.log("error", f"Failed to stop webhook: {traceback.format_exc()}")
@@ -166,6 +168,7 @@ class SlaveCoordinator(ServiceBase):
             # Monitoring
             self.resources_monitors = {}
             self.resources_monitor = ResourceMonitor(self.id, self.logger)
+            self.logger.log("info",f"Microservices started {self.id}")
             return True
         except:
             self.logger.log("error", f"Failed to start webhook: {traceback.format_exc()}")
@@ -204,6 +207,7 @@ class SlaveCoordinator(ServiceBase):
             else :
                 volumes = {}
             command = "python " + command_file + " -i '" + json.dumps(sub_conf).replace("\\","\\\\") + "'"
+            self.logger.log("info",f"Create docker : {image_name} - {image_tag}")
             self.docker_manager.create_container(image_name, image_tag, ports, volumes, command)
             return True
         except:

@@ -285,7 +285,7 @@ docker run
     -v dockervolume1:/data/:rw 
     -p 8443:8443 
     --network internal_network 
-    --network host 
+    <!-- --network host  -->
     --add-host 192.168.0.1:host-gateway 
     -it ttdantett/siem_slavecoordinator 
     python SlaveCoordinator.py 
@@ -302,7 +302,7 @@ docker run
 -v dockervolume1:/data/:rw 
 -p 6000:6000 
 --network internal_network 
---network host 
+<!-- --network host  -->
 --add-host 192.168.0.1:host-gateway 
 -it ttdantett/siem_mastercoordinator 
 python MasterCoordinator.py 

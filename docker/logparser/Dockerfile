@@ -56,6 +56,7 @@ COPY ../src/LPAnonymizerInterface.py /app/
 COPY ../src/LPPlugins /app/LPPlugins/
 COPY ../src/Utils.py /app/
 COPY ../src/UtilsEnum.py /app/
+COPY ../src/UtilsIndexing.py /app/
 RUN chmod +x /app/LogParser.py
 EXPOSE 443 80 8080 4443 5000-6000
 # cd SIEMProject

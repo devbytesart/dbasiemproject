@@ -9,7 +9,7 @@
         "primary": true,
         "image": "ttdantett/siem_mastercoordinator",
         "logger": {
-          "log_level": "debug",
+          "log_level": "info",
           "log_path": "mastercoordinator_mon.log",
           "max_queue_size": 4096,
           "max_file": 50,
@@ -49,7 +49,7 @@
         },
         "logger": {
           "stats_file": "stats_2.txt",
-          "log_level": "debug",
+          "log_level": "info",
           "log_path": "mastercoordinator.log",
           "max_queue_size": 8192,
           "max_file": 50,
@@ -926,7 +926,7 @@
               },
               "logger": {
                 "stats_file": "stats_2.txt",
-                "log_level": "debug",
+                "log_level": "info",
                 "log_path": "userinterface.log",
                 "max_queue_size": 8192,
                 "max_file": 50,
@@ -993,7 +993,7 @@
                 "path": "/data/storage/authenticator1"
               },
               "logger": {
-                "log_level": "debug",
+                "log_level": "info",
                 "log_path": "mastercoordinator_mon.log",
                 "max_queue_size": 4096,
                 "max_file": 50,

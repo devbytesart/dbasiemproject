@@ -64,7 +64,7 @@ class MasterCoordinator(ServiceBase):
                                           "get_global_configuration": self.handle_get_config,
                                           "set_global_configuration": self.handle_set_config,
                                           "shutdown": self.handle_shutdown, 
-                                          "retrieve_monitoring": self.logger.retrieve_monitoring,
+                                          "retrieve_monitoring": self.handle_retrieve_monitoring,
                                           "get_privileges":self.handle_get_global_privileges, 
                                           "set_privileges":self.handle_set_global_privileges
                                           })
@@ -81,6 +81,13 @@ class MasterCoordinator(ServiceBase):
             self.run()
         except:
             self.logger.log("error", f"Error during starting services {traceback.format_exc()}")
+
+    def handle_retrieve_monitoring(self, data):
+        try:
+            return self.logger.retrieve_monitoring(data)
+        except:
+            self.logger.log("error", f"Failed to retrieve monitoring data: {traceback.format_exc()}")
+            return None
 
     def _stop_microservices(self):
         # Stop webhook
