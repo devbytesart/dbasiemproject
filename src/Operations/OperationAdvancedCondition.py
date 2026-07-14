@@ -18,7 +18,7 @@ title: siem project
 document: operation advanced condition
 """
 
-from OperationBase import *
+from src.Operations.OperationBase import *
 from WebRequester import *
 import UtilsEnum as ue
 import Utils as utils

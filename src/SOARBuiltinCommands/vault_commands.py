@@ -62,3 +62,15 @@ def vault_list_credentials(self: Any):
         return self.vault.list_keys()
     except:
         raise Exception(f"Error while listing credentials {traceback.format_exc()}")
+
+#TODO Test permissions to delete the key before
+def vault_delete_credentials(self: Any, id:str):
+    """
+    Delete the id of the list 
+    id: str => Id of the vault to delete
+    """
+    try:
+        self.vault.delete_key(id)
+        return f"Key {id} deleted"
+    except:
+        raise Exception(f"Error while deleting id {traceback.format_exc()}")

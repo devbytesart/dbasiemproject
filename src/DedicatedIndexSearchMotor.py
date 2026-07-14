@@ -123,6 +123,7 @@ class DedicatedIndexSearchMotor(ServiceBase):
     def _stop_microservices(self):
         try:
             # Stop the service collectors 
+            self.logger.log("info",f"Stop microservices {self.id}")
             self.stop_threads_services()
             # TODO stop the threads for store data in cache
             # Stop the webhook
@@ -134,6 +135,7 @@ class DedicatedIndexSearchMotor(ServiceBase):
 
     def _start_microservices(self):
         try:
+            self.logger.log("info",f"Start microservices {self.id}")
             self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             self.index_file_manager = IndexFileManager(self.storage_path, self.index_name, None, self.logger, self.max_file_size)
             self.data_file_manager = DataFileManager(self.storage_path, self.index_name, None, self.logger, self.max_file_size)
@@ -187,7 +189,7 @@ class DedicatedIndexSearchMotor(ServiceBase):
             if self.index_name not in index:
                 self.logger.log("debug", "Index not concerned : " + str(index) + str(self.index_name))
                 return {}
-            print("========== query : " + str(query) + " tenant : " + str(tenant) + " start_time : " + str(start_time) + " end_time : " + str(end_time))
+            self.logger.log("info",{"message":"search query", "s_index":str(index), "s_technology":str(technology), "s_query":str(query),"s_tenant":str(tenant),"s_start_time":str(start_time),"s_end_time":str(end_time)})
             # TODO forward all information from the indexer to retrieve data in the file
             start_index_search = time.time()
             res = json.dumps(self.index_file_manager.search_index(query, tenant, start_time, end_time, technology, negative)).encode('utf-8')
@@ -213,6 +215,7 @@ class DedicatedIndexSearchMotor(ServiceBase):
                 self.logger.log("debug", "Index not concerned : " + str(index) + str(self.index_name))
                 return {}
             # TODO the tenant is not take into account for now. Find a way to add some important field in the raw json such as siem_timestamp, techno
+            self.logger.log("info",{"message":"Search raw logs", "s_index":str(index), "s_technology":str(technology), "s_query":str(query),"s_tenant":str(tenant),"s_start_time":str(start_time),"s_end_time":str(end_time)})
             return json.dumps(self.data_file_manager.search_in_raw_data(query, tenant, start_time, end_time, technology, negative)).encode('utf-8')
         except Exception as e:
             self.logger.log("error","Error while searching in raw : " + str(e) + str(traceback.format_exc()))

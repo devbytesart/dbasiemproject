@@ -59,6 +59,7 @@ class UserInterface(ServiceBase):
             "configuration":self.configurator.handle_get_configuration,
             "shutdown":self.handle_shutdown, 
             "retrieve_logs":self.handle_retrieve_logs, 
+            "retrieve_monitoring": self.handle_retrieve_monitoring,
             "retrieve_mapping": self.handle_retrieve_mapping})
         # self.dashboard_list = {}
         self._start_microservices()
@@ -161,6 +162,7 @@ class UserInterface(ServiceBase):
             self.webhook.stop()
             print("AFTER STOP WEBHOOK")
             self.app = None
+            self.logger.log("info",f"Stop microservices {self.id}")
             return True
         except:
             self.logger.log("error", f"Error during microservices stopping: {traceback.format_exc()}")
@@ -169,6 +171,7 @@ class UserInterface(ServiceBase):
 
     def _start_microservices(self):
         print("START MICRO SERVICES")
+        self.logger.log("info",f"Start microservices {self.id}")
         self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
         self.queue_manager = QueueManager(self.max_queue_size, self.backup_file, self.backup_max_file, self.max_backup_file_size)
         # self.report_manager = ReportManager(self.logger, self.indexsearchmotorsReq)
@@ -213,7 +216,7 @@ class UserInterface(ServiceBase):
     def handle_retrieve_monitoring(self, data):
         try:
             print("Userinterface handle_retrieve_monitoring called: " + str(data))
-            results = self.logger.retrieve_monitoring(data["retrieve_monitoring"])
+            results = self.logger.retrieve_monitoring(data)
             if results:
                 return results
             # return {"status": "error", "message": "Failed to retrieve monitoring data"}
@@ -454,8 +457,10 @@ class UserInterface(ServiceBase):
                 if jwt_token != "null" and jwt_token != "" and jwt_token is not None:
                     session['user_logged_in'] = True
                     session['user_id'] = jwt_token
+                    self.logger.log("info",f"Successful login {username} on {self.id}")
                     return redirect(url_for('Search'))
                 else:
+                    self.logger.log("warning",f"Failed login {username} on {self.id}")
                     return render_template('login.html', error="Invalid username or password")
 
             return render_template('login.html')
@@ -517,11 +522,14 @@ class UserInterface(ServiceBase):
                 confirm_password = request.form.get('confirm_password')
                 # Validate form data
                 if password != confirm_password:
+                    self.logger.log("warning",f"Failed password changed {username} on {self.id}")
                     return render_template('changepassword.html', error="Passwords do not match.")
                 success = self.authenticatorsReq.change_password(session.get("user_id"), username, password)
                 if success:
+                    self.logger.log("info",f"Successful password changed {username} on {self.id}")
                     return redirect(url_for('login'))  # Redirect to login page
                 else:
+                    self.logger.log("warning",f"Failed password changed {username} on {self.id}")
                     return render_template('changepassword.html', error="Error changing password. Please try again.")
             return render_template('changepassword.html')
 
@@ -602,8 +610,10 @@ class UserInterface(ServiceBase):
                 # Simulate user creation logic (replace with actual logic)
                 success = self.authenticatorsReq.sign_up(username, password, email, auth_type)
                 if success:
+                    self.logger.log("info",f"Success password changed {username} on {self.id}")
                     return redirect(url_for('login'))  # Redirect to login page
                 else:
+                    self.logger.log("warning",f"Failed user signup {username} on {self.id}")
                     return render_template('signup.html', error="Error creating account. Please try again.")
             return render_template('signup.html')
 
@@ -766,7 +776,7 @@ class UserInterface(ServiceBase):
                 }}}
                 log["data"]["raw"] = base64.b64encode(json.dumps(log["data"]["parsed"]).encode('utf-8')).decode('utf-8')
                 self.queue_manager.enqueue(json.dumps(log).encode('utf-8'))
-                self.logger.log("info", "Saving dashboard/report by user: " + user_id)
+                self.logger.log("info", f"Saving dashboard/report by user: {user_id}")
                 # with open('dashboard.json', 'w') as f:
                     # json.dump(data, f)
                 return jsonify({"message": "Dashboard/Report saved successfully"})
@@ -880,7 +890,7 @@ class UserInterface(ServiceBase):
 
                 # Conver the file in memory
                 file_obj = io.BytesIO(file_data)
-
+                self.logger.log("info", f"File {document_id}.{file_format} downloaded.")
                 # Download the file
                 return send_file(
                     file_obj,

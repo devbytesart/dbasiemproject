@@ -27,14 +27,14 @@ from Webhook import *
 from WebRequester import *
 import traceback, os, threading, re
 from collections import defaultdict
-from OperationBase import *
-from OperationCount import *
-from OperationProject import *
-from OperationRender import *
-from OperationVariable import *
-from OperationAdvancedCondition import *
-from OperationTransform import *
-from OperationOrder import *
+from src.Operations.OperationBase import *
+from src.Operations.OperationCount import *
+from src.Operations.OperationProject import *
+from src.Operations.OperationRender import *
+from src.Operations.OperationVariable import *
+from src.Operations.OperationAdvancedCondition import *
+from src.Operations.OperationTransform import *
+from src.Operations.OperationOrder import *
 from ParameterLoader import *
 from ReportManager import *
 import UtilsEnum as uenum
@@ -125,6 +125,7 @@ class IndexSearchMotor(ServiceBase):
     def _stop_microservices(self):
         try:
             # Stop the webhook
+            self.logger.log("info",f"Stop microservices {self.id}")
             self.webhook.stop()
             return True
         except:
@@ -133,6 +134,7 @@ class IndexSearchMotor(ServiceBase):
 
     def _start_microservices(self):
         try:
+            self.logger.log("info",f"Start microservices {self.id}")
             # Start the webhook
             self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             # Careful to the order of operator which is very important

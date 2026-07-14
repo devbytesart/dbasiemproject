@@ -18,7 +18,7 @@ title: siem project
 document: operation count
 """
 
-from OperationBase import *
+from src.Operations.OperationBase import *
 from collections import defaultdict
 import UtilsEnum as ue
 import Utils as utils

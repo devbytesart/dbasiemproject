@@ -58,6 +58,13 @@ class SOARVault:
 
     def get(self, key):
         return self.vault.get(key)
+    
+    def delete_key(self, key):
+        try:
+            if self.vault.get(key):
+                del self.vault[key]
+        except:
+            self.logger.log("error", f"Error while deleting vault: {traceback.format_exc()}")
 
     def list_keys(self):
         # TODO Find a better solution to hide password and sensitive fields

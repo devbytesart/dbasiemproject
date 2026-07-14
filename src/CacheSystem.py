@@ -46,7 +46,9 @@ class CacheSystem(ServiceBase):
                 "configuration": self.configurator.get_config, 
                 "search_cached_data": self.handle_get_ids, 
                 "store_cached_data": self.handle_store_ids, 
-                "shutdown": self.handle_shutdown})
+                "shutdown": self.handle_shutdown, 
+                "retrieve_monitoring": self.handle_retrieve_monitoring
+            })
             self.webhook =  Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
         except:
             self.logger.log("error", "Error during initialization of CacheSystem" + str(traceback.format_exc()))
@@ -84,6 +86,7 @@ class CacheSystem(ServiceBase):
     
     def _stop_microservices(self):
         try:
+            self.logger.log("info",f"Stop microservices {self.id}")
             self.webhook.stop()
             return True
         except:
@@ -92,6 +95,7 @@ class CacheSystem(ServiceBase):
 
     def _start_microservices(self):
         try:
+            self.info("info",f"Start microservices {self.id}")
             self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             return True
         except:
@@ -145,7 +149,7 @@ class CacheSystem(ServiceBase):
                     dictionary[d["id"]] = json.dumps(d)
                     dictionary_num += 1
             # print("dic_ids_num_data : ", self.dic_ids_num_data)
-            print("Storing cache time : ", time.time() - start_storing_cache)
+            self.logger.log("error",f"Storing cache time : {time.time() - start_storing_cache}")
             return True
         except Exception as e:
             self.logger.log("error", "Error in handle store ids:" + str(traceback.format_exc()))
@@ -184,8 +188,8 @@ class CacheSystem(ServiceBase):
                     found.append(d)
                 else:
                     not_found.append(d)
-            print("not found : " + str(len(not_found)) + " found : " + str(len(found)))
-            print("time get ids cache: " + str(time.time() - start_get_ids_cache))
+            self.logger.log("debug",f"not found : {str(len(not_found))} found : {str(len(found))}")
+            self.logger.log("debug",f"time get ids cache: {str(time.time() - start_get_ids_cache)}")
             return {"found":found, "not_found": not_found, "data": data_found}
         except:
             self.logger.log("error", f"Error during handle get ids: {traceback.format_exc()}")
@@ -201,6 +205,7 @@ class CacheSystem(ServiceBase):
     def free_cache(self):
         """Free the cache from the cache system"""
         try:
+            self.logger.log("info",f"Freeing cache {self.id}")
             # TODO regularly free the cache depending on the new data arriving
             self.dic_ids = {}
             self.dic_raw_ids = {}

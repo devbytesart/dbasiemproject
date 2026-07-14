@@ -175,6 +175,7 @@ class MasterCoordinator(ServiceBase):
         try:
             if self.primary:
                 for slave in self.configurator.get_config(["infrastructure","slavecoordinators"]):
+                    self.logger.log("info",f"Master send configuration to {slave['id']}")
                     print(slave)
                     new_configuration = copy.deepcopy(slave)
                     print(self.configurator.elements)
@@ -195,6 +196,7 @@ class MasterCoordinator(ServiceBase):
                 for slave in self.configurator.get_config(["infrastructure","slavecoordinators"]):
                     for authenticator in slave["sub-infrastructure"]["authenticators"]:
                         try:
+                            self.logger.log("info",f"Master send privileges to {authenticator['id']}")
                             # Send the new privileges to the authenticator
                             new_privileges = copy.deepcopy(self.privileges_manager.get_global_privileges(authenticator["id"]))
                             self.configurator.replace_references(new_privileges, self.configurator.elements)

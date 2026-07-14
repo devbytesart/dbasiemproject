@@ -18,7 +18,7 @@ title: siem project
 document: operation render
 """
 
-from OperationBase import *
+from src.Operations.OperationBase import *
 import UtilsEnum as ue
 import Utils as utils
 import re, json
