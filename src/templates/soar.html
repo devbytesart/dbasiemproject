@@ -113,12 +113,12 @@ DOCUMENT: soar
                     <div class="search-container">
                             
                         <div class="field">
-                            <button type="button" class="ui button" title="Play all" onclick="playAllFunctions()">▶️</button>
-                            <button type="button" class="ui button" title="Replay all" onclick="playAllFunctions(true)">🔁</button>
-                            <button type="button" class="ui button" title="Stop execution" onclick="stopExecution()">🟥</button>
-                            <button type="button" class="ui button" title="Import" onclick="showImportPopup()">⬇️</button>
-                            <button type="button" class="ui button" title="Export" onclick="exportContext()">⬆️</button>
-                            <button type="button" class="ui button red" title="Delete all" onclick="eraseContext()">🗑️</button>
+                            <button id="playall_button" type="button" class="ui button" title="Play all" onclick="playAllFunctions()">▶️</button>
+                            <button id="replayall_button" type="button" class="ui button" title="Replay all" onclick="playAllFunctions(true)">🔁</button>
+                            <button id="stop_button" type="button" class="ui button" title="Stop execution" onclick="stopExecution()">🟥</button>
+                            <button id="import_button" type="button" class="ui button" title="Import" onclick="showImportPopup()">⬇️</button>
+                            <button id="export_button" type="button" class="ui button" title="Export" onclick="exportContext()">⬆️</button>
+                            <button id="delete_button" type="button" class="ui button red" title="Delete all" onclick="eraseContext()">🗑️</button>
                             <button type="submit" class="styled-button" style="width: 55%;">Launch</button>
                             <!-- Button/checkbox -->
                             <div style="margin-top: 10px;">

@@ -32,22 +32,21 @@ import uuid
 ##############################################################
 
 
-def ai_llm_query_ollama(self: Any, instance: str, query: str, model: str = "qwen2.5:14b", https: bool = False, temperature: float = 0.2):
+def ai_llm_query_ollama(self: Any, instance: str, query: str, temperature: float = 0.2):
     """
     Simple Query/Answer to the LLM
     - instance: str => SOAR Instance that contains the credentials and urls to reach the LLM
     - query: str => User query to the LLM
-    - model: str (qwen2.5:14b) => LLM Model installed on ollama
     """
     try:
         if instance is not None and query is not None:
             # Get instance credentials
             credentials = self.vault.get(instance)
             url = credentials.get("url")
+            model = credentials.get("model")
             api_key = credentials.get("apikey", "")
-            # Protocol definition
-            protocol = "https" if https else "http"
-            endpoint = f"{protocol}://{url.rstrip('/')}/api/chat"
+            # Endpoint definition
+            endpoint = f"{url.rstrip('/')}/api/chat"
             print(endpoint)
             # Header configuration
             headers = {"Content-Type": "application/json"}
@@ -89,119 +88,9 @@ def ai_llm_query_ollama(self: Any, instance: str, query: str, model: str = "qwen
 ###      AGENTIC COMMANDS
 ##############################################################
 
-# def ai_agentic_query_ollama(self: Any, instance: str, query:str, tenant: str, index: str = "soar", model: str = "qwen2.5:14b", https: bool = False, session_token: str = None):
-#     """
-#     The LLM received the query with this command and create wrokplan and launch action on the SOAR
-#     - instance: str => SOAR Instance that contains the credentials and urls to reach the LLM
-#     - query: str => User query to the LLM
-#     - model: str => LLM Model installed on ollama (qwen2.5:14b)
-#     - session_token: str => Token of the user (None)
-#     - index: str => index to save the context (soar)
-#     - tenant: str => tenant where to save the context
-#     """
-#     try:
-#         context_name = "agentic"
-#         print("BEFORE COMMANDS LIST")
-#         #commands_list = self.commands["soar_set_context"]["function"]("testagentic2", "soar", "siem_system", "soar_get_help", params={"filter":""}, author="soar", session_token=session_token, display=False)
-#         commands_list = []
-#         for com in self.commands.keys():
-#             # TODO erase this next part, temporary
-#             commands_list.append({
-#                 "name": com,
-#                 "description": str(self.commands[com]["description"]),
-#                 "params": str(self.commands[com]["params"])
-#             })
-#         print("AFTER COMMAND LIST", str(commands_list)[:50])
-#         #Prepare LLM
-#         instructions = """
-#             You are an intelligent orchestrator (SOAR). Your goal is to assist the user by answering their questions or executing specific actions. To achieve this, you have access to a list of functions (tools) that you can decide to call.
-
-#             Here is the list of available functions, their parameters, and descriptions:
-#             """ + str(commands_list).replace("\"","").replace("\'","").replace("\\","") + """
-#             ---
-
-#             ### DECISION RULES
-#             1. If you can accurately answer the user's question WITHOUT using any function (to save time), do so directly.
-#             2. If the user's request requires an action or information that you do not possess, you MUST select and configure the appropriate function(s) from the list above.
-#             3. Do not guess parameters. Extract them from the ongoing context provided in the available functions before. If a required parameter is missing, ask the user for it via the "text" field.
-#             5. **siem_search** The siem_search is the command from the SIEM These example below are only for parameter query, other parameters are explained before in the list of availables commands. Use pipe to separate operations and ! for the command. See example below:
-#             - !search * | !counts by <field> | !order by <field> | !render <chart type> by <field> over count
-#             - !search <condition1> and <condition2> or <condition3> | !order by <field>
-#             - !search <condition> | !transform <field> as substring(:5) | !counts by <field>_substring5
-            
-#             ### MANDATORY OUTPUT FORMAT
-#             You must strictly respond using the following UNIQUE JSON format. Do not include any conversational text outside the JSON, and do not use Markdown code blocks (do not wrap it in ```json ... ```). Provide the raw JSON only:
-
-#             {
-#             "text": ["Step 1 or message to the user", "Step 2..."],
-#             "function": [
-#                 {
-#                 "name": "function_name",
-#                 "parameters": {
-#                     "param1": "value1",
-#                     "param2": "value2"
-#                 }
-#                 }
-#             ],
-#             "result": null
-#             }
-
-#             ### HOW TO HANDLE RESULTS ("result")
-#             - When you request a function execution, the external script will run it and send this exact same JSON back to you, but the "result" field will contain the data returned by the function.
-#             - When you receive a JSON where the "result" field is no longer "null" but contains data, your role is to analyze this data to formulate the final answer to the user inside the "text" field, and clear the "function" field (set it to []).
-
-#             ### USER REQUEST
-#             The following request has been done by the user, answer this question :
-#             """ + query
-
-
-#         print("Send request and instructions to the llm")
-#         results = self.commands["soar_set_context"]["function"](context_name, index, tenant, "ai_llm_query_ollama", params={"query":instructions,"instance":instance}, author="soar", session_token=session_token)
-#         print("RESULT LLM:",str(results))
-#         time.sleep(5)
-#         #Launch the commands
-#         print("FUNCTION: ", str(json.loads(results["history"][0]["answer"][0])["function"]))
-#         for func in json.loads(results["history"][0]["answer"][0])["function"]:
-#             try:
-#                 print("FUNCTION NAME:", str(type(func["name"])), str(func["name"]))
-#                 print("FUNCTION PARAMETERS:", str(type(func["parameters"])), str(func["parameters"]))
-#                 self.commands["soar_set_context"]["function"](context_name, index, tenant, func["name"], params=func.get("parameters",{}),  author="soar", session_token=session_token)
-#             except:
-#                 self.logger.log("error",f"Error during launch function {func['name']} {traceback.format_exc()}")
-#         # # Function to find answer keys
-#         # def find_keys(data, target_key):
-#         #     results = []
-#         #     # Si c'est un dictionnaire, on cherche la clé et on fouille dans les valeurs
-#         #     if isinstance(data, dict):
-#         #         for key, value in data.items():
-#         #             if key == target_key:
-#         #                 results.append(value)
-#         #             # On continue de chercher plus profondément dans la valeur
-#         #             results.extend(find_keys(value, target_key))
-#         #     # Si c'est une liste, on fouille dans chaque élément de la liste
-#         #     elif isinstance(data, list):
-#         #         for item in data:
-#         #             results.extend(find_keys(item, target_key))
-#         #     return results
-#         # # If any value is required by the LLM to answer the question
-#         # try:
-#         #     res = find_keys(self.context, "answer")
-#         #     results = json.loads(results["history"][0]["answer"][0])
-#         #     results["result"] = str(res)
-#         #     print("RESULTS TO SEND TO LLM", str(results))
-#         #     self.commands["soar_set_context"]["function"](context_name, index, tenant, "ai_llm_query_ollama", params={"query":results,"instance":instance}, author="soar", session_token=session_token)
-#         # except:
-#         #     self.logger.log("error",f"Error during request to llm {traceback.format_exc()}")
-#         return "ok"
-#         # TODO to continue
-#     except Exception as main_exception:
-#         self.logger.log("error", f"SOAR AI Agentic Query global error: {traceback.format_exc()}")
-#         raise main_exception
-
-
 
 def ai_agentic_query_ollama(self, instance: str, query: str, tenant: str, index: str = "soar",
-                             model: str = "qwen2.5:14b", https: bool = False, session_token: str = None,
+                             session_token: str = None,
                              max_turns: int = 5, max_duration_seconds: int = 120):
     """
     The LLM receives the request, decides on an action plan, and exchanges messages with the
@@ -223,7 +112,6 @@ def ai_agentic_query_ollama(self, instance: str, query: str, tenant: str, index:
 
     - instance: str => SOAR instance holding the credentials and URLs to reach the LLM
     - query: str => User request sent to the LLM
-    - model: str => LLM model installed on ollama (qwen2.5:14b)
     - session_token: str => User token (None)
     - index: str => index where the context is saved (soar)
     - tenant: str => tenant where the context is saved

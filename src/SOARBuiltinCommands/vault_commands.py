@@ -41,15 +41,16 @@ def vault_set_basic_credential(self: Any, id: str, username: str, password: str)
     except:
         raise Exception(f"Error while setting basic credential {traceback.format_exc()}")
 
-def vault_set_ollama_credential(self:Any, id:str, url:str, apikey:str = ""):
+def vault_set_ollama_credential(self:Any, id:str, url:str, apikey:str = "", model:str = "qwen2.5:14b"):
     """
     Add credentials to authenticate to a Ollama LLM
-    -id: str => id of the instance
-    - url: str => url of the web services
-    - apikey: str (None) => apikey to connect to the webservices
+    - id: str => id of the instance
+    - url: str => url of the web services (https://<hostname>:11434)
+    - apikey: str => (None) apikey to connect to the webservices
+    - model: str => (qwen2.5:14b) The model of the LLM to request
     """
     try:
-        self.vault.set(id, {"type": "apikey", "id": id, "url": url, "apikey": apikey})
+        self.vault.set(id, {"type": "apikey", "id": id, "url": url, "apikey": apikey, "model": model})
     except:
         raise Exception(f"Error while setting Ollama credential {traceback.format_exc()}")
 

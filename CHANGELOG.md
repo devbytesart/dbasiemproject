@@ -22,11 +22,14 @@ Realease note version 01.001.001
 ### Added
 
 - Add logs info and warnings for monitoring on components
+- Add disabled buttons play, stop and replay for playbook part
 
 ### Changed
 
 - Move Operations in another folder src/Operations/
 - Vault key deletion commands added
+- change method of storing context for soar (cache now)
+- Change vault to get the model and complete url on the key and not in the command itself.
 
 ### Fixed
 

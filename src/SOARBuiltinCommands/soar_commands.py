@@ -98,7 +98,8 @@ def soar_save_context(self: Any, name: str, index: str, tenant: str, playbook: b
             if self.context["variables"]["_siem_id"] != "ERROR":
                 self.queue.enqueue(json.dumps(log).encode("utf-8"))
                 # Wait for the logindexer to save the log
-                time.sleep(2)
+                #TO ERASE IN CASE OF PROBLEM
+                #time.sleep(2)
                 print("save queue:", str(self.queue.get_size()))
         return "History saved"
     except:
@@ -323,7 +324,8 @@ def soar_play_context(self: Any, name: str, instance: str, index: str, tenant: s
                 # log = utindex.create_simple_log(index, tenant, "soar", name, content, siem_id)
                 log = utindex.create_simple_log(index, tenant, "soar", name, content, self.context["variables"]["_siem_id"])
                 self.queue.enqueue(json.dumps(log).encode("utf-8"))
-                time.sleep(1)
+                # TO ERASE IN CASE OF PROBLEM
+                #time.sleep(1)
         # Incomplete ? 
         if incomplete:
             print("soar_play_context Incomplete: " + str(error_data))
@@ -364,13 +366,14 @@ def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: 
         incomplete = False
         with self._temporary_context():
             # Load context if already exist
-            self.commands["soar_load_context"]["function"](var_name, instance, index, tenant)
+            self.commands["soar_load_context"]["function"](name, index, tenant, instance=instance)
+            # self.commands["soar_load_context"]["function"](var_name, instance, index, tenant)
             is_playbook = False
             # We don't change the _running status of the context
             # Load the playbook if context does not exist
             if self.context["history"] == []:
-                print("soar_play_playbook context does not exist2,load playbook")
-                self.commands["soar_load_context"]["function"](name, instance, index, tenant, True)
+                print("soar_play_playbook context does not exist,load playbook")
+                self.commands["soar_load_context"]["function"](name, index, tenant, is_playbook=True, instance=instance)
                 is_playbook = True
             # Set _running to True to play the context and the playbook
             self.context["variables"]["_running"] = True
@@ -409,7 +412,7 @@ def soar_play_playbook(self: Any, name: str, instance: str, index: str, tenant: 
             raise Exception("Failed to create context")
 
 
-def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, params: dict, author:str, instance: str=None, command_id: int=None, playbook: bool=False, display=True, session_token=None):
+def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, params: dict, author:str, instance: str=None, command_id: int=None, playbook: bool=False, display: bool=True, session_token: str =None):
     """ Add a command to a playbook or a context
     params:
     - name: str => name of the context/playbook
@@ -444,15 +447,19 @@ def soar_set_context(self:Any, name:str, index: str, tenant:str,  command: str, 
             tenant = ["soar"]
         # Load context/playbook
         ## If playbook
-        if playbook:
-            # TODO change token here too
-            self.commands["soar_load_context"]["function"](name, index, tenant, True, instance=instance, session_token=session_token)
-        ## else context
-        else:
-            if session_token is not None:
-                self.commands["soar_load_context"]["function"](name, index, tenant, session_token=session_token)
+        print("SOARCOMMANDS SELF CONTEXT")
+        print(str(self.context))
+        print("\n\n")
+        if self.context == {}:
+            if playbook:
+                # TODO change token here too
+                self.commands["soar_load_context"]["function"](name, index, tenant, True, instance=instance, session_token=session_token)
+            ## else context
             else:
-                self.commands["soar_load_context"]["function"](name, index, tenant, instance=instance)
+                if session_token is not None:
+                    self.commands["soar_load_context"]["function"](name, index, tenant, session_token=session_token)
+                else:
+                    self.commands["soar_load_context"]["function"](name, index, tenant, instance=instance)
         # print("soar_set_context context:", str(self.context))
         ## If playbook:
         # TODO find a more clean way to do this

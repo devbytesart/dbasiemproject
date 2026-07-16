@@ -370,6 +370,38 @@ async function replayCommand(id = null, fallbackCommand = null, display = true) 
 $(document).ready(function () {
     initJSONEditor();
 
+    // PLAYBOOK BUTTONS
+    const soarModeCheckbox = document.getElementById('soarModeCheckbox');
+    const playAllBtn = document.getElementById('playall_button');
+    const replayAllBtn = document.getElementById('replayall_button');
+    const stopBtn = document.getElementById('stop_button');
+
+
+    // Fonction pour mettre à jour l'état des boutons
+    function toggleButtons() {
+        const isPlaybookActive = soarModeCheckbox.checked;
+        
+        // Désactive ou active l'attribut HTML "disabled"
+        playAllBtn.disabled = isPlaybookActive;
+        replayAllBtn.disabled = isPlaybookActive;
+        stopBtn.disabled = isPlaybookActive;
+
+        // Optionnel : Ajoute/retire la classe CSS "disabled" de Semantic UI pour l'aspect visuel
+        [playAllBtn, replayAllBtn, stopBtn].forEach(btn => {
+            if (isPlaybookActive) {
+                btn.classList.add('disabled');
+            } else {
+                btn.classList.remove('disabled');
+            }
+        });
+    }
+
+    // Écoute les changements sur la checkbox
+    soarModeCheckbox.addEventListener('change', toggleButtons);
+
+    // Exécute la fonction au chargement de la page pour s'aligner sur l'état initial
+    toggleButtons();
+
     // Instantiate TagInputList
     indexInput = new TagInputList("Index", "/search_available_index", "selectindex", false, {}, 'GET');
     tenantInput = new TagInputList("Tenant", "/search_available_tenant", "selecttenant", false, {}, 'GET');
