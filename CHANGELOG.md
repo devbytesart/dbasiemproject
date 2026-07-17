@@ -34,6 +34,7 @@ Realease note version 01.001.001
 ### Fixed
 
 - Monitoring troubleshooted for slavecoordinator,mastercoordinator, logparser, cachesystem, userinterface, dedicatedindexsearchmotor, indexsearchmotor
+- Troubleshoot error in DISM for Decimal value
 
 ### Security
 

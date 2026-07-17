@@ -27,8 +27,8 @@ const MOV_RES_STEP = 20;
 // var dateStartInput;
 // var dateEndInput;
 var page_id;
-var dashboardTypeInput = "dashboard";
-var dashboardNameInput;
+// var dashboardTypeInput = "dashboard";
+// var dashboardNameInput;
 // var reportFormat;
 let tagInputSystem;
 
@@ -36,12 +36,13 @@ let tagInputSystem;
 document.addEventListener("DOMContentLoaded", () => {
     const dropZone = document.getElementById("drop-zone");
     const form = document.getElementById("config-form");
-    dashboardNameInput = document.getElementById("dashboard-name");
+    // dashboardNameInput = document.getElementById("dashboard-name");
     // const dashboardTypeInput = document.getElementById("dashboard-type");
 
 
     const saveDashboardButton = document.getElementById("save-dashboard");
-    const saveReportButton = document.getElementById("save-report");
+    // const saveReportButton = document.getElementById("save-report");
+    const isreport = document.getElementById("isreport");
     // const generateReport = document.getElementById("generate-report");
     let selectedWidget = null;
 
@@ -447,23 +448,23 @@ form.addEventListener("input", () => {
             const heightPercent = Math.floor((widgetRect.height / dropZoneRect.height) * 100);
 
 
-const instance = widget._widgetInstance;
-if (!instance) return null;
+        const instance = widget._widgetInstance;
+        if (!instance) return null;
 
-return {
-    id: instance.id,
-    type: instance.type,
-    position: { left: leftPercent, top: topPercent },
-    size: { width: widthPercent, height: heightPercent },
-    config: instance.config,   
-    name: instance.config?.name,
-};
+        return {
+            id: instance.id,
+            type: instance.type,
+            position: { left: leftPercent, top: topPercent },
+            size: { width: widthPercent, height: heightPercent },
+            config: instance.config,   
+            name: instance.config?.name,
+        };
 
         });
 
         // Build object to save 
         const payload = {
-            name: nameInput.value,
+            name: tagInputSystem.getSelectedValue("Dashboard"),
             widgets: widgets,
             type: typeInput,
             page_id: pageId
@@ -482,46 +483,56 @@ return {
 
     // Listener for dashboard
     saveDashboardButton.addEventListener("click", () => {
+        let _url = "/save_dashboard";
+        let _type = "dashboard_template";
+        if(isreport.checked) {
+            _url = "/save_report";
+            _type = "report_template";
+        }
         saveLayout({
             dropZone: dropZone,
-            nameInput: dashboardNameInput,
-            typeInput: dashboardTypeInput,
+            nameInput: tagInputSystem.getSelectedValue("Dashboard"),
+            typeInput: _type,
             pageId: page_id,
-            url: "/save_dashboard"
+            url: _url
         });
     });
 
-    // Listener for report
-    saveReportButton.addEventListener("click", () => {
-        saveLayout({
-            dropZone: dropZone,
-            nameInput: dashboardNameInput, 
-            typeInput: dashboardTypeInput, 
-            pageId: page_id,
-            url: "/save_report"
-        });
-    });
+    // // Listener for report
+    // saveReportButton.addEventListener("click", () => {
+    //     saveLayout({
+    //         dropZone: dropZone,
+    //         nameInput: dashboardNameInput, 
+    //         typeInput: dashboardTypeInput, 
+    //         pageId: page_id,
+    //         url: "/save_report"
+    //     });
+    // });
 
-    const tabButtons = document.querySelectorAll(".tab-button");
-    const tabContents = document.querySelectorAll(".tab-content");
+    // const tabButtons = document.querySelectorAll(".tab-button");
+    // const tabContents = document.querySelectorAll(".tab-content");
 
-    tabButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            tabButtons.forEach(btn => btn.classList.remove("active"));
-            tabContents.forEach(tab => tab.style.display = "none");
+    // tabButtons.forEach(button => {
+    //     button.addEventListener("click", function () {
+    //         tabButtons.forEach(btn => btn.classList.remove("active"));
+    //         tabContents.forEach(tab => tab.style.display = "none");
 
-            this.classList.add("active");
-            document.getElementById(this.dataset.target).style.display = "block";
+    //         this.classList.add("active");
+    //         document.getElementById(this.dataset.target).style.display = "block";
 
-            dashboardTypeInput = this.outerText.toLowerCase();
-            console.log(dashboardTypeInput);
-        });
-    });
+    //         dashboardTypeInput = this.outerText.toLowerCase();
+    //         console.log(dashboardTypeInput);
+    //     });
+    // });
 
 function loadDashboard() {
+    let _techno = "dashboard"
+    if(isreport.checked) {
+        _techno = "report"
+    }
     const index = tagInputSystem.getSelectedValue("Index");
     const tenant = tagInputSystem.getSelectedValue("Tenant");
-    const technology = tagInputSystem.getSelectedValue("Technology");
+    const technology = _techno;
     const dashboard = tagInputSystem.getSelectedValue("Dashboard");
     const startDate = "1970-01-01 00:00:00";
     const endDate = "2500-01-01 00:00:00";

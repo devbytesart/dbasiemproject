@@ -73,12 +73,19 @@ DOCUMENT: edition
                 <form id="searchForm" class="ui form collapsed-content" style="overflow: auto;white-space: nowrap;">
                     <div class="fields">
                         <div class="field">
-                            <label for="dashboard-name">TO SAVE TITLE:</label>
-                            <input type="text" id="dashboard-name" placeholder="Report Name">
+                            <!-- <label for="dashboard-name">TO SAVE TITLE:</label> -->
+                            <!-- <input type="text" id="dashboard-name" placeholder="Report Name"> -->
                         </div> 
                         <div class="field">
-                            <label>LOADING</label>
                             <div class="fields">
+                                <!-- Button/Checkbox -->
+                                <div style="margin-top: 10px;">
+                                    <label class="toggle-container">Report
+                                        <br/>
+                                        <input id="isreport" type="checkbox" />
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
                                 <div class="field">
                                     <div id="selectindex"></div>
                                 </div>
@@ -93,17 +100,20 @@ DOCUMENT: edition
                                 </div>
                             </div>
                         </div>
+                        <div class="workspace">  
+                            <button type="button" id="save-dashboard" class="styled-button">Save</button>
+                        </div>
                     </div>
                 </form>
             </div>
-            <!-- Browsing tab -->
+            <!-- Browsing tab
             <div class="tabs">
                 <button class="tab-button active" data-target="dashboard-tab">Dashboard</button>
                 <button class="tab-button" data-target="report-tab">Report</button>
-            </div>
+            </div> -->
         
             <!-- Tab content -->
-            <div class="tab-content" id="dashboard-tab">
+            <!-- <div class="tab-content" id="dashboard-tab">
                 <div class="workspace">  
                         <div class="fields">
                             <div class="field">
@@ -117,7 +127,11 @@ DOCUMENT: edition
                 <div class="workspace">  
                     <button type="button" id="save-report" class="styled-button">Save</button>
                 </div>
-            </div>
+            </div> -->
+
+            <!-- <div class="tab-content" id="dashboard-tab">
+
+            </div> -->
         
             <!--Creation wzone for widget  -->
             <div id="drop-zone" class="drop-zone" style="height:80%;"></div>

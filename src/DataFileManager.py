@@ -222,7 +222,8 @@ class DataFileManager:
                         # Open the file and read it
                         with open(u_file, 'rb') as f:
                             # Browse pair key/value at root level
-                            for key, value in ijson.kvitems(f, ""):
+                            # MANDATORY use_float as the json crash the SOAR and SIEM if not
+                            for key, value in ijson.kvitems(f, "", use_float=True):
                                 if key in id_set:
                                     if raw:
                                         found_ids.append({

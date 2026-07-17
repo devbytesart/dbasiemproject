@@ -248,11 +248,11 @@ class LogParser(ServiceBase):
                 stats.update(self.queue_manager.get_stats())
                 self.logger.log("debug", stats)
                 # Resources monitor container
-                # stats_res = {
-                #     "type": "logparser_resources"
-                # }
+                stats_res = {
+                    "type": "logparser_resources"
+                }
                 # stats_res.update(self.resource_monitor.get_container_info())
-                # self.logger.log("info", stats_res)
+                self.logger.log("info", stats_res)
                 self.count = 0
                 self.start_count = time.time()
                 time.sleep(10)
