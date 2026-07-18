@@ -1,5 +1,5 @@
 <!-- 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ title: siem project
 document: dockerfile master coordinator
 -->
 
-# <img src="./src/static/media/dbart.png" height="64"> DevBytesArt SIEM Project (DBASP) (Beta Version)
+# <img src="./src/static/media/dbart.png" height="64"> DevBytesArt® SIEM Project (DBASP) (Beta Version)
 
 ## DBASP
 
@@ -95,7 +95,7 @@ Some improvements are required to use it in production (not exhaustive list):
 - Search capabilities are now limited. Some operations must be added
 - Reporting capabilities to improve 
 - SOAR capabilities to improve
-- IA Agent to create and add in the SOAR
+- IA Agent to improve
 - Propose detection rules and IA capabilities in detection
 
 ## Prerequisites
@@ -343,11 +343,11 @@ Because of this, I will be handling issues and Pull Requests on a **best-effort 
 
 ### How to Contribute?
 
-1. **[Fork the project](https://github.com/devbytesart/SIEMProject/fork)**.
+1. **[Fork the project](https://github.com/DevBytesArt®/SIEMProject/fork)**.
 2. **Create your feature branch** (`git checkout -b feature/AmazingFeature`).
 3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`).
 4. **Push to the branch** (`git push origin feature/AmazingFeature`).
-5. Open a **[Pull Request](https://github.com/devbytesart/SIEMProject/pulls)**.
+5. Open a **[Pull Request](https://github.com/DevBytesArt®/SIEMProject/pulls)**.
 
 For major changes, please open an issue or a discussion first so we can chat about it and make sure we are aligned.
 
@@ -355,7 +355,7 @@ For major changes, please open an issue or a discussion first so we can chat abo
 
 ### Need Help with Installation or Configuration?
 
-If you run into any trouble while setting up or configuring **SIEMProject**, please don't hesitate to reach out! You can open a **[GitHub Discussion](https://github.com/devbytesart/SIEMProject/discussions)** or submit an **[Issue](https://github.com/devbytesart/SIEMProject/issues)** describing your problem.
+If you run into any trouble while setting up or configuring **SIEMProject**, please don't hesitate to reach out! You can open a **[GitHub Discussion](https://github.com/DevBytesArt®/SIEMProject/discussions)** or submit an **[Issue](https://github.com/DevBytesArt®/SIEMProject/issues)** describing your problem.
 
 As mentioned above, I will gladly guide you and provide assistance on a **best-effort basis**, depending on my availability. 
 

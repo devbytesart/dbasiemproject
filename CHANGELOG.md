@@ -23,6 +23,7 @@ Realease note version 01.001.001
 
 - Add logs info and warnings for monitoring on components
 - Add disabled buttons play, stop and replay for playbook part
+- Add trademarks DevBytesArt on all pages 
 
 ### Changed
 
@@ -30,6 +31,8 @@ Realease note version 01.001.001
 - Vault key deletion commands added
 - change method of storing context for soar (cache now)
 - Change vault to get the model and complete url on the key and not in the command itself.
+- Change dashboard/report way to load and save
+- Set by default the technology for dashboard/edition and soar page
 
 ### Fixed
 
@@ -38,7 +41,8 @@ Realease note version 01.001.001
 
 ### Security
 
-**None yet**
+- Check permissions userinterface, index and tenant to save and refresh dashboard and report
+- Check permissions users right to access privileges and global configuration
 
 ---
 

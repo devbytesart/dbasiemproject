@@ -1,5 +1,5 @@
 <!-- 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ The application requires to have the docker images installed on the docker deskt
 
 Images: Download the required container images:
 ```
-docker pull ttdantett/devbytesart:<image tag>
+docker pull ttdantett/DevBytesArt®:<image tag>
 ```
 
 Security: Valid SSL certificates are mandatory:

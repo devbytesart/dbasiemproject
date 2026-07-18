@@ -1,6 +1,6 @@
 /*
 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -863,7 +863,7 @@ function showUserInterfaceForm() {
     createType("text", "keyfile", "certs/server.key", false, ["webhook", "certs"]);
 
     // REPORTING INDEX
-    createType("text", "index", "soar", false, ["reporting"]);
+    //createType("text", "index", "soar", false, ["reporting"]);
 
     // INDEXSEARCHMOTORS (first element of the list)
     createType("text", "id", "&indexsearchmotor1", false, ["indexsearchmotor"]);

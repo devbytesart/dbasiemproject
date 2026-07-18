@@ -1,6 +1,6 @@
 /*
 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "name": "Technology",
             "id": "selecttechnology",
             "paramUrl": "technology",
-            "url": "/search_available_technologies",
+            "url": null,
             "params": {},
             "method": "GET",
             "multiple": false,
@@ -70,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "last": true
         }
     ], () => dashboardManager.refreshDashboard(), dashboardManager.page_id);
+
+    tagInputSystem.tags["Technology"].setSelectedValues("template_dashboard");
+    tagInputSystem.tags["Technology"].disable();
 
     // Callback during change of TagSystem
     tagInputSystem.onChange = (newValues) => dashboardManager.handleTagSystemChange(newValues);

@@ -1,5 +1,5 @@
 <!-- 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ The webpage contains the followings elements:
 - Save title input
 - index 
 - tenant
+- technology
 - dashboard
 - Dashboard and report tab
 - Save button
@@ -46,7 +47,10 @@ To load or modify a dashboard, complete this input on the right.
 
 The title of the dashboard is the input on the top left and let create a new version of an existing dashboard/report.
 
+The technology in edition is fixed to template_dashboard and template_report in order to be able to retrieve it easier in search, dashboard and soar page. 
+
 Indices and Tenants are proposed according to the permissions of the user. 
+Only indices associated with the log indexer that get the data from the userinterface is available. As it is this logindexer that will index the dashboards, the logindexer set the available index on this page. 
 
 All data are stored on only one index. Indices are physically or logically segregated each others. This is the main segregation of data. 
 
@@ -54,7 +58,7 @@ It could be several tenants in the index. Tenants are logically segregated.
 
 In order to find dashboards/reports available, select first the index and tenants. The dashboard list will be loaded with available dashboards/reports name based on the previous selection. 
 
-**Keep in mind that in order to save a dashboard, a log indexer with the right index must be configured to get the dashboard from the queue and index it**
+**Keep in mind that in order to save a dashboard, a log indexer with the right index must be configured to get the dashboard from the queue and index it. Temporary the context is stored on cache, that let the user launch commands with saving and load at each tasks**
 
 Indeed, when saving the dashboard will be stored in a queue and the log indexer will collect dahsboards and store it in the index. Depending on the configuration, the saving can takes times or not be implemented. In case of problem check with the administrator the configuration of the application. 
 

@@ -1,5 +1,5 @@
 <!-- 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ The page is organised as it:
 - Show/Hides panel
 - Index
 - Tenant
-- Vault Instance
 - Context Name
 - Panel of buttons
 - JSON View Context (on the right)
@@ -43,14 +42,14 @@ It is possible to hide/display the search bar with the button "Show/Hide Panel".
 
 All data are stored on only one index. Indices are physically or logically segregated each others. This is the main segregation of data. 
 
-It could be several tenants in the index. Tenants are logically segregated. 
-
-The vault instance is used to connect to a specific instance of an application, website or others SIEM components. Users require to have a specific resources access in the permission to access to the vault instance. 
-**In order to find any playbook/context, the SOAR uses the vault instance permissions to launch commands and save in the context**
+It could be several tenants in the index. Tenants are logically segregated.  
 
 The Context name is the name of the context or the playbook. 
 
-In order to search the context name, it is required to indicates the index, the tenant and the vault where it is stored. 
+In order to search the context name, it is required to indicates the index, the tenant.
+Only indices associated with the log indexer that get the data from the userinterface is available. As it is this logindexer that will index the dashboards, the logindexer set the available index on this page. 
+
+The vault instance is used to connect to a specific instance of an application, website or others SIEM components. Users require to have a specific resources access in the permission to access to the vault instance.
 
 The panel of buttons can perform actions on the entire playbook/context:
 

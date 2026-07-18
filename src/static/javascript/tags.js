@@ -1,6 +1,6 @@
 /*
 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ document: tags
 */
 
 class TagInputList {
-    constructor(label, endpoint, targetId, isMultiple = true, queryParams = {}, method = 'POST') {
+    constructor(label, endpoint, targetId, isMultiple = true, queryParams = {}, method = 'POST', enable = true) {
         this.label = label;
         this.endpoint = endpoint;
         this.targetId = targetId;
@@ -32,6 +32,7 @@ class TagInputList {
         this.inputId = `${this.targetId}_tag_input`;
         this.containerId = `${this.targetId}_tag_container`;
         this.dropdownId = `${this.targetId}_suggestions`;
+        this.isEnabled = enable;
         this.init();
     }
 
@@ -58,13 +59,19 @@ class TagInputList {
         input.type = 'text';
         input.id = this.inputId;
         input.placeholder = 'Add an item...';
-        input.style = 'border:none;outline:none;flex:1;padding:4px;font-size:14px;';
+        input.style = 'border:none;outline:none;flex:1;padding:4px;font-size:14px;background:transparent;';
+
 
         input.addEventListener('focus', () => {
-             this.updateSuggestions(''); // Using specific logic to display suggestions
+             if (!this.isEnabled) return;
+             this.updateSuggestions('');
         });
-        input.addEventListener('input', () => this.updateSuggestions(input.value));
+        input.addEventListener('input', () => {
+             if (!this.isEnabled) return;
+             this.updateSuggestions(input.value);
+        });
         input.addEventListener('keydown', (e) => {
+            if (!this.isEnabled) return;
             if (e.key === 'Enter' && input.value.trim()) {
                 e.preventDefault();
                 const val = input.value.trim();
@@ -88,47 +95,90 @@ class TagInputList {
         wrapper.appendChild(dropdown);
         container.appendChild(label);
         container.appendChild(wrapper);
+
+        this.updateVisualState();
     }
+
+    // Enable component
+    enable() {
+        this.isEnabled = true;
+        this.updateVisualState();
+    }
+
+    // Disable components
+    disable() {
+        this.isEnabled = false;
+        this.updateVisualState();
+    }
+
+    // Manage style
+    updateVisualState() {
+        const input = document.getElementById(this.inputId);
+        const wrapper = document.getElementById(this.containerId);
+        
+        if (!input || !wrapper) return;
+
+        if (this.isEnabled) {
+            input.disabled = false;
+            input.placeholder = 'Add an item...';
+            wrapper.style.backgroundColor = '#fff';
+            wrapper.style.cursor = 'text';
+        } else {
+            input.disabled = true;
+            input.placeholder = '';
+            wrapper.style.backgroundColor = '#f5f5f5'; 
+            wrapper.style.cursor = 'not-allowed';
+            this.hideSuggestions();
+        }
+
+
+        this.renderTags();
+    }        
 
     async loadData() {
         const params = this.queryParams();
         const method = this.method.toUpperCase();
-        const url = new URL(this.endpoint, window.location.origin);
+        if(this.endpoint) {
+            const url = new URL(this.endpoint, window.location.origin);
 
-        if (method === 'GET') {
-            Object.entries(params).forEach(([key, value]) => {
-                url.searchParams.append(key, value);
-            });
+            if (method === 'GET') {
+                Object.entries(params).forEach(([key, value]) => {
+                    url.searchParams.append(key, value);
+                });
+            }
+
+            try {
+                const res = await fetch(url.toString(), {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: method === 'GET' ? undefined : JSON.stringify(params)
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+
+                const contentType = res.headers.get("content-type") || "";
+                if (!contentType.includes("application/json")) {
+                    const text = await res.text();
+                    throw new Error(`Non-JSON response: ${text}`);
+                }
+
+                const data = await res.json();
+
+                if (!Array.isArray(data)) {
+                    throw new Error(`Expected array, got: ${JSON.stringify(data)}`);
+                }
+
+                this.suggestions = [...new Set(data)];
+                this.applyDefaultSelection();
+
+            } catch (err) {
+                console.error(`Failed to fetch from ${this.endpoint}:`, err);
+            }
         }
-
-        try {
-            const res = await fetch(url.toString(), {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: method === 'GET' ? undefined : JSON.stringify(params)
-            });
-
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-
-            const contentType = res.headers.get("content-type") || "";
-            if (!contentType.includes("application/json")) {
-                const text = await res.text();
-                throw new Error(`Non-JSON response: ${text}`);
-            }
-
-            const data = await res.json();
-
-            if (!Array.isArray(data)) {
-                throw new Error(`Expected array, got: ${JSON.stringify(data)}`);
-            }
-
-            this.suggestions = [...new Set(data)];
-            this.applyDefaultSelection();
-
-        } catch (err) {
-            console.error(`Failed to fetch from ${this.endpoint}:`, err);
+        else {
+            this.suggestions = [];
         }
     }
 
@@ -150,7 +200,7 @@ class TagInputList {
         const dropdown = document.getElementById(this.dropdownId);
         dropdown.innerHTML = '';
 
-        // If reauest is empty, display all suggestions not selected
+        // If request is empty, display all suggestions not selected
         const matches = query.trim() === ''
             ? this.suggestions.filter(item => !this.tags.includes(item)).slice(0, 10)
             : this.suggestions
@@ -197,25 +247,40 @@ class TagInputList {
     renderTags() {
         const container = document.getElementById(this.containerId);
         const input = document.getElementById(this.inputId);
+        if (!container || !input) return;
+
+        // Cleaning
         const existingTags = container.querySelectorAll('.tag');
         existingTags.forEach(tag => tag.remove());
 
+        // 2. Rebuilt
         this.tags.forEach((tagText, index) => {
             const tag = document.createElement('span');
             tag.className = 'tag';
             tag.textContent = tagText;
-            tag.style = 'background:var(--background-header-color);color:white;padding:4px 8px;border-radius:20px;font-size:14px;display:flex;align-items:center;';
+            
+            if (this.isEnabled) {
+                // --- MODE ACTIF ---
+                tag.style = 'background:var(--background-header-color, #007bff);color:white;padding:4px 8px;border-radius:20px;font-size:14px;display:flex;align-items:center;';
+                
+                // Create "x" button only if active
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '×';
+                removeBtn.style = 'background:none;border:none;color:white;margin-left:5px;cursor:pointer;font-weight:bold;font-size:16px;line-height:1;padding:0;';
+                
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.tags.splice(index, 1);
+                    this.renderTags();
+                    if (typeof this.notifyChange === 'function') this.notifyChange();
+                };
+                
+                tag.appendChild(removeBtn);
+            } else {
+                // Block mode
+                tag.style = 'background:#e0e0e0;color:#757575;padding:4px 8px;border-radius:20px;font-size:14px;display:flex;align-items:center;cursor:not-allowed;pointer-events:none;border:1px solid #ccc;';
+            }
 
-            const removeBtn = document.createElement('button');
-            removeBtn.textContent = '×';
-            removeBtn.style = 'background:none;border:none;color:white;margin-left:5px;cursor:pointer;';
-            removeBtn.onclick = () => {
-                this.tags.splice(index, 1);
-                this.renderTags();
-                this.notifyChange();
-            };
-
-            tag.appendChild(removeBtn);
             container.insertBefore(tag, input);
         });
     }
@@ -232,6 +297,9 @@ class TagInputList {
     setSelectedValues(values) {
         this.tags = Array.isArray(values) ? values : [values];
         this.renderTags();
+        if(!this.isEnabled) {
+            this.disable()
+        }
     }
 
     setQueryParams(newParams) {

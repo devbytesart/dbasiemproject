@@ -1,5 +1,5 @@
 """ 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ class SOAR(ServiceBase):
     def load_configuration(self):
         self.config = self.configurator.get_config()
         self.id = self.config["id"]
+        self.index = []
         # LOGGER
         self.monitoring_log_level = self.config["logger"]["log_level"]
         self.monitoring_log_path = self.config["logger"]["log_path"]
@@ -169,6 +170,10 @@ class SOAR(ServiceBase):
     def handle_retrieve_logs(self, size):
         # TODO factorise this function in the base class ?
         try:
+            index = size.get("index", None)
+            # Add index in the SOAR to limit the list of index available
+            if index and index not in self.index:
+                self.index.append(index)
             # Using bytearray to improve performance
             elements = bytearray(b"[") 
             size = int(size["size"])

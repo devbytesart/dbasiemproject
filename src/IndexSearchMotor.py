@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ from Webhook import *
 from WebRequester import *
 import traceback, os, threading, re
 from collections import defaultdict
-from src.Operations.OperationBase import *
-from src.Operations.OperationCount import *
-from src.Operations.OperationProject import *
-from src.Operations.OperationRender import *
-from src.Operations.OperationVariable import *
-from src.Operations.OperationAdvancedCondition import *
-from src.Operations.OperationTransform import *
-from src.Operations.OperationOrder import *
+from OperationBase import *
+from OperationCount import *
+from OperationProject import *
+from OperationRender import *
+from OperationVariable import *
+from OperationAdvancedCondition import *
+from OperationTransform import *
+from OperationOrder import *
 from ParameterLoader import *
 from ReportManager import *
 import UtilsEnum as uenum
@@ -511,23 +511,24 @@ class IndexSearchMotor(ServiceBase):
     def _get_av(self, type, data):
         """ Function to simplify the get_availables indices, tenants, technologies """
         try:
+            # TODO unify index or indices, tenant or tenants, techno...
             results = []
             token = json.loads(data.get("session_token"))
             token_data = token.get("token")
             for indexer in self.indexers:
                 wr = WebRequester(indexer.get("host"), indexer.get("port"), indexer.get("auth_token"), slave_reverse=self.slave_reverse)
-                if type == "indices":
+                if type == "index" or type == "indices":
                     ind = json.loads(wr.get_available_indices(token_data))
                     if ind and json.loads(self.authenticatorsReq.check_permissions(token_data, [{"resource": ind, "type": "index", "read": True, "write": False}])):
                         results.append(ind)
-                elif type == "tenants":
+                elif type == "tenant" or type == "tenants":
                     ten = json.loads(wr.get_available_tenants(token_data))
                     # print("TENANT:" , str(ten) , " " , str(type(ten)))
                     for t in ten:
                         # print("TENANT T:" , str(t))
                         if json.loads(self.authenticatorsReq.check_permissions(token_data, [{"resource": t, "type": "tenant", "read": True, "write": False}])):
                             results.append(t)
-                elif type == "technologies":
+                elif type == "technology" or type == "technologies":
                     tech = json.loads(wr.get_available_technologies(token_data))
                     # print("TECH:" , str(tech) , " " , str(type(tech)))
                     for te in tech:

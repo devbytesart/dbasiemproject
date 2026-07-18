@@ -1,6 +1,6 @@
 /*
 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveDashboardButton = document.getElementById("save-dashboard");
     // const saveReportButton = document.getElementById("save-report");
     const isreport = document.getElementById("isreport");
+
     // const generateReport = document.getElementById("generate-report");
     let selectedWidget = null;
 
@@ -74,11 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "name": "Technology",
             "id": "selecttechnology",
             "paramUrl": "technology",
-            "url": "/search_available_technologies",
+            "url": null,
             "params": {},
             "method": "GET",
             "multiple": false,
-            "last": false
+            "last": false,
+            "enable": false
         },
         {
             "name": "Dashboard",
@@ -106,6 +108,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     dropZone.addEventListener("dragover", (e) => e.preventDefault());
+
+    // IS REPORT 
+    tagInputSystem.tags["Technology"].setSelectedValues("template_dashboard");
+    isreport.addEventListener("change", (event) => {
+        // event.target.checked vaut true si la case est cochée, false sinon
+        const value = event.target.checked ? "template_report" : "template_dashboard";
+        // On passe la valeur dans un tableau puisque setSelectedValues attend généralement une liste
+        tagInputSystem.tags["Technology"].setSelectedValues(value);
+        loadDashboard();
+    });
+    tagInputSystem.tags["Technology"].disable();
 
     function addWidgetToDropZone(widgetData, dropZone, e) {
         let widgetInstance;
@@ -465,6 +478,9 @@ form.addEventListener("input", () => {
         // Build object to save 
         const payload = {
             name: tagInputSystem.getSelectedValue("Dashboard"),
+            index: tagInputSystem.getSelectedValue("Index"),
+            tenant: tagInputSystem.getSelectedValue("Tenant"),
+            technology: tagInputSystem.getSelectedValue("Technology"),
             widgets: widgets,
             type: typeInput,
             page_id: pageId
@@ -477,7 +493,10 @@ form.addEventListener("input", () => {
             body: JSON.stringify(payload),
         })
         .then(response => response.json())
-        .then(data => alert("Saved successfully!"))
+        .then(data => {
+                alert(JSON.stringify(data, null, 2));
+            }
+        )
         .catch(error => console.error("Error saving:", error));
     }
 
@@ -526,9 +545,9 @@ form.addEventListener("input", () => {
     // });
 
 function loadDashboard() {
-    let _techno = "dashboard"
+    let _techno = "template_dashboard"
     if(isreport.checked) {
-        _techno = "report"
+        _techno = "template_report"
     }
     const index = tagInputSystem.getSelectedValue("Index");
     const tenant = tagInputSystem.getSelectedValue("Tenant");

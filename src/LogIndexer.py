@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -540,7 +540,7 @@ class LogIndexer(ServiceBase):
                     if log_service["monitoring"]:
                         received_data = log_service["webrequester_bin"].retrieve_monitoring(log_service["size"])
                     else:
-                        received_data = log_service["webrequester_bin"].retrieve_logs(log_service["size"])
+                        received_data = log_service["webrequester_bin"].retrieve_logs(log_service["size"], self.index_name)
                     if received_data is not None:
                         # print("Received data: " + str(received_data))
                         data = json.loads(received_data)

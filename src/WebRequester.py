@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -98,14 +98,15 @@ class WebRequester:
         }
         return self.send_request("webhook", data , retry)
 
-    def retrieve_logs(self, size, retry=5):
+    def retrieve_logs(self, size, index=None, retry=5):
         """
         Send a request of type "retrieve_log" that retrieve the last size logs
         size: number of logs to retrieve
         """
         data = {
             "retrieve_logs": {
-                "size" : size
+                "size" : size,
+                "index": index
             }
         }
         return self.send_request("binary", data, retry)

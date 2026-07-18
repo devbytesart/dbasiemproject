@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ title: siem project
 document: operation variable
 """
 
-from src.Operations.OperationBase import *
+from OperationBase import *
 import UtilsEnum as ue
 import Utils as utils
 # from OperationAdvancedCondition import *

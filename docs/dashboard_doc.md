@@ -1,5 +1,5 @@
 <!-- 
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -47,7 +47,8 @@ In order to load the dashboard, it is required to know where it is stored:
 
 - Index, Tenants, Technology (dashboard in general) and dashboard name.
 
-Indices and Tenants are proposed according to the permissions of the user. 
+Indices and Tenants are proposed according to the permissions of the user.
+Only indices associated with the log indexer that get the data from the userinterface is available. As it is this logindexer that will index the dashboards, the logindexer set the available index on this page. 
 
 All data are stored on only one index. Indices are physically or logically segregated each others. This is the main segregation of data. 
 

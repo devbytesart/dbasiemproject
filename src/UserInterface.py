@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -127,10 +127,11 @@ class UserInterface(ServiceBase):
             else:
                 self.indexsearchmotorsReq = None
             # REPORT INDEX
-            if "reporting" in self.config and "index" in self.config["reporting"]:
-                self.reporting_index = self.config["reporting"]["index"]
-            else:
-                self.reporting_index = "soar"
+            # if "reporting" in self.config and "index" in self.config["reporting"]:
+            #     self.reporting_index = self.config["reporting"]["index"]
+            # else:
+            #     self.reporting_index = "soar"
+            self.reporting_index = []
             # AUTHENTICATOR
             self.authenticatorsReq = None
             if "authenticator" in self.config and "id" in self.config["authenticator"]:
@@ -228,6 +229,9 @@ class UserInterface(ServiceBase):
         
     def handle_retrieve_logs(self, size):
         try:
+            index = size.get("index",None)
+            if index and index not in self.reporting_index:
+                self.reporting_index.append(index)
             # Using bytearray to improve performance
             elements = bytearray(b"[") 
             size = int(size["size"])
@@ -315,13 +319,17 @@ class UserInterface(ServiceBase):
     def read_json(self, file):
         try:
             # TODO ask to mastercoordinator to send the configuration file
-            # TODO check the right of the user
             # wr = WebRequester("webhook", self.mastercoords[0]["auth_token"], self.mastercoords[0]["host"], self.mastercoords[0]["port"])
             # return json.loads(wr.configuration())
             # TODO change the session token
+            token = json.loads(session.get("user_id"))
             if file == "globalconfiguration":
+                if not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":"global_configuration", "type": "global_configuration", "read": True, "write": False}])):
+                    return {"message": "Failed to load global configuration - Not enough permissions to read global_configuration"}
                 return json.loads(self.slavecoordsReq.get_global_configuration(session.get("user_id")))
             elif file == "globalauthorisation":
+                if not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":"global_privileges", "type": "global_configuration", "read": True, "write": False}])):
+                    return {"message": "Failed to load global configuration - Not enough permissions to read global_privileges"}
                 return json.loads(self.slavecoordsReq.get_privileges(session.get("user_id")))
             else:
                 return {"configuration": "not found"}
@@ -331,14 +339,18 @@ class UserInterface(ServiceBase):
 
     def write_json(self, file, data):
         try:
+            token = json.loads(session.get("user_id"))
             if file == "globalconfiguration":
+                if not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":"global_configuration", "type": "global_configuration", "read": True, "write": True}])):
+                    return {"message": "Failed to load global configuration - Not enough permissions to read global_configuration"}
                 return self.slavecoordsReq.set_global_configuration(session.get("user_id"), data)
             elif file == "globalauthorisation":
+                if not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":"global_privileges", "type": "global_configuration", "read": True, "write": True}])):
+                    return {f"message": "Failed to load global configuration - Not enough permissions to read global_privileges"}
                 return self.slavecoordsReq.set_privileges(session.get("user_id"), data)
             else:
                 return {"configuration": "not found"}
             # TODO ask to mastercoordinator to update the configuration file
-            # TODO check the right of the user
             # TODO change this with the configuration file
             # wr = WebRequester("webhook", self.mastercoords[0]["auth_token"], self.mastercoords[0]["host"], self.mastercoords[0]["port"])
         except:
@@ -347,7 +359,7 @@ class UserInterface(ServiceBase):
 
     def query(self, data):
         try:
-            print("In query")
+            print("In query",str(data))
             data["session_token"] = session.get("user_id")
             # current_id = json.loads(session.get("user_id")).get("username") + "_" + str(data["page_id"])
             current_id = utils.create_current_id(json.loads(session.get("user_id")).get("username"), str(data["page_id"]))
@@ -755,21 +767,31 @@ class UserInterface(ServiceBase):
             """
             try:
                 data = request.json
-                user_id = json.loads(session.get("user_id")).get("id")
+                token = json.loads(session.get("user_id"))
+                user_id = token.get("id")
                 dt = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
                 # Protect data entries from malicious inputs
                 data = utils.sanitize_json(data)
                 # Name
                 name = data.get("name", "Unnamed")
+                # Verify permissions
+                # Check index permissions write
+                if not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":"userinterface", "type": "service", "read": True, "write": True}])):
+                    return jsonify({"message": "Failed to save dashboard/report - Not enough permissions on userinterface"}), 401
+                elif not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":data.get("index"), "type": "index", "read": True, "write": True}])):
+                    return jsonify({"message": "Failed to save dashboard/report - Not enough permissions on index"}), 401
+                elif not json.loads(ui.authenticatorsReq.check_permissions(token.get("token"), [{"resource":data.get("tenant"), "type": "tenant", "read": True, "write": True}])):
+                    return jsonify({"message": "Failed to save dashboard/report - Not enough permissions on tenant"}), 401
                 # json dumps widgets
                 log = {"data": {"parsed": {
                     "id": utils.create_unique_id(), 
                     "name": name,
-                    "type": dtype + "_template",
+                    "type": dtype,
                     dtype + "_id": data.get("name") + "_" + user_id, 
-                    "index": self.reporting_index,
-                    "tenant": user_id,
-                    "technology": dtype,
+                    # "index": self.reporting_index,
+                    "index": data.get("index"),
+                    "tenant": data.get("tenant"),
+                    "technology": data.get("technology"),
                     "widgets": json.dumps(data["widgets"]) if "widgets" in data else {},
                     "siem_timestamp": dt, 
                     "parserReceivedTime": dt
@@ -976,7 +998,7 @@ class UserInterface(ServiceBase):
                 index = [r.get("index", "")]
                 tenant = [r.get("tenant", "")]
                 technology = [r.get("technology", "")]
-                query = "!search type:dashboard_template"
+                query = "!search type:dashboard"
                 # Verify users 
                 user_data = session.get("user_id")
                 if not user_data:
@@ -1205,7 +1227,7 @@ class UserInterface(ServiceBase):
                 dashboard = data.get("dashboard")
                 if dashboard:
                     query_payload = {
-                        "query": f"!search type:dashboard_template and name:{dashboard}",
+                        "query": f"!search type:dashboard and name:{dashboard}",
                         "startTime": data.get("startDate",None),
                         "endTime": data.get("endDate", None),
                         "index": [data.get("indices")],
@@ -1531,6 +1553,13 @@ class UserInterface(ServiceBase):
               401:
                 description: Unauthorized access — user not authenticated.
             """
+            referer_url = request.referrer
+            print("referrer_url:",referer_url)
+            # In case of dashboard and edition (use only dedicated index)
+            if "/dashboard" in referer_url or "/edition" in referer_url or "/soar" in referer_url:
+                print("index :", str(self.reporting_index))
+                return self.reporting_index
+            # Others requirements (search)
             res = self.indexsearchmotorsReq.get_available_indices(session.get("user_id"))
             if res:
                 return json.loads(res)
@@ -2275,7 +2304,7 @@ class UserInterface(ServiceBase):
             </head>
             <body>
                 <nav>
-                    <img src="/static/media/dbart.png" style="width:32px;" alt="DevBytesArt"/>
+                    <img src="/static/media/dbart.png" style="width:32px;" alt="DevBytesArt®"/>
                     <a href="/docs/index">Welcome</a> |
                     <a href="/docs/installation">Installation</a> |
                     <a href="/docs/tutorial">Tutorial</a> |

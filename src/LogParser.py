@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -301,7 +301,7 @@ class LogParser(ServiceBase):
         except:
             self.logger.log("error", "Error loading plugins:" + traceback.format_exc())
 
-    def handle_retrieve_logs(self, size):
+    def handle_retrieve_logs(self, size, index=None):
         try:
             # Using bytearray to improve performance
             elements = bytearray(b"[") 

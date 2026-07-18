@@ -1,5 +1,5 @@
 """
-Copyright 2026 ttdantett DevBytesArt
+Copyright 2026 ttdantett DevBytesArt®
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -229,23 +229,23 @@ class PrivilegesManager:
                     VALUES (?, ?, ?, ?)
                     """, (resource.get("id"), resource.get("name"), resource.get("type"), resource.get("description")))
 
-            # Insert roles
-            if "roles" in data:
-                print("SAVE ROLES IN DATABASE")
-                for role in data.get("roles", []):
-                    # Convert roles inherited in JSON
-                    inherit_roles_json = json.dumps(role.get("inherit", []))
-                    cursor.execute("""
-                    INSERT OR REPLACE INTO roles (id, name, inherit_roles)
-                    VALUES (?, ?, ?)
-                    """, (role["id"], role["name"], inherit_roles_json))
+            # # Insert roles
+            # if "roles" in data:
+            #     print("SAVE ROLES IN DATABASE")
+            #     for role in data.get("roles", []):
+            #         # Convert roles inherited in JSON
+            #         inherit_roles_json = json.dumps(role.get("inherit", []))
+            #         cursor.execute("""
+            #         INSERT OR REPLACE INTO roles (id, name, inherit_roles)
+            #         VALUES (?, ?, ?)
+            #         """, (role["id"], role["name"], inherit_roles_json))
 
-                    # Insert permissions for each role
-                    for perm in role.get("permissions", []):
-                        cursor.execute("""
-                        INSERT OR REPLACE INTO permissions (role_id, resource_id, can_read, can_write)
-                        VALUES (?, ?, ?, ?)
-                        """, (role["id"], perm["id"], perm["read"], perm["write"]))
+            #         # Insert permissions for each role
+            #         for perm in role.get("permissions", []):
+            #             cursor.execute("""
+            #             INSERT OR REPLACE INTO permissions (role_id, resource_id, can_read, can_write)
+            #             VALUES (?, ?, ?, ?)
+            #             """, (role["id"], perm["id"], perm["read"], perm["write"]))
 
             # Insert users
             if "users" in data:
@@ -260,88 +260,92 @@ class PrivilegesManager:
                     password = user.get("password", None)
                     password_hash = self.hash_password(password) if password else None
 
-                try:
-                    # Verify if user already exists 
-                    cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
-                    existing_user = cursor.fetchone()
+                    # --- Début du bloc réindenté à l'intérieur du FOR ---
+                    try:
+                        # Verify if user already exists 
+                        cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+                        existing_user = cursor.fetchone()
 
-                    if existing_user:
-                        print("User already exists, updating...")
-                        # Update existing users
-                        update_fields = [
-                            "name = ?",
-                            "email = ?",
-                            "disabled = ?",
-                            "authentication_type = ?",
-                            "session_token = ?",
-                            "session_creation_date = ?",
-                            "session_token_expired = ?",
-                            "number_of_failed_attempted = ?",
-                            "last_failed_attempted = ?"
-                        ]
-                        update_values = [
-                            user_name,
-                            user.get("email"),
-                            user.get("disabled", False),
-                            user.get("authentication_type", "local"),
-                            user.get("session_token", None),
-                            user.get("session_creation_date", datetime.now(timezone.utc).strftime(DEFAULT_TOKEN_DATE_FORMAT)),
-                            user.get("session_token_expired", False),
-                            user.get("number_of_failed_attempted", 0),
-                            user.get("last_failed_attempted", None),
-                        ]
+                        if existing_user:
+                            print(f"User {user_name} already exists, updating...")
+                            # Update existing users
+                            update_fields = [
+                                "name = ?",
+                                "email = ?",
+                                "disabled = ?",
+                                "authentication_type = ?",
+                                "session_token = ?",
+                                "session_creation_date = ?",
+                                "session_token_expired = ?",
+                                "number_of_failed_attempted = ?",
+                                "last_failed_attempted = ?"
+                            ]
+                            update_values = [
+                                user_name,
+                                user.get("email"),
+                                user.get("disabled", False),
+                                user.get("authentication_type", "local"),
+                                user.get("session_token", None),
+                                user.get("session_creation_date", datetime.now(timezone.utc).strftime(DEFAULT_TOKEN_DATE_FORMAT)),
+                                user.get("session_token_expired", False),
+                                user.get("number_of_failed_attempted", 0),
+                                user.get("last_failed_attempted", None),
+                            ]
 
-                        # Update password only if provided
-                        if password_hash:
-                            update_fields.append("password_hash = ?")
-                            update_values.append(password_hash)
+                            # Update password only if provided
+                            if password_hash:
+                                update_fields.append("password_hash = ?")
+                                update_values.append(password_hash)
 
-                        # Add clause WHERE
-                        update_values.append(user_id)
+                            # Add clause WHERE
+                            update_values.append(user_id)
 
-                        # Execute request of update
-                        cursor.execute(f"""
-                        UPDATE users
-                        SET {', '.join(update_fields)}
-                        WHERE id = ?
-                        """, update_values)
-                    else:
-                        print("User does not exist, inserting...")
-                        # Insert new user
+                            # Execute request of update
+                            cursor.execute(f"""
+                            UPDATE users
+                            SET {', '.join(update_fields)}
+                            WHERE id = ?
+                            """, update_values)
+                        else:
+                            print(f"User {user_name} does not exist, inserting...")
+                            # Insert new user
+                            cursor.execute("""
+                            INSERT INTO users (
+                                id, name, password_hash, email, disabled, authentication_type,
+                                session_token, session_creation_date, session_token_expired,
+                                number_of_failed_attempted, last_failed_attempted
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """, (
+                                user_id,
+                                user_name,
+                                password_hash,
+                                user.get("email"),
+                                user.get("disabled", False),
+                                user.get("authentication_type", "local"),
+                                user.get("session_token", None),
+                                user.get("session_creation_date", datetime.now(timezone.utc).strftime(DEFAULT_TOKEN_DATE_FORMAT)),
+                                user.get("session_token_expired", False),
+                                user.get("number_of_failed_attempted", 0),
+                                user.get("last_failed_attempted", None)
+                            ))
+                            
+                        # Mettre la gestion des rôles de l'utilisateur ICI, dans le même try
+                        # Drop all roles for this specific user
                         cursor.execute("""
-                        INSERT INTO users (
-                            id, name, password_hash, email, disabled, authentication_type,
-                            session_token, session_creation_date, session_token_expired,
-                            number_of_failed_attempted, last_failed_attempted
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (
-                            user_id,
-                            user_name,
-                            password_hash,
-                            user.get("email"),
-                            user.get("disabled", False),
-                            user.get("authentication_type", "local"),
-                            user.get("session_token", None),
-                            user.get("session_creation_date", datetime.now(timezone.utc).strftime(DEFAULT_TOKEN_DATE_FORMAT)),
-                            user.get("session_token_expired", False),
-                            user.get("number_of_failed_attempted", 0),
-                            user.get("last_failed_attempted", None)
-                        ))
-                except Exception as e:
-                    self.logger.log("error", f"Error during user insertion or update {user_name}: {e}")
+                        DELETE FROM user_roles
+                        WHERE user_id = ?
+                        """, (user_id,))
 
-                # Drop all roles for this user
-                cursor.execute("""
-                    DELETE FROM user_roles
-                    WHERE user_id = ?
-                    """, (user_id,))
+                        # Attribution of new roles for this user
+                        for role_id in user.get("roles", []):
+                            cursor.execute("""
+                            REPLACE INTO user_roles (user_id, role_id)
+                            VALUES (?, ?)
+                            """, (user_id, role_id))
 
-                # Attribution of new roles for this user
-                for role_id in user.get("roles", []):
-                    cursor.execute("""
-                    REPLACE INTO user_roles (user_id, role_id)
-                    VALUES (?, ?)
-                    """, (user_id, role_id))
+                    except Exception as e:
+                        self.logger.log("error", f"Error during user insertion or update {user_name}: {e}")
+                    # --- Fin du bloc réindenté ---
 
             conn.commit()
         except Exception as e:
@@ -684,7 +688,6 @@ class PrivilegesManager:
         try:
             # TODO check the duplicata of token creation with the function create_token
             # TODO erase the print password ...
-            print("IN PRIVILEGE MANAGER REQUEST SIGN IN:", str(request))
             username = request.get("username")
             password = request.get("password")
             # password_hash = self.hash_password(password)
