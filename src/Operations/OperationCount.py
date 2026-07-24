@@ -102,7 +102,7 @@ class OperationCount(OperationBase):
         # return {"type":"table", "data": results, "fields": fields + ['count']}
         # Variables
         # return {"type":"table", "data": results, "fields": [], "variables": var}
-        return utils.update_siem_search_result({"data":results, "variables":var})
+        return utils.update_siem_search_result({"data":results, "variables":var, "sort_field": self.sort_by, "sorted_by": "desc"})
     
     def execute_operation(self, operation: str, data: list, index: list, tenant: list, technology: list, start_time: str, end_time: str, token: str):
         fields = self.parse_operation(operation)

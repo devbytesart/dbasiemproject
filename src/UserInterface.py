@@ -1227,7 +1227,7 @@ class UserInterface(ServiceBase):
                 dashboard = data.get("dashboard")
                 if dashboard:
                     query_payload = {
-                        "query": f"!search type:dashboard and name:{dashboard}",
+                        "query": f"!search type:dashboard and name:{dashboard} | !order by siem_timestamp desc | !limit 1",
                         "startTime": data.get("startDate",None),
                         "endTime": data.get("endDate", None),
                         "index": [data.get("indices")],

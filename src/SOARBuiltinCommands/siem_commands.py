@@ -213,7 +213,7 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
     - template_name: str => name of the template to get the format of the report
     - index: list => name of the index where to find the template of the report
     - tenant: list => name of the tenant where to find the template of the report
-    - technology: list => name of the technology where to find the template of the report
+    - technology: list => (template_report) name of the technology where to find the template of the report
     - format_report: str => format of report, pdf, csv ... 
     - portrait: bool => portrait or landscape format
     - save: bool => save or not the report in the index soar
@@ -225,9 +225,9 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
     try:
         # Search widget data
         # TODO add the name of the report in the log
-        query = "!search type:report_template and name:" + template_name
+        query = "!search type:report and name:" + template_name
         print("query: ", query)
-        res = self.commands["siem_search"]["function"](instance, query, index, tenant, technology, all_pages=True)
+        res = self.commands["siem_search"]["function"](query, index, tenant, technology, instance, all_pages=True)
         print("siem_generate_report ", str(res))
         # Generate report if data available
         if res != "[]":
@@ -262,7 +262,7 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
                         "type": "report",
                         "content": decoded
                     }
-                    log = self.commands["siem_create_log"]["function"](index[0], tenant[0], technology[0], name, params)
+                    log = self.commands["siem_create_log"]["function"](index[0], tenant[0], "report", name, params)
                     print("log to save:", str(log))
                     self.queue.enqueue(log.encode("utf-8"))
 
@@ -271,7 +271,7 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
                 if not raw and save:
                     for attempt in range(3):
                         query = f"!search type:report and name:{name}"
-                        res = self.commands["siem_search"]["function"](instance, query, index, tenant, technology)
+                        res = self.commands["siem_search"]["function"](query, index, tenant, technology, instance)
                         if res != "[]":
                             res = json.loads(res)
                             if len(res["data"]) > 0:
@@ -310,7 +310,7 @@ def siem_modify_log(self:Any, instance:str, index:str, tenant:str, technology:st
         print(index, tenant, technology)
         query = "!search id:" + id
         print("query: ", query)
-        res = self.commands["siem_search"]["function"](instance, query, [index], [tenant], [technology], all_pages=True)
+        res = self.commands["siem_search"]["function"](query, [index], [tenant], [technology], instance, all_pages=True)
         # Update the log
         print("before res:" + str(res))
         if res != "[]":

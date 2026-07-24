@@ -96,7 +96,7 @@ class OperationOrder(OperationBase):
             # Fallback if the field doesn't exist in the data records
             results = data
         print("Ordering execution time: ", time.time() - start_ordering)
-        return utils.update_siem_search_result({"data": results, "variables": var})
+        return utils.update_siem_search_result({"data": results, "variables": var, "sort_field":sort_key, "sorted_by": direction})
 
     def execute_operation(self, operation: str, data: list, index: list, tenant: list, technology: list, start_time: str, end_time: str, token: str):
         fields = self.parse_operation(operation)

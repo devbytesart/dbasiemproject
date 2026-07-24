@@ -15,7 +15,26 @@ Major.Minor.Patch
 
 ---
 
-## [01.001.001] - 2026-xx-xx
+
+## [01.002.002] - 2026-x-x
+
+### Added
+
+- Add limit operation on ISM
+- Create Import and Export button
+
+### Changed
+
+### Fixed
+
+- Display on search page and dashboard, soar tables order correctly
+- Troubleshoot soar siem functions (save log, ...) due to change order of instance in the parameters of siem_search function
+
+### Security
+
+--- 
+
+## [01.001.001] - 2026-07-18
 
 Realease note version 01.001.001
 

@@ -35,6 +35,7 @@ from OperationVariable import *
 from OperationAdvancedCondition import *
 from OperationTransform import *
 from OperationOrder import *
+from OperationLimit import *
 from ParameterLoader import *
 from ReportManager import *
 import UtilsEnum as uenum
@@ -139,7 +140,17 @@ class IndexSearchMotor(ServiceBase):
             self.webhook = Webhook(self.webhook_host, self.webhook_port, self.cmdhandler.handle_json, self.webhook_token, self.webhook_certfile, self.webhook_keyfile)
             # Careful to the order of operator which is very important
             # TODO find a way to not be dependant of the order
-            self.operations = [OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True, True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True), OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3)), OperationCount(int(self.max_threads/3)), OperationOrder(int(self.max_threads/3)), OperationProject(), OperationRender(), OperationVariable(self, int(self.max_threads/3)), OperationTransform()]
+            self.operations = [
+                OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True, True), 
+                OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3), True), 
+                OperationAdvancedCondition(self.indexers, self.logger, int(self.max_threads/3)), 
+                OperationCount(int(self.max_threads/3)), 
+                OperationOrder(int(self.max_threads/3)), 
+                OperationProject(), 
+                OperationRender(), 
+                OperationLimit(),
+                OperationVariable(self, int(self.max_threads/3)), 
+                OperationTransform()]
             # Reporting
             self.report_manager = ReportManager(self.logger, self, self.authenticatorsReq)
             return True
@@ -385,12 +396,8 @@ class IndexSearchMotor(ServiceBase):
                 items_per_page = 10
 
                         # Sorted by
-            sorted_by = None
-            sort_field = None
-            if "sort_field" in data:
-                sort_field = data["sort_field"]
-            if "sorted_by" in data:
-                sorted_by = data["sorted_by"]
+            sorted_by = self.last_result[current_id].get("sort_field",None)
+            sort_field = self.last_result[current_id].get("sorted_by",None)
 
             # Variables
             variables = {}

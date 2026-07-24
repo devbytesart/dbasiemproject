@@ -89,7 +89,7 @@ class TableManager {
         `);
     }
 
-    initDataTable(data, fields = null) {
+    initDataTable(data, fields = null, sort_field = null, sorted_by = "desc") {
         console.log("Initializing DataTable with data");
         const keys = new Set();
         if (!fields) {
@@ -98,14 +98,28 @@ class TableManager {
             fields.forEach(key => keys.add(key));
         }
 
+        const columnKeys = Array.from(keys);
         const validatedData = this.validateAndCorrectData(data, Array.from(keys));
-        const columns = Array.from(keys).map(key => ({ title: key, data: key }));
+        const columns = columnKeys.map(key => ({ title: key, data: key }));
+
+        //Sort part
+        let initialOrder = [];
+        if (sort_field) {
+            const columnIndex = columnKeys.indexOf(sort_field);
+            if (columnIndex !== -1) {
+                // Sécurité au cas où sortedBy est null/undefined
+                const direction = (sorted_by && sorted_by.toLowerCase() === 'desc') ? 'desc' : 'asc';
+                initialOrder = [[columnIndex, direction]];
+            }
+        }
+
 
         this.destroyTable();
 
         this.datatable = $(this.tableSelector).DataTable({
             data: validatedData,
             columns: columns,
+            order: initialOrder,
             paging: false,
             searching: false,
             ordering: true,
@@ -180,7 +194,7 @@ class TableManager {
                         $(`#endindex-${this.uniqueIdSelector}`).text(`End Items: ${tableData.end_index}`);
 
                         if (data && data.length > 0) {
-                            this.initDataTable(data, this.fieldsProjected);
+                            this.initDataTable(data, this.fieldsProjected,response.sort_field,response.sorted_by);
                         } else {
                             this.destroyTable();
                         }

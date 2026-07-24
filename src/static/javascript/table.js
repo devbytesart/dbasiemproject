@@ -42,7 +42,7 @@ function destroyTable() {
 }
 
 // Function to init datatable
-function initDataTable(data, fields = null) {
+function initDataTable(data, fields = null, sort_field = null, sorted_by = "desc") {
     destroyTable();  
 
     const keys = new Set();
@@ -53,13 +53,27 @@ function initDataTable(data, fields = null) {
         fields.forEach(key => keys.add(key));
     }
 
+    const columnKeys = Array.from(keys);
     const validatedData = validateAndCorrectData(data, Array.from(keys)); 
-    const columns = Array.from(keys).map(key => ({ title: key, data: key }));
+    // const columns = Array.from(keys).map(key => ({ title: key, data: key }));
+    const columns = columnKeys.map(key => ({ title: key, data: key }));
+
+    //Sort part
+    let initialOrder = [];
+    if (sort_field) {
+        const columnIndex = columnKeys.indexOf(sort_field);
+        if (columnIndex !== -1) {
+            // Sécurité au cas où sortedBy est null/undefined
+            const direction = (sorted_by && sorted_by.toLowerCase() === 'desc') ? 'desc' : 'asc';
+            initialOrder = [[columnIndex, direction]];
+        }
+    }
 
     // Initi datatable with new data
     datatable = $('#dataTable').DataTable({
         data: validatedData,
         columns: columns,
+        order: initialOrder,
         paging: false, // Disable automatic pagination
         searching: false, // Disable automatic search
         ordering: true, // Autorise sorting
@@ -89,7 +103,12 @@ function loadData(action = "first") {
         url: '/get_page', 
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ action: action, currentPage: currentPage, itemsPerPage: currentPageSize, page_id: page_id }),
+        data: JSON.stringify({ 
+            action: action, 
+            currentPage: currentPage, 
+            itemsPerPage: currentPageSize, 
+            page_id: page_id
+        }),
         success: function(response) {
             if (response) {
                 response = JSON.parse(response);
@@ -110,7 +129,12 @@ function loadData(action = "first") {
                     // Reset the column selector if not data
                     if (data && data.length > 0) {
                         createColumnSelector(fieldsProjected);  // Update columns selector
-                        initDataTable(data.map(item => {return {...item}}), fieldsProjected);  // Init table with new data
+                        initDataTable(
+                            data.map(item => {return {...item}}), 
+                            fieldsProjected,
+                            response.sort_field, 
+                            response.sorted_by
+                        );  // Init table with new data
                     } else {
                         console.warn("No data in table.");
                         destroyTable();  

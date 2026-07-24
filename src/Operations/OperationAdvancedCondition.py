@@ -175,9 +175,9 @@ class OperationAdvancedCondition(OperationBase):
             #     results = self.search_data(self.evaluate_operation(parsed_query, data, tenant, start_time, end_time))
             if data is not None and "variables" in data:
                 # data["data"] = result
-                return utils.update_siem_search_result({"data":results})
+                return utils.update_siem_search_result({"data":results,"sort_field":"siem_timestamp","sorted_by":"desc"})
             # return {"type": "table", "data": results, "fields": []}
-            return utils.update_siem_search_result({"data":results})
+            return utils.update_siem_search_result({"data":results,"sort_field":"siem_timestamp","sorted_by":"desc"})
         except Exception as e:
             self.logger.log("error", f"Error in execute operation advanced condition {traceback.format_exc()}")
             return data

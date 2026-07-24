@@ -103,6 +103,25 @@ DOCUMENT: edition
                         <div class="workspace">  
                             <button type="button" id="save-dashboard" class="styled-button">Save</button>
                         </div>
+                        <div class="workspace">  
+                            <!-- Bouton Export -->
+                            <button id="export-btn" class="styled-button" type="button" class="btn btn-primary">
+                                Exporter JSON
+                            </button>
+                            <br/>
+                            <!-- Bouton Import -->
+                            <button id="import-btn"  class="styled-button" type="button" class="btn btn-secondary">
+                                Importer JSON
+                            </button>
+                        </div>
+                        <!-- Input Fichier -->
+                        <input 
+                            type="file" 
+                            id="import-file-input" 
+                            accept=".json,application/json" 
+                            style="display: none;" 
+                        />
+
                     </div>
                 </form>
             </div>
