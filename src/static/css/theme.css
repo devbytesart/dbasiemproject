@@ -250,12 +250,33 @@ body.no-menu .layout {
     cursor: pointer;
 }
 
+.img-button {
+    width: 64px; 
+    height: 64px; 
+    background-color: var(--background-header-color);
+    border-radius: 5px; 
+    border: none; 
+    padding: 0; 
+    box-sizing: border-box;
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.img-button img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
 .autocomplete-dropdown div:hover {
     background-color: #f0f0f0;
 }
 
 /* Style for toggle button */
 .toggle-container {
+    margin-right: 10px;
     display: inline-flex;
     align-items: center;
     gap: 10px;

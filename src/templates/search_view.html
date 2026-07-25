@@ -113,7 +113,9 @@ DOCUMENT: search view
                         </div>
 
                         <div class="field">
-                            <button type="button" id="downloadResults" class="styled-button">Export</button>
+                            <button type="button" id="downloadResults" class="styled-button" title="Export">
+                                <img src="/static/media/export.png" alt="Export">
+                            </button>
                         </div>
 
                         <div class="field">
@@ -134,11 +136,11 @@ DOCUMENT: search view
 
                 <div class="table-container" id="tableContainer" hidden>
                     <div id="pagination" class="row">
-                        <button id="first" title="Go to First Page" class="ui button">⏮️ First</button>
-                        <button id="previous" title="Go to Previous Page" class="ui button">◀️ Previous</button>
+                        <button id="first" title="Go to First Page" class="img-button" style="width: 128px;"><img src="/static/media/first.png" alt="First"><span style="color:white">First</span></button>
+                        <button id="previous" title="Go to Previous Page" class="img-button" style="width: 128px;"><img src="/static/media/previous.png" alt="Previous"><span style="color:white">Previous</span></button>
                         <input type="number" id="currentPage" value="0" style="width: 5%;" class="ui button">
-                        <button id="next" title="Go to Next Page" class="ui button">Next ▶️</button>
-                        <button id="last" title="Go to Last Page" class="ui button">Last ⏭️</button>
+                        <button id="next" title="Go to Next Page" class="img-button" style="width: 128px;"><span style="color:white">Next</span><img src="/static/media/next.png" alt="Next"></button>
+                        <button id="last" title="Go to Last Page" class="img-button" style="width: 128px;"><span style="color:white">Last</span><img src="/static/media/last.png" alt="Last"></button>
                         <select id="pageSize" title="Select Page Size" style="width:5%;">
                             <option value="10">10</option>
                             <option value="25">25</option>

@@ -101,20 +101,28 @@ DOCUMENT: edition
                             </div>
                         </div>
                         <div class="workspace">  
-                            <button type="button" id="save-dashboard" class="styled-button">Save</button>
+                            <button type="button" id="save-dashboard" class="styled-button img-button" style="width: 128px;">
+                                <img src="/static/media/save.png" alt="Save">
+                            </button>
                         </div>
                         <div class="workspace">  
-                            <!-- Bouton Export -->
-                            <button id="export-btn" class="styled-button" type="button" class="btn btn-primary">
-                                Exporter JSON
+                            <!-- Button Import -->
+                            <!-- <button id="import-btn"  class="styled-button" type="button" class="btn btn-secondary" title="Import">
+                                ⬇️
+                            </button> -->
+                            <button id="import-btn" type="button" class="styled-button img-button" title="Import" style="padding:0px">
+                                <img src="/static/media/import.png" alt="Bouton">
                             </button>
                             <br/>
-                            <!-- Bouton Import -->
-                            <button id="import-btn"  class="styled-button" type="button" class="btn btn-secondary">
-                                Importer JSON
+                            <!-- Button Export -->
+                            <!-- <button id="export-btn" class="styled-button" type="button" class="btn btn-primary" title="Export">
+                                ⬆️
+                            </button> -->
+                            <button id="export-btn" type="button" class="styled-button img-button" title="Export" style="padding:0px">
+                                <img src="/static/media/export.png" alt="Bouton">
                             </button>
                         </div>
-                        <!-- Input Fichier -->
+                        <!-- Input File -->
                         <input 
                             type="file" 
                             id="import-file-input" 

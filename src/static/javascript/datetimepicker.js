@@ -38,8 +38,22 @@ class DateTimePicker extends HTMLElement {
             <div class="date-time-picker">
                 <div class="header">
                     <h3 id="title"></h3>
-                    <button id="toggle" aria-label="Toggle picker">
-                        <i>&#128275;</i>
+                    <button id="toggle" class="img-button" aria-label="Toggle picker"  
+                        style="padding:0px;
+                            width: 32px;
+                            height: 32px;
+                            background-color: var(--background-header-color);
+                            border-radius: 5px; 
+                            border: none; 
+                            padding: 0; /* Supprime l'espace interne qui écrasait l'image */
+                            box-sizing: border-box;
+                            cursor: pointer; 
+                            display: inline-flex; 
+                            align-items: center; 
+                            justify-content: center;
+                    ">
+                        <!-- <i>&#128275;</i> -->
+                            <img src="/static/media/lockopened.png" alt="Bouton" style="object-fit: contain;width: 16px;height: 16px;">
                     </button>
                 </div>
 
@@ -118,8 +132,10 @@ class DateTimePicker extends HTMLElement {
 
         // Change button icon
         this.toggleButton.innerHTML = isDisabled
-            ? `<i>&#128275;</i>` // Icon locker open
-            : `<i>&#128274;</i>`; // Icon locker close
+            // ? `<i>&#128275;</i>` // Icon locker open
+            // : `<i>&#128274;</i>`; // Icon locker close
+            ? `<img src="/static/media/lockopened.png" alt="unlocked" style="object-fit: contain;width: 16px;height: 16px;">`
+            : `<img src="/static/media/lockclosed.png" alt="locked" style="object-fit: contain;width: 16px;height: 16px;">`
     }
 
     updateResult() {

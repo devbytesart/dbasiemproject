@@ -70,14 +70,26 @@ class SOARCard {
             input.dataset.key = key;
             input.style.flex = '1';
 
+            // const editBtn = document.createElement('button');
+            // editBtn.title = 'Edit value';
+            // editBtn.textContent = '✏️';
+            // editBtn.onclick = () => {
+            //     input.disabled = !input.disabled;
+            //     if (!input.disabled) input.focus();
+            // };
+
             const editBtn = document.createElement('button');
             editBtn.title = 'Edit value';
-            editBtn.textContent = '✏️';
+            editBtn.classList.add('styled-button', 'img-button');
+            editBtn.style.padding = '0px';
+            const editImg = document.createElement('img');
+            editImg.src = '/static/media/modify.png'; 
+            editImg.alt = 'Edit';
+            editBtn.appendChild(editImg);
             editBtn.onclick = () => {
                 input.disabled = !input.disabled;
                 if (!input.disabled) input.focus();
             };
-
             row.appendChild(label);
             row.appendChild(input);
             row.appendChild(editBtn);
@@ -131,20 +143,31 @@ class SOARCard {
             collapsible.style.display = 'block';
             collapsible.appendChild(answerContent);
 
-            const copyBtn = document.createElement('button');
-            copyBtn.textContent = '📋';
-            copyBtn.title = 'Copy answer';
-            copyBtn.style.position = 'absolute';
-            copyBtn.style.top = '10px';
-            copyBtn.style.right = '10px';
-            copyBtn.onclick = () => {
-                navigator.clipboard.writeText(answerContent.textContent);
-            };
+            // const copyBtn = document.createElement('button');
+            // copyBtn.textContent = '📋';
+            // copyBtn.title = 'Copy answer';
+            // copyBtn.style.position = 'absolute';
+            // copyBtn.style.top = '10px';
+            // copyBtn.style.right = '10px';
+            // copyBtn.onclick = () => {
+            //     navigator.clipboard.writeText(answerContent.textContent);
+            // };
 
+            const copyBtn = document.createElement('button');
+            copyBtn.title = 'Copy value';
+            copyBtn.classList.add('styled-button', 'img-button');
+            copyBtn.style.padding = '0px';
+            const editImg = document.createElement('img');
+            editImg.src = '/static/media/copy.png';
+            editImg.alt = 'Copy';
+            copyBtn.appendChild(editImg);
+            copyBtn.onclick = () => {
+                input.disabled = !input.disabled;
+                if (!input.disabled) input.focus();
+            };
             wrapper.appendChild(button);
             wrapper.appendChild(collapsible);
             wrapper.appendChild(copyBtn);
-
             button.addEventListener('click', () => {
                 $(collapsible).slideToggle();
             });
@@ -173,28 +196,75 @@ class SOARCard {
         if (!result_only) {
             const cardId = `cmd-id-${this.entry.id}`;
 
-            card.innerHTML = `
-                <div class="result-header">
-                    <div><strong>ID:</strong>
-                        <input type="number" id="${cardId}" value="${this.entry.id}" style="width:30px;"/>
-                    </div>
-                    <div><strong>Author:</strong> ${this.entry.author}</div>
-                    <div><strong>Date:</strong> ${this.entry.date}</div>
+            // card.innerHTML = `
+            //     <div class="result-header">
+            //         <div><strong>ID:</strong>
+            //             <input type="number" id="${cardId}" value="${this.entry.id}" style="width:30px;"/>
+            //         </div>
+            //         <div><strong>Author:</strong> ${this.entry.author}</div>
+            //         <div><strong>Date:</strong> ${this.entry.date}</div>
+            //     </div>
+            //     <div class="result-body">
+            //         <div class="command-block">
+            //             <strong>Command:</strong>
+            //             <input contenteditable="true" class="command-line" type="text" id="cmd-input-${this.entry.id}" value="${this.escapeHTML(this.normalizeArrayStrings(this.entry.command))}" disabled style="width: 60%;">
+            //             <div class="command-buttons" style="display: inline-flex; gap: 8px; margin-left: 10px;">
+            //                 <button onclick="copyToClipboard('cmd-input-${this.entry.id}')" title="Copy Command">📋</button>
+            //                 <button onclick="this.closest('.result-card').__instance.editCommand()" title="Edit">✏️</button>
+            //                 <button onclick="this.closest('.result-card').__instance.replayCommandFromCard()" title="Play Edited">▶️</button>
+            //                 <button onclick="replayCommand(${this.entry.id})" title="Replay">🔁</button>
+            //                 <button onclick="eraseContext(${this.entry.id})" title="Erase">🗑️</button>
+            //             </div>
+            //         </div>
+            //     </div>
+            // `;
+
+
+card.innerHTML = `
+            <div class="result-header">
+                <div><strong>ID:</strong>
+                    <input type="number" id="${cardId}" value="${this.entry.id}" style="width:30px;"/>
                 </div>
-                <div class="result-body">
-                    <div class="command-block">
-                        <strong>Command:</strong>
-                        <input contenteditable="true" class="command-line" type="text" id="cmd-input-${this.entry.id}" value="${this.escapeHTML(this.normalizeArrayStrings(this.entry.command))}" disabled style="width: 60%;">
-                        <div class="command-buttons" style="display: inline-flex; gap: 8px; margin-left: 10px;">
-                            <button onclick="copyToClipboard('cmd-input-${this.entry.id}')" title="Copy Command">📋</button>
-                            <button onclick="this.closest('.result-card').__instance.editCommand()" title="Edit">✏️</button>
-                            <button onclick="this.closest('.result-card').__instance.replayCommandFromCard()" title="Play Edited">▶️</button>
-                            <button onclick="replayCommand(${this.entry.id})" title="Replay">🔁</button>
-                            <button onclick="eraseContext(${this.entry.id})" title="Erase">🗑️</button>
-                        </div>
+                <div><strong>Author:</strong> ${this.entry.author}</div>
+                <div><strong>Date:</strong> ${this.entry.date}</div>
+            </div>
+            <div class="result-body">
+                <div class="command-block">
+                    <strong>Command:</strong>
+                    <input contenteditable="true" class="command-line" type="text" id="cmd-input-${this.entry.id}" value="${this.escapeHTML(this.normalizeArrayStrings(this.entry.command))}" disabled style="width: 60%;">
+                    
+                    <!-- Updated action buttons to use custom images instead of emoji icons -->
+                    <div class="command-buttons" style="display: inline-flex; gap: 8px; margin-left: 10px;">
+                        
+                        <!-- 1. Copy Command Button -->
+                        <button onclick="copyToClipboard('cmd-input-${this.entry.id}')" title="Copy Command" class="styled-button img-button" style="padding:0px">
+                            <img src="/static/media/copy.png" alt="Copy">
+                        </button>
+
+                        <!-- 2. Edit Command Button -->
+                        <button onclick="this.closest('.result-card').__instance.editCommand()" title="Edit" class="styled-button img-button" style="padding:0px">
+                            <img src="/static/media/modify.png" alt="Edit">
+                        </button>
+
+                        <!-- 3. Play Edited Command Button -->
+                        <button onclick="this.closest('.result-card').__instance.replayCommandFromCard()" title="Play Edited" class="styled-button img-button" style="padding:0px">
+                            <img src="/static/media/play.png" alt="Play Edited">
+                        </button>
+
+                        <!-- 4. Replay Command Button -->
+                        <button onclick="replayCommand(${this.entry.id})" title="Replay" class="styled-button img-button" style="padding:0px">
+                            <img src="/static/media/replay.png" alt="Replay">
+                        </button>
+
+                        <!-- 5. Erase/Delete Button -->
+                        <button onclick="eraseContext(${this.entry.id})" title="Erase" class="styled-button img-button" style="padding:0px">
+                            <img src="/static/media/delete.png" alt="Erase">
+                        </button>
+
                     </div>
                 </div>
-            `;
+            </div>
+        `;
 
             const idInput = card.querySelector(`#${cardId}`);
             idInput.addEventListener('change', () => {

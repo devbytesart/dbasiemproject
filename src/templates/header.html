@@ -27,8 +27,17 @@ DOCUMENT: header
     {% include "help_popup.html" %}
     <div class="header-title">{{ page_title }}</div>
     <div class="header-right">
-        <button id="helpIcon" class="icon-button" title="Help">&#x2753;</button>
+    <button id="helpIcon" type="button" class="img-button" title="help" style="padding:0px;width: 32px;height: 32px;">
+        <img src="/static/media/help.png" alt="Bouton">
+    </button>
+        <button id="User Logged" type="button" class="img-button" title="Logged" style="padding:0px;width: 32px;height: 32px;">
+        <img src="/static/media/profil.png" alt="Bouton">
+    </button>
+        <button id="logoutIcon" type="button" class="img-button" title="logout" style="padding:0px;width: 32px;height: 32px;">
+        <img src="/static/media/return.png" alt="Bouton">
+    </button>
+        <!-- <button id="helpIcon" class="icon-button" title="Help">&#x2753;</button>
         <button class="icon-button" title="User Logged">&#128100;</button>
-        <button id="logoutIcon" class="icon-button" title="Logout">&#x21AA;</button>
+        <button id="logoutIcon" class="icon-button" title="Logout">&#x21AA;</button> -->
     </div>
 </header>

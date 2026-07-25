@@ -67,34 +67,38 @@ function createColumnSelector(fieldsProjected) {
     columnSelector.empty();
 
     fieldsProjected.forEach(key => {
-        // Determine if the column is visible based on "fieldsProjected"
         if (fieldsProjected && fieldsProjected.length > 0) {
             columnVisibility[key] = fieldsProjected.includes(key);
         } else if (initialLoad) {
             columnVisibility[key] = true;
         } else {
             columnVisibility[key] = columnVisibility[key] ?? false;  
-            // Keep previous visbility
         }
 
         const item = $('<div class="item"></div>');
         const label = $('<label></label>').text(key);
-        const checkbox = $('<input type="checkbox">');
 
-        checkbox.prop('checked', columnVisibility[key]);
-        checkbox.on('change', function() {
+        const toggleContainer = $('<label class="toggle-container"><span class="toggle-slider"><p> </p></span></label>');
+        const input = $('<input type="checkbox">');
+
+        input.prop('checked', columnVisibility[key]);
+
+
+        input.on('change', function() {
             columnVisibility[key] = this.checked;
             updateTableVisibility();
         });
+        
+        toggleContainer.prepend(input);
 
-        label.prepend(checkbox);
+        label.prepend(toggleContainer);
         item.append(label);
         columnSelector.append(item);
     });
 
     initialLoad = false;
 
-    $('#columnSearch').on('keyup', function() {
+    $('#columnSearch').off('keyup').on('keyup', function() {
         const searchValue = $(this).val().toLowerCase();
         columnSelector.children('.item').each(function() {
             const labelText = $(this).text().toLowerCase();
