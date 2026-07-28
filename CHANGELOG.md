@@ -42,6 +42,7 @@ Major.Minor.Patch
 
 - Add limit operation on ISM
 - Create Import and Export button
+- SlaveCoordinator restart the docker that are deleted
 
 ### Changed
 

@@ -75,6 +75,10 @@ class SlaveCoordinator(ServiceBase):
             self.thread_stats = threading.Thread(target=self._load_stats)
             self.thread_stats.daemon = True
             self.thread_stats.start()
+            # Monitoring 
+            self.thread_container_monitoring = threading.Thread(target=self._container_monitoring)
+            self.thread_container_monitoring.daemon = True
+            self.thread_container_monitoring.start()
             # start microservices
             self._start_microservices()
             # Run
@@ -136,13 +140,47 @@ class SlaveCoordinator(ServiceBase):
                 "type": "slavecoordinator_monitoring"
             }
             # Resources monitoring
-            # TODO troubleshoot this part, Decimal crash the SOAR
-            # for res_mon in self.resources_monitors:
-            #     try:
-            #         self.logger.log("info", self.resources_monitors[res_mon].get_container_info())
-            #     except:
-            #         self.logger.log("error", f"Failed to retrieve monitoring data: {traceback.format_exc()}")
+            for res_mon in self.resources_monitors:
+                try:
+                    self.logger.log("info", self.resources_monitors[res_mon].get_container_info())
+                except:
+                    self.logger.log("error", f"Failed to retrieve monitoring data: {traceback.format_exc()}")
             time.sleep(10)
+
+
+    def _container_monitoring(self):
+        while True:
+            try:
+                if self.configurator.elements:
+                    elements = self.configurator.elements
+                    # Iteration on key, value pair
+                    for service_name, service_config in elements.items():
+                        container_id = service_config.get("id", service_name)
+                        # Check if container does exists
+                        if not self.docker_manager.container_exists(container_id):
+                            self.logger.log(
+                                "warning", f"Container does not exist: {container_id}"
+                            )
+                            self._create_docker(service_config, self._identify_command(service_config["type"]))
+                            continue
+                        # Verify health status of the container
+                        # status_info = self.docker_manager.get_container_status(container_id)
+                        # if not status_info["running"]:
+                        #     self.logger.log(
+                        #         "warning",
+                        #         f"Container {container_id} is down (Status: {status_info['status']}, ExitCode: {status_info['exit_code']}). Restarting...",
+                        #     )
+                        #     # 
+                        #     self._create_docker(service_config)
+                # Pause entre chaque vérification
+                time.sleep(10)
+            except Exception:
+                self.logger.log(
+                    "error",
+                    f"Failed in container monitoring: {traceback.format_exc()}",
+                )
+                time.sleep(5)  # Sécurité pour éviter une boucle infinie ultra-rapide en cas d'erreur persistent
+
 
     def _stop_microservices(self):
         try:

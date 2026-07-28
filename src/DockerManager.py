@@ -152,7 +152,42 @@ class DockerManager:
         except Exception as e:
             print(f"Error checking if container exists: {e}")
             return False
-        
+
+    def get_container_status(self, container_id):
+        """Retourne un dictionnaire contenant l'état détaillé du conteneur.
+        Return dictionary of detailed status of the container
+        ex:
+            dict: Status, Health (if configured), ExitCode, Error, StartedAt...
+        """
+        try:
+            container = self.client.containers.get(container_id)
+            # Force refresh data container 
+            container.reload()
+            
+            state = container.attrs.get("State", {})
+            
+            status_info = {
+                "exists": True,
+                "status": state.get("Status", "unknown"),  # 'running', 'exited', 'paused', 'restarting'...
+                "running": state.get("Running", False),
+                "paused": state.get("Paused", False),
+                "restarting": state.get("Restarting", False),
+                "dead": state.get("Dead", False),
+                "exit_code": state.get("ExitCode", 0),
+                "error": state.get("Error", ""),
+                "started_at": state.get("StartedAt", ""),
+                "finished_at": state.get("FinishedAt", ""),
+                "health": state.get("Health", {}).get("Status", "none")  # 'healthy', 'unhealthy', 'starting'
+            }
+            
+            return status_info
+
+        except NotFound:
+            return {"exists": False, "status": "not_found", "running": False}
+        except Exception as e:
+            print(f"Error getting status for container {container_id}: {e}")
+            return {"exists": False, "status": "error", "error": str(e), "running": False}
+
 # Example usage
 # if __name__ == "__main__":
 #     manager = DockerManager()
