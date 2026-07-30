@@ -23,18 +23,72 @@ let selectAll = false;
 let columnVisibility = {};
 let initialLoad = true;
 
-var indices;
-var tenants;
-var technologies;
+// var indices;
+// var tenants;
+// var technologies;
 var dateStartInput;
 var dateEndInput;
 var page_id;
 
-$(document).ready(function() {
 
-    indices = new DropdownList('Index', '/search_available_index', 'dropdownindex');
-    tenants = new DropdownList('Tenant', '/search_available_tenant', 'dropdowntenant');
-    technologies = new DropdownList('Technology', '/search_available_technologies', 'dropdowntechnology');
+function initSuggestions() {
+    console.log("initSuggestions launched");
+    const inputs = document.querySelectorAll('#searchQuery');
+    inputs.forEach(input => {
+        console.log("input suggestions", input);
+        if (input.dataset.suggestionInitialized) return; 
+        input.dataset.suggestionInitialized = 'true';
+
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.className = 'suggestions hidden';
+        document.body.appendChild(suggestionsContainer);
+
+        new SuggestionManager(input, suggestionsContainer, '/get_suggestions', true);
+    });
+}
+
+// $(document).ready(function() {
+document.addEventListener("DOMContentLoaded", () => {
+
+    initSuggestions();
+
+    const tagInputSystem = new TagsSystem([
+        {
+            "name": "Index",
+            "id": "selectindex",
+            "paramUrl": "index",
+            "url": "/search_available_index",
+            "params": {},
+            "method": "GET",
+            "multiple": true,
+            "last": false,
+        },
+        {
+            "name": "Tenant",
+            "id": "selecttenant",
+            "paramUrl": "tenant",
+            "url": "/search_available_tenant",
+            "params": {},
+            "method": "GET",
+            "multiple": true,
+            "last": false,
+        },
+        {
+            "name": "Technology",
+            "id": "selecttechnology",
+            "paramUrl": "technology",
+            "url": "/search_available_technologies",
+            "params": {},
+            "method": "GET",
+            "multiple": true,
+            "last": false,
+        }
+    ], () => {});
+    tagInputSystem.init();
+
+    // indices = new DropdownList('Index', '/search_available_index', 'dropdownindex');
+    // tenants = new DropdownList('Tenant', '/search_available_tenant', 'dropdowntenant');
+    // technologies = new DropdownList('Technology', '/search_available_technologies', 'dropdowntechnology');
     dateStartInput = document.getElementById("startPicker");
     dateEndInput = document.getElementById("endPicker");
     page_id = Math.floor(Math.random() * 10000000000)
@@ -76,11 +130,13 @@ $(document).ready(function() {
         } else {
             console.log('Please select valid start and end times.');
         }
-        // const index = $('#indexSelect').val();
-        // const tenant = $('#tenantSelect').val();
-        const index = indices.getSelectedValues();
-        const tenant = tenants.getSelectedValues();
-        const technology = technologies.getSelectedValues();
+
+        // const index = indices.getSelectedValues();
+        // const tenant = tenants.getSelectedValues();
+        // const technology = technologies.getSelectedValues();
+        const index = tagInputSystem.getSelectedValues("Index");
+        const tenant = tagInputSystem.getSelectedValues("Tenant");
+        const technology = tagInputSystem.getSelectedValues("Technology");
 
         loadingSpinnerShow("Waiting search results ...");
 
@@ -115,7 +171,7 @@ $(document).ready(function() {
                         // fields = JSON.parse(item);
                         fields = item;
                     } catch (error) {
-                        console.error("Erreur de parsing JSON:", error);
+                        console.error("JSON Parsing error:", error);
                         fields = {};
                     }
                     return {...fields};
@@ -129,7 +185,7 @@ $(document).ready(function() {
             }
         })
         .catch(error => {
-            console.error('Erreur:', error);
+            console.error('Error:', error);
             loadingSpinnerHide();  // Hide the global spinner global after received the error
         });
     });    

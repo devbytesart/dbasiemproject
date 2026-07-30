@@ -504,10 +504,14 @@ class IndexSearchMotor(ServiceBase):
         """
         # TODO propose suggestions from the data
         try:
+            print("IN HANDLE GET SUGGESTIONS")
             suggestions = []
+            print("OPERATION before self.operations",str(self.operations))
             for operation in self.operations:
+                    print("In operation suggestions")
                     suggestion = operation.get_suggestions()
-                    print("SUGGESTION:" + str(suggestion) + str(type(suggestion)))
+                    print("SUGGESTIONS")
+                    # print("SUGGESTION:" + str(suggestion) + str(type(suggestion)))
                     if suggestion:
                         suggestions += suggestion
             return suggestions

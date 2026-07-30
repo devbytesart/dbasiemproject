@@ -20,12 +20,12 @@ document: suggestion_cmd
 */
 
 class SuggestionManager {
-    constructor(inputElement, suggestionsContainer, endpoint) {
+    constructor(inputElement, suggestionsContainer, endpoint, search_suggestions=false) {
         this.inputElement = inputElement;
         this.suggestionsContainer = suggestionsContainer;
         this.endpoint = endpoint;
         this.currentSelectionIndex = -1;
-
+        this.search_suggestions = search_suggestions;
         this.attachEvents();
     }
 
@@ -72,7 +72,10 @@ fetchSuggestions(showAll = false) {
         if (!text.endsWith(' ') && !text.endsWith(';') && text.length > 0) {
             newText += ' ';
         }
-        newText += `${param}=`;
+        if(this.search_suggestions === false)
+            newText += `${param}=`;
+        else
+            newText += " "
         this.setInputValue(newText);
         this.placeCursorAtEnd();
     }
@@ -116,11 +119,14 @@ fetchSuggestions(showAll = false) {
 
         const fragment = document.createDocumentFragment();
         let hasContent = false;
+        let examples = [];
 
         if (Array.isArray(data)) {
             data.forEach(cmd => {
                 if (cmd.name && cmd.description !== undefined) {
-                    const row = this.createCommandRow(cmd.name, cmd.description);
+                    if("examples" in cmd) 
+                        examples = cmd.examples;
+                    const row = this.createCommandRow(cmd.name, cmd.description, examples);
                     row.addEventListener('click', () => {
                         this.replaceCommand(cmd.name);
                         this.clearSuggestions();
@@ -131,7 +137,9 @@ fetchSuggestions(showAll = false) {
             });
         } else if (data.command && Array.isArray(data.parameters)) {
             const cmd = data.command;
-            fragment.appendChild(this.createCommandRow(cmd.name, cmd.description));
+            if("examples" in cmd) 
+                examples = cmd.examples;
+            fragment.appendChild(this.createCommandRow(cmd.name, cmd.description, examples));
             hasContent = true;
 
             data.parameters.forEach(param => {
@@ -148,7 +156,7 @@ fetchSuggestions(showAll = false) {
         }
     }
 
-    createCommandRow(name, description) {
+    createCommandRow(name, description, examples=[]) {
         const row = document.createElement('div');
         row.classList.add('suggestion-item', 'command-row');
 
@@ -158,6 +166,24 @@ fetchSuggestions(showAll = false) {
 
         const descEl = document.createElement('div');
         descEl.innerHTML = (description || '').toString().replace(/\n/g, '<br/>');
+
+        let descHtml = descEl.innerHTML;
+
+        // Normalize examples (handles string, array, or undefined/null)
+        const normalizedExamples = Array.isArray(examples)
+            ? examples
+            : (examples ? [examples] : []);
+
+        // Render examples section ONLY if examples exist
+        if (normalizedExamples.length > 0) {
+            const examplesList = normalizedExamples
+                .map(ex => `<code>${this.escapeHtml(ex)}</code>`)
+                .join('<br/>');
+
+            descHtml += `<div class="command-examples"><strong>Examples:</strong><br/>${examplesList}</div>`;
+        }
+
+        descEl.innerHTML = descHtml;
 
         row.appendChild(nameEl);
         row.appendChild(descEl);
@@ -183,6 +209,21 @@ fetchSuggestions(showAll = false) {
         descCol.classList.add('param-description');
         descCol.innerHTML = (param.description || '').replace(/\n/g, '<br/>');
 
+        // Standardize example
+        const rawExamples = param.examples || param.example;
+        const examples = Array.isArray(rawExamples) 
+            ? rawExamples 
+            : (rawExamples ? [rawExamples] : []);
+
+        // If examples, we add description
+        if (examples.length > 0) {
+            const examplesList = examples
+                .map(ex => `<code>${this.escapeHtml(ex)}</code>`)
+                .join(', ');
+
+            descHtml += `<div class="param-examples"><strong>Ex:</strong> ${examplesList}</div>`;
+        }
+
         // Add columns
         row.appendChild(nameCol);
         row.appendChild(typeCol);
@@ -195,6 +236,14 @@ fetchSuggestions(showAll = false) {
         });
 
         return row;
+    }
+
+    escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
     clearSuggestions() {
@@ -235,21 +284,24 @@ fetchSuggestions(showAll = false) {
             return;
         }
 
-        // Else, search incomplete before cursor
-        // Search last pair "key=value" before cursor with regex
-        // Parameter can be key=, key="val", key='val' or key=partialval (without space)
-        const paramRegex = /(\w+=("[^"]*"|'[^']*'|[^\s]*)?)$/;
-        const match = before.match(paramRegex);
+        if(this.search_suggestions === false) {
+            // Only for soar commands
+            // Else, search incomplete before cursor
+            // Search last pair "key=value" before cursor with regex
+            // Parameter can be key=, key="val", key='val' or key=partialval (without space)
+            const paramRegex = /(\w+=("[^"]*"|'[^']*'|[^\s]*)?)$/;
+            const match = before.match(paramRegex);
 
-        if (match) {
-            const paramStart = before.lastIndexOf(match[0]);
-            const newText = before.slice(0, paramStart) + suggestion + after;
-            input.value = newText;
-            const newCursor = paramStart + suggestion.length;
-            input.setSelectionRange(newCursor, newCursor);
-            input.focus();
-            this.clearSuggestions();
-            return;
+            if (match) {
+                const paramStart = before.lastIndexOf(match[0]);
+                const newText = before.slice(0, paramStart) + suggestion + after;
+                input.value = newText;
+                const newCursor = paramStart + suggestion.length;
+                input.setSelectionRange(newCursor, newCursor);
+                input.focus();
+                this.clearSuggestions();
+                return;
+            }
         }
 
         // Else we don't replace anything, we insert at the cursor position 

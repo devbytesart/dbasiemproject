@@ -37,7 +37,26 @@ class OperationVariable(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [self.keyword + " <name> = <value>", self.keyword + " <name> = <condition>"]
+        # return [self.keyword + " <name> = <value>", self.keyword + " <name> = <condition>"]
+        return [{
+            "name": self.keyword,
+            "description": "Create variable to store research and reuse it later in the query",
+            "params": [
+                {
+                    "name": "name", 
+                    "type": "string", 
+                    "description": "name of the variable to reuse it later", 
+                    "default": ""
+                 },
+                {
+                    "name": "query",
+                    "type": "string",
+                    "description": "Full query to launch and store results in the var, splitted operations by ;",
+                    "default":""
+                }
+            ],
+            "examples": ["!var name1 = !search * ; !counts by device"]
+        }]
 
     def parse_operation(self, operation: str):
         """Analyse an expression of variable 'var <name> = <value>'."""

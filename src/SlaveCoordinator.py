@@ -164,14 +164,14 @@ class SlaveCoordinator(ServiceBase):
                             self._create_docker(service_config, self._identify_command(service_config["type"]))
                             continue
                         # Verify health status of the container
-                        # status_info = self.docker_manager.get_container_status(container_id)
-                        # if not status_info["running"]:
-                        #     self.logger.log(
-                        #         "warning",
-                        #         f"Container {container_id} is down (Status: {status_info['status']}, ExitCode: {status_info['exit_code']}). Restarting...",
-                        #     )
-                        #     # 
-                        #     self._create_docker(service_config)
+                        status_info = self.docker_manager.get_container_status(container_id)
+                        if not status_info["running"]:
+                            self.logger.log(
+                                "warning",
+                                f"Container {container_id} is down (Status: {status_info['status']}, ExitCode: {status_info['exit_code']}). Restarting...",
+                            )
+                            # 
+                            self._create_docker(service_config, self._identify_command(service_config["type"]))
                 # Pause entre chaque vérification
                 time.sleep(10)
             except Exception:

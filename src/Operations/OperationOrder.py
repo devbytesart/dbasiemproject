@@ -38,7 +38,29 @@ class OperationOrder(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [ self.keyword + " by <field> " + self.order]
+        # return [ self.keyword + " by <field> " + self.order]
+        return [{
+            "name": self.keyword,
+            "description": "Order data by field asc | desc, required search query before",
+            "params": [
+                {
+                    "name": "field", 
+                    "type": "string", 
+                    "description": "name of the fields to sort by", 
+                    "default": ""
+                 },
+                 {
+                    "name":"order",
+                    "type":"string",
+                    "description":"Order ascendant or descendant",
+                    "default":"asc"
+                  }
+            ],
+            "examples": [
+                "!search <conditions> | !order by siem_timestamp desc",
+                "!search * | !order by <field> asc | !render ... "
+                ]
+        }]
 
     def parse_operation(self, operation: str):
         """ Order statistic operation of type 'order by <field> [asc|desc]'. """

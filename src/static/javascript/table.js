@@ -126,15 +126,18 @@ function loadData(action = "first") {
                     fieldsProjected = response.fields;
                     console.log("Fields projected :", fieldsProjected);
 
-                    // Reset the column selector if not data
                     if (data && data.length > 0) {
-                        createColumnSelector(fieldsProjected);  // Update columns selector
+                        const keepSelected = (action !== "first");
+                        createColumnSelector(fieldsProjected, keepSelected);
+                        
                         initDataTable(
                             data.map(item => {return {...item}}), 
                             fieldsProjected,
                             response.sort_field, 
                             response.sorted_by
-                        );  // Init table with new data
+                        );
+                        // update column with selected fields
+                        updateTableVisibility();
                     } else {
                         console.warn("No data in table.");
                         destroyTable();  
@@ -153,6 +156,7 @@ function loadData(action = "first") {
         }
     });
 }
+
 
 // Management browsing buttons 
 $(document).ready(function() {

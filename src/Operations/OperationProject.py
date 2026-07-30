@@ -33,7 +33,23 @@ class OperationProject(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [self.keyword + " <field1>, <field2>, ..."]
+        # return [self.keyword + " <field1>, <field2>, ..."]
+        return [{
+            "name": self.keyword,
+            "description": "keep only the fields list selected, required search query before",
+            "params": [
+                {
+                    "name": "fields", 
+                    "type": "list of strings splitted by ,", 
+                    "description": "fields to display in the results", 
+                    "default": ""
+                 }
+            ],
+            "examples": [
+                "!search <conditions> | !projects field1,field2...",
+                "!seach * | !counts by ... | !order by ... | !projects ..."
+                ]
+        }]
     
     def parse_operation(self, operation: str):
         """Analyse an operation of type projection 'project <field1>, <field2>, ...'."""

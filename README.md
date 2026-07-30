@@ -331,6 +331,12 @@ Add the vault for this service user or user with the command (on SOAR page)
 vault_set_basic_credential id=<name of the instance> username=<user analyst with rights permissions> password=<password>
 ```
 
+## Documentation
+
+The full documentation is available on the application itself. This documentation explain how components works, how use it as an analyst or administrator.
+
+API documentation is available with swagger from the application. 
+
 ## Contributing and Collaboration
 
 Contributions are what make the open-source community such an amazing place. Whether you want to fix a bug, add a feature from the roadmap, or improve the documentation, **your help is highly appreciated!**

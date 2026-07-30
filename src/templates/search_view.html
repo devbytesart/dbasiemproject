@@ -27,6 +27,7 @@ DOCUMENT: search view
 
     <link rel="stylesheet" href="static/css/theme.css">
     <link rel="stylesheet" href="static/css/help.css">
+    <link rel="stylesheet" href="static/css/suggestions.css">
     <!-- Fomantic UI CSS -->
     <link rel="stylesheet" href="static/css/semantic.min.css">
     <!-- DataTables CSS (compatible with Fomantic UI) -->
@@ -53,12 +54,13 @@ DOCUMENT: search view
     <!-- Fichiers JS externes -->
     <script src="/static/javascript/utils.js"></script>
     <script src="/static/javascript/help.js"></script>
-    <script src="/static/javascript/dropdownlist.js"></script>
+    <script src="/static/javascript/tags.js"></script>
+    <!-- <script src="/static/javascript/dropdownlist.js"></script> -->
     <script src="/static/javascript/datetimepicker.js"></script>
     <script src="/static/javascript/column-selector.js"></script>
     <script src="/static/javascript/table.js"></script>
     <script src="/static/javascript/graph.js"></script>
-    <script src="/static/javascript/suggestions.js"></script>
+    <script src="/static/javascript/suggestions_cmd.js"></script>
     <script src="/static/javascript/app.js"></script>
 </head>
 
@@ -91,17 +93,20 @@ DOCUMENT: search view
 
                         <!-- Indexes field with a searchable dropdown -->
                         <div class="field">
-                            <div id="dropdownindex"></div>
+                            <!-- <div id="dropdownindex"></div> -->
+                            <div id="selectindex"></div>
                         </div>
 
                         <!-- Tenants field with a searchable dropdown -->
                         <div class="field">
-                            <div id="dropdowntenant"></div>
+                            <!-- <div id="dropdowntenant"></div> -->
+                            <div id="selecttenant"></div>
                         </div>
 
                         <!-- Technologies field with a searchable dropdown -->
                         <div class="field">
-                            <div id="dropdowntechnology"></div>
+                            <!-- <div id="dropdowntechnology"></div> -->
+                            <div id="selecttechnology"></div>
                         </div>
 
                         <div class="field">
@@ -127,7 +132,7 @@ DOCUMENT: search view
                             <div class="field">
                                 <div contenteditable="true" id="searchQuery" style="border: 1px solid #ccc; padding: 5px;" placeholder="Rechercher..."></div>
                             </div>
-                            <div id="suggestions"></div>
+                            <!-- <div id="suggestions"></div> -->
                             <div class="field">
                                 <button type="submit" class="styled-button" style="width: 100%;">Search</button>
                             </div>

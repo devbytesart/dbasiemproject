@@ -33,7 +33,35 @@ class OperationRender(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [ self.keyword + " <type> by <field> over <count>"]
+        # return [ self.keyword + " <type> by <field> over <count>"]
+        return [{
+            "name": self.keyword,
+            "description": "Render graph based on number, required a query search before, a field for x axis and number for y axis",
+            "params": [
+                {
+                    "name": "type", 
+                    "type": "string", 
+                    "description": "type of graph (pie, bar, line, polar, radar, donut, scatter)", 
+                    "default": ""
+                 },
+                 {
+                    "name": "field",
+                    "type": "string",
+                    "description":"Field in x axis",
+                    "default":""
+                  },
+                  {
+                      "name":"count",
+                      "type":"string",
+                      "description":"field name that contains numerical value to display in y axis",
+                      "default":""
+                  }
+            ],
+            "examples": [
+                "!search <conditions> | !counts by <field> over count | !render donut by <field> over count",
+                "!search * | !order by ... | !render bar by day over sum"
+                ]
+        }]
     
     def parse_operation(self, operation: str):
         """Analyse an expression of graph rendering 'render graph <type>'."""

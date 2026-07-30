@@ -376,7 +376,112 @@ class UserInterface(ServiceBase):
         except:
             self.logger.log("error", f"Failed to query data: {traceback.format_exc()}")
             return None
-    
+
+        
+    def handle_get_suggestions(self, data, operations):
+        """Handle SIEM suggestions request with command & parameter parsing (!command syntax)."""
+        try:
+            print("Received SIEM suggestions request:", str(data))
+            user_input = data.get("input", "") if isinstance(data, dict) else str(data)
+            
+            # 1. Extract the section after the last pipe '|'
+            last_section = user_input.split("|")[-1].lstrip()
+            print("HANDLE_GET_SUGGESTIONS operations:", str(operations))
+            
+            # Helper to extract and normalize examples into a list of strings
+            def _extract_examples(item):
+                ex = item.get("examples") or item.get("example") or []
+                if isinstance(ex, str):
+                    return [ex]
+                return ex if isinstance(ex, list) else []
+
+            # 2. Standardize dictionary of suggestions
+            operations_dict = {}
+            for op in operations:
+                op_data = op.get_suggestions() if hasattr(op, 'get_suggestions') else op
+                
+                # Case A: Structured dictionary
+                if isinstance(op_data, dict) and op_data.get("name"):
+                    op_data["examples"] = _extract_examples(op_data)
+                    operations_dict[op_data["name"]] = op_data
+                    
+                # Case B: op_data is a list
+                elif isinstance(op_data, list):
+                    for item in op_data:
+                        if isinstance(item, str):
+                            cmd_name = item.split()[0]
+                            operations_dict[cmd_name] = {
+                                "name": cmd_name,
+                                "description": getattr(op, "description", ""),
+                                "params": getattr(op, "params", []),
+                                "examples": [item]
+                            }
+                        elif isinstance(item, dict) and item.get("name"):
+                            item["examples"] = _extract_examples(item)
+                            operations_dict[item["name"]] = item
+
+            # Case 0: Empty input or trailing "!" -> Return all available operations
+            if not last_section or last_section == "!":
+                return [
+                    {
+                        "name": op_name,
+                        "description": op_info.get("description", ""),
+                        "examples": op_info.get("examples", [])
+                    }
+                    for op_name, op_info in operations_dict.items()
+                ]
+
+            # Split the current command line section into tokens
+            parts = last_section.split()
+            command_name = parts[0].strip()
+
+            # Step 1: Partial command input (e.g., "!sea" or "!project_r")
+            # Check if the user is still actively typing the command name (no trailing space)
+            is_typing_command = len(parts) == 1 and not last_section.endswith(" ")
+            if is_typing_command and command_name not in operations_dict:
+                return [
+                    {
+                        "name": op_name,
+                        "description": op_info.get("description", ""),
+                        "examples": op_info.get("examples", [])
+                    }
+                    for op_name, op_info in operations_dict.items()
+                    if op_name.startswith(command_name)
+                ]
+
+            # Step 2: Recognized operation -> Provide details, parameters, and examples
+            if command_name in operations_dict:
+                operation = operations_dict[command_name]
+                param_defs = operation.get("params", [])
+                examples = operation.get("examples", [])
+
+                suggestions = []
+                for param in param_defs:
+                    pname = param.get("name")
+                    if pname:
+                        suggestions.append({
+                            "name": pname,
+                            "type": param.get("type", ""),
+                            "description": param.get("description", ""),
+                            "default": param.get("default", None)
+                        })
+
+                return {
+                    "command": {
+                        "name": operation.get("name"),
+                        "description": operation.get("description", ""),
+                        "examples": examples
+                    },
+                    "parameters": suggestions,
+                    "examples": examples
+                }
+
+            return []
+
+        except Exception:
+            self.logger.log("error", f"Error during get suggestions: {traceback.format_exc()}")
+            return []
+
 #####################
 # DECORATOR PART
 #####################
@@ -1462,20 +1567,20 @@ class UserInterface(ServiceBase):
                 description: Unauthorized access — user not authenticated.
             """
             try:
-                query = request.args.get('q', '').lower()
-                if query:
-                    # TODO change this part
-                    # ims = self.get_indexsearchmotors()
-                    # wr = WebRequester("webhook", ims[0]["auth_token"], ims[0]["host"], ims[0]["port"])
-                    # wr = WebRequester("webhook", "my_secure_token", "192.168.178.38", "5400")
-                    suggestions_db = json.loads(self.indexsearchmotorsReq.get_suggestions())
-                    # TODO propose suggestions even in the middle of the request. Here only the start proposes something
-                    matched_suggestions = [s for s in suggestions_db if query in s.lower()]
-                    return jsonify({'suggestions': matched_suggestions})
+                # query = request.args.get('q', '').lower()
+                # if query:
+                #     suggestions_db = json.loads(self.indexsearchmotorsReq.get_suggestions())
+                #     # TODO propose suggestions even in the middle of the request. Here only the start proposes something
+                #     matched_suggestions = [s for s in suggestions_db if query in s.lower()]
+                #     return jsonify({'suggestions': matched_suggestions})
+                query = request.args.get('q', '')
+                operations = json.loads(self.indexsearchmotorsReq.get_suggestions())
+                print("OPERATIONS",str(operations))
+                suggestions_db = self.handle_get_suggestions({'input': query}, operations)
+                return jsonify({'suggestions': suggestions_db})
             except:
                 return jsonify({'suggestions': []})
-            
-
+                
         # TODO factorise this function with get_suggestions    
         @self.app.route('/command_suggestions')
         @login_required
@@ -2305,8 +2410,10 @@ class UserInterface(ServiceBase):
             <body>
                 <nav>
                     <img src="/static/media/dbart.png" style="width:32px;" alt="DevBytesArt®"/>
+                    <a href="/search">Home</a> |
                     <a href="/docs/index">Welcome</a> |
                     <a href="/docs/installation">Installation</a> |
+                    <a href="/docs/upgrade">Upgrade</a> |
                     <a href="/docs/tutorial">Tutorial</a> |
                     <a href="/apidocs/">API</a>
                 </nav>

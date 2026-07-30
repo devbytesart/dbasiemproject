@@ -20,19 +20,28 @@ document: column selector
 */
 
 $(document).ready(function() {
-    // Function of balance for all fields with the button "Select All"
+    // Function to toggle balance for all fields with the "Select All / Deselect All" button
     $('#toggleSelect').on('click', function() {
         console.log("Toggling select all...");
+        // Determine the target state based on the current selectAll state
+        const targetState = selectAll;
         $('#columnSelector input[type="checkbox"]').each(function() {
-            $(this).prop('checked', selectAll);  // Check or uncheck all boxes
-            const columnName = $(this).parent().text().trim();
-            columnVisibility[columnName] = selectAll;
+            // Set the checkbox state
+            $(this).prop('checked', targetState);
+            
+            // Retrieve the text from the main parent label
+            const columnName = $(this).closest('label').text().trim();
+            
+            if (columnName) {
+                columnVisibility[columnName] = targetState;
+            }
         });
-
-        selectAll = !selectAll;  // Reverse button states
+        // Toggle state for next click
+        selectAll = !selectAll;
+        // Update button label dynamically based on next action
         $('#toggleSelect').text(selectAll ? 'Select All' : 'Select None');
+        // Apply column visibility to the DOM table
         updateTableVisibility();  
-        // Update visibility of columns in table
     });
 });
 
@@ -62,17 +71,23 @@ async function updateTableVisibility() {
     loadingSpinnerHide();
 }
 
-function createColumnSelector(fieldsProjected) {
+function createColumnSelector(fieldsProjected, keepSelected = false) {
     const columnSelector = $('#columnSelector');
     columnSelector.empty();
 
+    // Si on réinitialise (action == "first"), on peut vider l'objet pour repartir propre
+    if (!keepSelected) {
+        columnVisibility = {};
+    }
+
     fieldsProjected.forEach(key => {
-        if (fieldsProjected && fieldsProjected.length > 0) {
-            columnVisibility[key] = fieldsProjected.includes(key);
-        } else if (initialLoad) {
-            columnVisibility[key] = true;
+        if (keepSelected) {
+            // Si le champ avait déjà un état (true/false), on le conserve.
+            // S'il n'existait pas encore dans columnVisibility, on le met à true par défaut.
+            columnVisibility[key] = columnVisibility[key] ?? true;
         } else {
-            columnVisibility[key] = columnVisibility[key] ?? false;  
+            // Action "first" -> Remise à zéro : tous les champs projetés sont visibles par défaut
+            columnVisibility[key] = true;
         }
 
         const item = $('<div class="item"></div>');
@@ -83,20 +98,16 @@ function createColumnSelector(fieldsProjected) {
 
         input.prop('checked', columnVisibility[key]);
 
-
         input.on('change', function() {
             columnVisibility[key] = this.checked;
             updateTableVisibility();
         });
         
         toggleContainer.prepend(input);
-
         label.prepend(toggleContainer);
         item.append(label);
         columnSelector.append(item);
     });
-
-    initialLoad = false;
 
     $('#columnSearch').off('keyup').on('keyup', function() {
         const searchValue = $(this).val().toLowerCase();

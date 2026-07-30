@@ -33,7 +33,29 @@ class OperationTransform(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [self.keyword + " <field1> as <format1>, <field2> as <format2>, ..."]
+        # return [self.keyword + " <field1> as <format1>, <field2> as <format2>, ..."]
+        return [{
+            "name": self.keyword,
+            "description": "Apply transformation to create another fields with transformation, required search query before",
+            "params": [
+                {
+                    "name": "field", 
+                    "type": "string", 
+                    "description": "name of the field to transform", 
+                    "default": ""
+                },
+                {
+                    "name": "format",
+                    "type": "string",
+                    "description": "Format of the field transformation",
+                    "default": ""
+                }
+            ],
+            "examples": [
+                "!search <conditions> | !transform siem_timestamp as substring(:7)",
+                "!search * | !transform name as substring(1,3),device as substring(2:), tenant as substring(:3) | !project name_substring1_2,devicesustring2_,tenant_substring_3"
+                ]
+        }]
     
     def parse_operation(self, operation):
         # TODO improve the pattern, the case <field> as <format>,<field> as <format> is not handled well when no space between comma
@@ -55,7 +77,10 @@ class OperationTransform(OperationBase):
             for field in fields:
                 field_name = field[0]
                 format_name = field[1]
-                str_format_name = format_name.replace("(","").replace(")","").replace(":","").replace(" ","_")
+                # Test if last is , to split several transform fields
+                if format_name[-1] == ",":
+                    format_name = format_name[:-1]
+                str_format_name = format_name.replace("(","").replace(")","").replace(":","_").replace(" ","_").replace(",","_")
                 # Add new fields to 'list_fields'
                 new_field = f"{field_name}_{str_format_name}"
                 # Transformation des données

@@ -33,7 +33,24 @@ class OperationLimit(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [self.keyword + " <number>"]
+        # return [self.keyword + " <number>"]
+        return [{
+            "name": self.keyword,
+            "description": "Limit the number of output of events in the table of results, required search query",
+            "params": [
+                {
+                    "name": "number", 
+                    "type": "number", 
+                    "description": "max line number to display", 
+                    "default": ""
+                 }
+            ],
+            "examples": [
+                "!search <conditions> | !limit 3",
+                "!search * | !counts by ... | !limit 10"
+                "!search ... | !order by <field> desc | !limit 10"
+            ]
+        }]
     
     def parse_operation(self, operation: str):
         """Analyse an operation of type limit 'limit <number>'."""

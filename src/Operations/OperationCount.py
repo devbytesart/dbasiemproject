@@ -38,7 +38,24 @@ class OperationCount(OperationBase):
         return False
     
     def get_suggestions(self):
-        return [ self.keyword + " by <field>"]
+        # return [ self.keyword + " by <field>"]
+        return [{
+            "name": self.keyword,
+            "description": "Count events and aggregations based on events counts",
+            "params": [
+                {
+                    "name": "fields", 
+                    "type": "string", 
+                    "description": "Name of fields splitted by ',', required data and search request before using it", 
+                    "default": ""
+                 }
+            ],
+            "examples": [
+                "!search * | !counts by field", 
+                "!search name:test | !counts by status,name,id | !render ... ",
+                "!search <conditions> | !project .... | !counts by ..."
+            ]
+        }]
 
     def parse_operation(self, operation: str):
         """ Analyse statistic operation of type 'stats count by <field>'. """

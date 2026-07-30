@@ -43,15 +43,19 @@ Major.Minor.Patch
 - Add limit operation on ISM
 - Create Import and Export button
 - SlaveCoordinator restart the docker that are deleted
+- Documentation on upgrade
+- Improvement of documentation for search operations
 
 ### Changed
 
 - Modify icon for standardize buttons on all pages
+- Use tagsystem on search page
 
 ### Fixed
 
 - Display on search page and dashboard, soar tables order correctly
 - Troubleshoot soar siem functions (save log, ...) due to change order of instance in the parameters of siem_search function
+- Suggestions are displayed correctly in search view
 
 ### Security
 

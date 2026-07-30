@@ -69,13 +69,8 @@ class OperationAdvancedCondition(OperationBase):
         except:
             self.logger.log("error", f"Error during identify_operation {traceback.format_exc()}")
             return False
-    
-    def get_suggestions(self):
-        return [self.keywords["normal"] +  " <value>",self.keywords["normal"] + " <field>:<value>"
-                ,self.keywords["raw"] + "<value>", self.keywords["raw"] + " <field>:<value>"
-                ,self.keywords["in_raw"] + "<regex>"
-                ]
-    
+
+
     def parse_operation(self, operation: str, start_time: str = None, end_time: str = None):
         """
             Analyse and execute recursive lexical analysis from boolean expression
@@ -390,7 +385,63 @@ class OperationAdvancedCondition(OperationBase):
         if self.raw:
             return [{"resource":"raw", "type": "operation", "read": True, "write": False}]
         return []
-    
+
+    def get_suggestions(self):
+        return [
+            {
+                "name": self.keywords["normal"],
+                "description": "search parsed and indexed logs with conditions",
+                "params": [
+                    {
+                        "name": "conditions", 
+                        "type": "string", 
+                        "description": "Conditions", 
+                        "default": ""
+                    }
+                ],
+                "examples": [
+                        f"{self.keywords['normal']} name:session opened",
+                        f"{self.keywords['normal']} session opened",
+                        f"{self.keywords['normal']} duser:$administrator$"
+                    ]
+            },
+            {
+                "name": self.keywords["raw"],
+                "description": "search and display RAW logs with conditions based on parsed and indexed logs",
+                "params": [
+                    {
+                        "name": "conditions", 
+                        "type": "string", 
+                        "description": "Conditions", 
+                        "default": ""
+                    }
+                ],
+                "examples": [
+                        f"{self.keywords['raw']} name:session opened",
+                        f"{self.keywords['raw']} session opened",
+                        f"{self.keywords['raw']} duser:$administrator$"
+                    ]
+            },
+            {
+                "name": self.keywords["in_raw"],
+                "description": "search and display RAW logs with regex based on unindexed logs",
+                "params": [
+                    {
+                        "name": "conditions", 
+                        "type": "string", 
+                        "description": "Conditions", 
+                        "default": ""
+                    }
+                ],
+                "examples": [
+                        f"{self.keywords['in_raw']} session opened",
+                        fr"{self.keywords['in_raw']} s|Sessions\so|Opened|",
+                        fr"{self.keywords['in_raw']} [\w\d]+"
+                    ]
+            }
+        ]
+
+
     def get_help(self):
         key_normal = self.keywords["normal"]
         key_raw = self.keywords["raw"]
@@ -425,13 +476,12 @@ class OperationAdvancedCondition(OperationBase):
                 <p>Operators available for text fields include:</p>
                 <pre><code class="hljs">
                     field:value
-                    value
-                    *value
-                    value*
-                    *value*
-                    $value$
-                    /value/
-                </code></pre>
+                <pre><code class="hljs">value => Search simple keywords in the index</code></pre>
+                <pre><code class="hljs">*value => Search words that ends with keyword</code></pre>
+                <pre><code class="hljs">value* => Search words that start with keyword</code></pre>
+                <pre><code class="hljs">*value* => Search words that contains keyword</code></pre>
+                <pre><code class="hljs">$value$ => Search words with case insensitive</code></pre>
+                <pre><code class="hljs">/value/ => Search regex value</code></pre>
                 <h3>Examples:</h3>
                 <pre><code class="hljs">{key_normal} name:session opened</code></pre>
                 <pre><code class="hljs">{key_normal} session opened</code></pre>
