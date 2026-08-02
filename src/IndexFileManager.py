@@ -469,7 +469,7 @@ class IndexFileManager:
                 if tenant in data["details"][fil]["tenants"]:
                     # files.append(fil)
                     # TODO test if this works
-                    if (technology is not None and technology in data["details"][fil]["technologies"]) or technology is None:
+                    if (technology is not None and technology != "" and technology in data["details"][fil]["technologies"]) or technology is None or technology == "":
                         # files.append(fil)
                         # TODO change start_time and end_time to datetime per day. And keep searching in default timestamps the precise time
                         start_time_hour = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S").strftime(self.date_format)

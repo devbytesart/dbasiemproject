@@ -202,7 +202,7 @@ def siem_get_available_technologies(self: Any, instance: str=None, token: str=No
         raise Exception("Indexsearchmotor instance not found")
 
 
-def siem_generate_report(self:Any, instance:str, name:str, template_name: str, index:list, tenant:list, technology:list, format_report:str="pdf", portrait:bool=True, save: bool=True, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar_report", raw: bool=False):
+def siem_generate_report(self:Any, instance:str, name:str, template_name: str, index:list, tenant:list, technology:list="template_report", format_report:str="pdf", portrait:bool=True, save: bool=True, start_time: str="2000-01-01 00:00:00", end_time: str="2500-01-01 00:00:00", current_id: str="soar_report", raw: bool=False):
     # TODO change all the system of template storage index, tenant, ... fix them
     # TODO add token to replace instance
     """ 
@@ -213,14 +213,14 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
     - template_name: str => name of the template to get the format of the report
     - index: list => name of the index where to find the template of the report
     - tenant: list => name of the tenant where to find the template of the report
-    - technology: list => (template_report) name of the technology where to find the template of the report
-    - format_report: str => format of report, pdf, csv ... 
-    - portrait: bool => portrait or landscape format
-    - save: bool => save or not the report in the index soar
-    - start_time: str => date of the start for the data research
-    - end_time: str => date of the end for the data research
-    - current_id: str => unique id to store the report in memory
-    - raw: bool => define if soar must return url to download or raw data to in other commands for example
+    - technology: list => (template_report by default) name of the technology where to find the template of the report
+    - format_report: str => (pdf by default)format of report, pdf, csv ... 
+    - portrait: bool => (portrait by default) portrait or landscape format
+    - save: bool => (true by default) save or not the report in the index soar
+    - start_time: str => (2000-01-01 00:00:00 by default) date of the start for the data research
+    - end_time: str => (2500-01-01 00:00:00) date of the end for the data research
+    - current_id: str => (soar_report by default) unique id to store the report in memory
+    - raw: bool => (false by default) define if soar must return url to download or raw data to in other commands for example
     """
     try:
         # Search widget data

@@ -132,12 +132,13 @@ class ReportManager:
                 title_style = styles["Title"]
 
                 for w in widgets:
-                    name = w.get("name", None)
+                    print("widget details:",str(w))
+                    name = w.get("config",{}).get("name", None)
                     if name:
                         elements.append(Paragraph(name, title_style))
                         elements.append(Spacer(1, 10))
                     d_w = data.get(w.get("id"), {})
-                    print(f"Widget '{w.get('id')}' with type '{d_w}'")
+                    print(f"Widget '{w.get('id')}' with '{d_w}'")
                     res_type = d_w.get("type","text")
                     f = d_w.get("fields", [])
                     d = d_w.get("data", [])

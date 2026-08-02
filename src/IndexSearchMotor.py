@@ -298,6 +298,7 @@ class IndexSearchMotor(ServiceBase):
             # query = request["query"]
             start_action = time.time()
             res = self.interpretRequest(query, index, tenant, technologies, start_time, end_time, token_data, current_id=current_id, all_pages=all_pages)
+            print("results of search data:",str(res))
             self.logger.log("debug", f"Time to interpret request data: {time.time() - start_action}")
             return res
         except:
@@ -388,6 +389,9 @@ class IndexSearchMotor(ServiceBase):
                 print("ALL ITEMS: " + str(all_items))
                 items_per_page = len(self.last_result[current_id]["data"])
                 print("ITEMS PER PAGE: " + str(items_per_page))
+                # To avoid errors later in the function
+                if items_per_page == 0:
+                    items_per_page = 1
             elif "items_per_page" in data:
                 # print("ITEMS PER PAGE from parameter")
                 items_per_page = int(data["items_per_page"])
@@ -494,7 +498,7 @@ class IndexSearchMotor(ServiceBase):
             return response
         except:
             self.logger.log("error", f"Error during get_page {traceback.format_exc()}")
-            return []
+            return {}
             # TODO handle error
 
 

@@ -124,6 +124,30 @@ Find below the element that composes the infrastructure of the SIEM/SOAR.
 | dedicatedindexsearchmotor | [View Details](./dedicatedindexsearchmotor) |
 | cachesystem | [View Details](./cachesystem) |
 
+
+## Index, Tenant and Technology and dates
+
+The concept of index, tenant and technology is probably the most important concept to understand for the user to use correctly the SIEM system.
+
+The index is a logical or physical segregation. Indeed, Index are stored by a logindexer dedicated to the index and store it in a folder that can be in a specific and separate disk than the others. It can be logically segregated as several logindexer can store the data in the same disk space but not in the same folder. Indices are and must be always stored on differents folders and/or disks. In order to search in a index, it must have a dedicated index search motor that will search on only one index.
+
+However, as, it can have several logindexers that store data of the same index in several folder, to search in all the index, a dedicated index search must be available for the index search motor. 
+
+**A research must get data from all folder that contain the index data and regroup it (see Log collection, parsing and indexing chain and section search concept to have more details)**
+
+Tenant is a logical segregation inside an index. A tenant is dedicated to an index, that is why it is possible to have same tenants name in differents indices, but only one in the same index. 
+
+ex: *Index: datacenter1, tenant:customer1 and index: datacenter2, tenant: customer1" are not the same.*
+
+Indices and tenants are used to segregate data and to improve efficiency with limiting the scope of a research.
+
+The index is composed of a tenant, dates and technology in this order. 
+When the search is done, the search query is provided to all dedicated index search by the index search motor (if index does not correspond the configuration of the dedicated index search motor, it is ignored), the DISM will look in the index folder the index file. The index files provide a json file with tenant key. Inside the tenant key, there is date keys, then technology keys and finally fields keys. 
+
+That is why to improve the research, it is required to know the index and the tenant, and advised to know the dates and the technologies. 
+
+**Conclusion: You always need to know where your data are (which index and which tenant)**
+
 ## Log collection, parsing and indexing chain
 
 The primary function of a SIEM is to collect logs, normalize them, and index them so they can be efficiently searched and analyzed later in the process.
