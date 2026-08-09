@@ -270,12 +270,12 @@ def siem_generate_report(self:Any, instance:str, name:str, template_name: str, i
                 # Return link to report 
                 if not raw and save:
                     for attempt in range(3):
-                        query = f"!search type:report and name:{name}"
-                        res = self.commands["siem_search"]["function"](query, index, tenant, technology, instance)
+                        query = f"!search type:report and name:{name} | !order by timestamp desc | !limit 1"
+                        res = self.commands["siem_search"]["function"](query, index, tenant, ["report"], instance)
+                        print("siem_generate_report report found: ", str(res))
                         if res != "[]":
                             res = json.loads(res)
                             if len(res["data"]) > 0:
-                                # TODO put variable to set the order -1 for last or 0 for last depending on the siem_search order default...
                                 report = res.get("data")[-1].get("content")
                         else:
                             time.sleep(attempt * 2)

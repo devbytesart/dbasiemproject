@@ -57,6 +57,12 @@ Dashboard page can display and update values in realtime to follows metrics.
 
 [Dashboard page](./dashboard_doc)
 
+## Report
+
+Report can be generated on the SOAR. Find the documentation here to generate reports
+
+[Report page](./report_doc)
+
 ## SOAR
 
 SOAR Page will explain how to use the SOAR :
