@@ -36,7 +36,7 @@ Major.Minor.Patch
 ---
 
 
-## [01.002.002] - 2026-x-x
+## [01.002.002] - 2026-08-09
 
 ### Added
 
@@ -56,6 +56,7 @@ Major.Minor.Patch
 - Display on search page and dashboard, soar tables order correctly
 - Troubleshoot soar siem functions (save log, ...) due to change order of instance in the parameters of siem_search function
 - Suggestions are displayed correctly in search view
+- SOAR reporting display url
 
 ### Security
 

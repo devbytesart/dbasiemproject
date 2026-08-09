@@ -26,9 +26,9 @@ import dateparser
 import UtilsIndexing as utindex
 
 
-def detection_create_alert(self: Any, name: str, type: str, severity: str, status: str, triggered: str, index:str, tenant:str, technology: str, group: bool = True, date: str=None):
+def _detection_create_alert(self: Any, name: str, type: str, severity: str, status: str, triggered: str, index:str, tenant:str, technology: str, group: bool = True, date: str=None):
     """ 
-    With results of a query create an alert on the siem
+    With results of a query create an alert on the siem.
     params:
     - name: str => name of the alert
     - type: str => custom type of alert such as soar_alert, siem_alert, real_time_alert ...
@@ -81,9 +81,10 @@ def detection_create_alert(self: Any, name: str, type: str, severity: str, statu
         raise Exception("Failed to create alert")
 
 
-def detection_create_rule(self:Any, name: str, type: str, severity: str, version: int, status: str, description: str, info:dict, query:str, index:list, index_alert:str, tenant:list, tenant_alert:str, technology: list, technology_alert:str, instance:str, loopback:str, group:bool=True, id:str=None):
+def detection_create_rule(self:Any, name: str, description: str, query:str, index:list, tenant:list, technology: list, instance:str, loopback: str, index_alert:str = "soar", tenant_alert:str = "alerts", technology_alert:str = "soar_alerts", info:dict = {}, severity: str = "high", status: str = "creation",  version: int = 1,group:bool=True, id:str=None):
     """
-    Create a detection rule in a playbook or a context that it is possible to launch with a schedule task
+    Create a detection rule in a playbook or a context that it is possible to launch with a schedule task.
+
     params:
     - name: str => Name of the detection rule
     - type: str => Type of detection rule 
@@ -93,7 +94,7 @@ def detection_create_rule(self:Any, name: str, type: str, severity: str, version
     - info: dict => json of others information added by the user
     - query: str => Query of the research
     - index: list => Index list for the query
-    - index_alet: str => Index where to store the alert
+    - index_alert: str => Index where to store the alert
     - tenant: list => Tenant list for the query
     - tenant_alert: str => Tenant list to store the alert
     - technology: list => Technology list for the query
@@ -108,11 +109,10 @@ def detection_create_rule(self:Any, name: str, type: str, severity: str, version
         _start = dateparser.parse(loopback)
         _start = _start.strftime("%Y-%m-%d %H:%M:%S.%f")
         # SIEM Search
-        results = self.commands["siem_search"]["function"](instance, query, index, tenant, technology, start_time=_start)
+        results = self.commands["siem_search"]["function"](query, index, tenant, technology, instance=instance, start_time=_start)
+        print("results detection create rule: " + str(results))
         # Create detection alert
-        return self.commands["detection_create_alert"]["function"](name, type, severity, status, results, index_alert, tenant_alert, technology_alert, group)
+        return self.commands["_detection_create_alert"]["function"](name, type, severity, status, results, index_alert, tenant_alert, technology_alert, group)
     except:
         self.logger.log("error",f"Failed to create the detection rule {traceback.format_exc()}")
         raise Exception("Failed to create rule")
-    
-
