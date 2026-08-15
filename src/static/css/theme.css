@@ -1,5 +1,8 @@
 /* Root variable reused in others css scripts */
 :root {
+    --left-width: 250px;
+    --right-width: 250px;
+
     --command-bg: #b6e1d9;   
     --command-border: #1abc9c;
 
@@ -13,6 +16,25 @@
     --background-header-color: #1abc9c;
     --backgroung-collapsible: #95a5a6;
     --collapsible-content-bg: #f1f1f1;
+
+
+    /* Deline colors var for cmd suggestions */
+    --item-bg: color-mix(in srgb, var(--command-bg) 15%, #ffffff);
+    --item-border: color-mix(in srgb, var(--command-border) 35%, #cccccc);
+
+    --item-hover-bg: color-mix(in srgb, var(--command-bg) 40%, #ffffff);
+    --item-hover-border: var(--command-border);
+
+    --item-selected-bg: color-mix(in srgb, var(--command-bg) 70%, #ffffff);
+    --item-selected-border: color-mix(in srgb, var(--command-border) 90%, #000000 10%);
+
+    --item-mandatory-bg: color-mix(in srgb, var(--command-bg) 50%, #ffffff);
+    --item-mandatory-border: color-mix(in srgb, var(--command-border) 75%, #ffffff);
+    --item-mandatory-hover-bg: color-mix(in srgb, var(--command-bg) 65%, #ffffff);
+    --item-mandatory-hover-border: color-mix(in srgb, var(--command-border) 100%, #000000 10%);
+
+    --mandatory-asterisk-color: color-mix(in srgb, var(--command-border) 85%, #000000 15%);
+
 }
 
 
@@ -23,15 +45,30 @@ body {
     height: 100vh;
     display: grid;
     place-items: center;
+    padding: 20px;
 }
 
-.layout {
+/* .layout {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr; 
     grid-template-rows: 100%; 
     width: 100%;
     height: 100%;
+} */
+
+.layout {
+    display: grid;
+    grid-template-columns: var(--left-width) 1fr var(--right-width); 
+    width: 100%;
+    height: 100vh;
+    transition: grid-template-columns 0.3s ease; 
 }
+
+aside#menu, .config-zone {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 
 /* Styles for menu zone */
 #menu {
@@ -62,9 +99,9 @@ body {
 }
 
 /* Render grid */
-.layout {
+/* .layout {
     grid-template-columns: minmax(150px, 300px) 1fr minmax(150px, 300px); 
-}
+} */
 
 /* Render content central flex si zone is missing */
 body.no-config .layout {

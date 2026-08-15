@@ -154,7 +154,7 @@ class DockerManager:
             return False
 
     def get_container_status(self, container_id):
-        """Retourne un dictionnaire contenant l'état détaillé du conteneur.
+        """ 
         Return dictionary of detailed status of the container
         ex:
             dict: Status, Health (if configured), ExitCode, Error, StartedAt...

@@ -139,7 +139,7 @@ fetchSuggestions(showAll = false) {
             const cmd = data.command;
             if("examples" in cmd) 
                 examples = cmd.examples;
-            fragment.appendChild(this.createCommandRow(cmd.name, cmd.description, examples));
+            //fragment.appendChild(this.createCommandRow(cmd.name, cmd.description, examples));
             hasContent = true;
 
             data.parameters.forEach(param => {
@@ -194,9 +194,17 @@ fetchSuggestions(showAll = false) {
         const row = document.createElement('div');
         row.classList.add('suggestion-item', 'param-row');
 
+        // Determine if parameter is mandatory (check required or *)
+        const isRequired = param.required || (param.description && param.description.trim().startsWith('*'));
+
         // Column name 
         const nameCol = document.createElement('div');
         nameCol.classList.add('param-name', 'bold');
+        
+        // Display in red if required
+        if (isRequired) {
+            row.classList.add('mandatory');
+        }
         nameCol.textContent = param.name;
 
         // Column type + default value
@@ -207,7 +215,6 @@ fetchSuggestions(showAll = false) {
         // Column description
         const descCol = document.createElement('div');
         descCol.classList.add('param-description');
-        descCol.innerHTML = (param.description || '').replace(/\n/g, '<br/>');
 
         // Standardize example
         const rawExamples = param.examples || param.example;
@@ -215,7 +222,10 @@ fetchSuggestions(showAll = false) {
             ? rawExamples 
             : (rawExamples ? [rawExamples] : []);
 
-        // If examples, we add description
+        // HTML description
+        let descHtml = (param.description || '').replace(/\n/g, '<br/>');
+
+        // Add examples if any
         if (examples.length > 0) {
             const examplesList = examples
                 .map(ex => `<code>${this.escapeHtml(ex)}</code>`)
@@ -223,6 +233,8 @@ fetchSuggestions(showAll = false) {
 
             descHtml += `<div class="param-examples"><strong>Ex:</strong> ${examplesList}</div>`;
         }
+
+        descCol.innerHTML = descHtml;
 
         // Add columns
         row.appendChild(nameCol);
@@ -237,6 +249,55 @@ fetchSuggestions(showAll = false) {
 
         return row;
     }
+
+
+    // createParamRow(param) {
+    //     const row = document.createElement('div');
+    //     row.classList.add('suggestion-item', 'param-row');
+
+    //     // Column name 
+    //     const nameCol = document.createElement('div');
+    //     nameCol.classList.add('param-name', 'bold');
+    //     nameCol.textContent = param.name;
+
+    //     // Column type + default value
+    //     const typeCol = document.createElement('div');
+    //     typeCol.classList.add('param-type');
+    //     typeCol.innerHTML = `${param.type}<br/><span>${param.default ?? ''}</span>`;
+
+    //     // Column description
+    //     const descCol = document.createElement('div');
+    //     descCol.classList.add('param-description');
+    //     descCol.innerHTML = (param.description || '').replace(/\n/g, '<br/>');
+
+    //     // Standardize example
+    //     const rawExamples = param.examples || param.example;
+    //     const examples = Array.isArray(rawExamples) 
+    //         ? rawExamples 
+    //         : (rawExamples ? [rawExamples] : []);
+
+    //     // If examples, we add description
+    //     if (examples.length > 0) {
+    //         const examplesList = examples
+    //             .map(ex => `<code>${this.escapeHtml(ex)}</code>`)
+    //             .join(', ');
+
+    //         descHtml += `<div class="param-examples"><strong>Ex:</strong> ${examplesList}</div>`;
+    //     }
+
+    //     // Add columns
+    //     row.appendChild(nameCol);
+    //     row.appendChild(typeCol);
+    //     row.appendChild(descCol);
+
+    //     // Add event click
+    //     row.addEventListener('click', () => {
+    //         this.insertParameterAtEnd(param.name); 
+    //         this.clearSuggestions();                
+    //     });
+
+    //     return row;
+    // }
 
     escapeHtml(str) {
     return String(str)

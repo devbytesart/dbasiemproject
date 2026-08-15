@@ -23,6 +23,7 @@ let loadingStartTime;
 let loadingInterval;
 
 $(document).ready(function() {
+    
         // Function to load and display checkboxes for indexes in a searchable dropdown
         $.ajax({
             url: '/search_available_index',
@@ -63,100 +64,323 @@ $(document).ready(function() {
         });
 
 
-        const downloadButton = document.getElementById('downloadResults');
-        if(downloadButton) {
-            document.getElementById('downloadResults').addEventListener('click', async function () {
-                const tableContainer = document.getElementById('tableContainer');
+        // const downloadButton = document.getElementById('downloadResults');
+        // if(downloadButton) {
+        //     document.getElementById('downloadResults').addEventListener('click', async function () {
+        //         const tableContainer = document.getElementById('tableContainer');
             
-                if (!tableContainer) {
-                alert('No content to export.');
-                return;
-                }
+        //         if (!tableContainer) {
+        //         alert('No content to export.');
+        //         return;
+        //         }
             
-                // Creation of selection box to choose file format
-                const formatSelection = document.createElement('select');
-                const formats = ['pdf', 'png', 'jpeg'];
+        //         // Creation of selection box to choose file format
+        //         const formatSelection = document.createElement('select');
+        //         const formats = ['pdf', 'png', 'jpeg', 'csv'];
             
-                formats.forEach(format => {
-                const option = document.createElement('option');
-                option.value = format;
-                option.textContent = format.toUpperCase();
-                formatSelection.appendChild(option);
-                });
+        //         formats.forEach(format => {
+        //             const option = document.createElement('option');
+        //             option.value = format;
+        //             option.textContent = format.toUpperCase();
+        //             formatSelection.appendChild(option);
+        //         });
             
-                const dialog = document.createElement('div');
-                dialog.style.position = 'fixed';
-                dialog.style.left = '50%';
-                dialog.style.top = '50%';
-                dialog.style.transform = 'translate(-50%, -50%)';
-                dialog.style.backgroundColor = 'white';
-                dialog.style.padding = '20px';
-                dialog.style.border = '1px solid #ccc';
-                dialog.style.zIndex = '1000';
+        //         const dialog = document.createElement('div');
+        //         dialog.style.position = 'fixed';
+        //         dialog.style.left = '50%';
+        //         dialog.style.top = '50%';
+        //         dialog.style.transform = 'translate(-50%, -50%)';
+        //         dialog.style.backgroundColor = 'white';
+        //         dialog.style.padding = '20px';
+        //         dialog.style.border = '1px solid #ccc';
+        //         dialog.style.zIndex = '1000';
             
-                const confirmButton = document.createElement('button');
-                confirmButton.textContent = 'Export';
+        //         const confirmButton = document.createElement('button');
+        //         confirmButton.textContent = 'Export';
             
-                const cancelButton = document.createElement('button');
-                cancelButton.textContent = 'Cancel';
-                cancelButton.style.marginLeft = '10px';
+        //         const cancelButton = document.createElement('button');
+        //         cancelButton.textContent = 'Cancel';
+        //         cancelButton.style.marginLeft = '10px';
             
-                dialog.appendChild(document.createTextNode('Choose export format: '));
-                dialog.appendChild(formatSelection);
-                dialog.appendChild(confirmButton);
-                dialog.appendChild(cancelButton);
-                document.body.appendChild(dialog);
+        //         dialog.appendChild(document.createTextNode('Choose export format: '));
+        //         dialog.appendChild(formatSelection);
+        //         dialog.appendChild(confirmButton);
+        //         dialog.appendChild(cancelButton);
+        //         document.body.appendChild(dialog);
             
-                return new Promise((resolve) => {
-                    confirmButton.addEventListener('click', async function () {
-                        const selectedFormat = formatSelection.value;
-                        dialog.remove();
-                        try {
-                            // Get content of div in HTML
-                        const content = tableContainer.outerHTML;
+        //         return new Promise((resolve) => {
+        //             confirmButton.addEventListener('click', async function () {
+        //                 const selectedFormat = formatSelection.value;
+        //                 dialog.remove();
+        //                 try {
+        //                     // Get content of div in HTML
+        //                 const content = tableContainer.outerHTML;
                 
-                        if (selectedFormat === 'pdf') {
-                            const pdf = new jsPDF({
-                            orientation: 'landscape',
-                            unit: 'px',
-                            format: 'letter'
-                            });
+        //                 if (selectedFormat === 'pdf') {
+        //                     const pdf = new jsPDF({
+        //                     orientation: 'landscape',
+        //                     unit: 'px',
+        //                     format: 'letter'
+        //                     });
 
-                            // Add content HTML in pdf
-                            pdf.html(content, {
-                            callback: function (pdf) {
-                                pdf.save('exported-content.pdf');
-                            },
-                            x: 10,
-                            y: 10
-                            });
+        //                     // Add content HTML in pdf
+        //                     pdf.html(content, {
+        //                     callback: function (pdf) {
+        //                         pdf.save('exported-content.pdf');
+        //                     },
+        //                     x: 10,
+        //                     y: 10
+        //                     });
                 
-                        } else {
-                            // Convert content HTML in one image (PNG or JPEG)
-                            const imageData = await html2canvas(tableContainer).then(canvas => {
-                            return canvas.toDataURL(`image/${selectedFormat === 'jpeg' ? 'jpeg' : 'png'}`);
-                            });
+        //                 } else {
+        //                     // Convert content HTML in one image (PNG or JPEG)
+        //                     const imageData = await html2canvas(tableContainer).then(canvas => {
+        //                     return canvas.toDataURL(`image/${selectedFormat === 'jpeg' ? 'jpeg' : 'png'}`);
+        //                     });
                 
-                            const link = document.createElement('a');
-                            link.href = imageData;
-                            link.download = `exported-content.${selectedFormat}`;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }
-                        } catch (error) {
-                        console.error('Error during exportation:', error);
-                        alert('Error during export, please try again or use another format.');
-                        }
-                    });
+        //                     const link = document.createElement('a');
+        //                     link.href = imageData;
+        //                     link.download = `exported-content.${selectedFormat}`;
+        //                     document.body.appendChild(link);
+        //                     link.click();
+        //                     document.body.removeChild(link);
+        //                 }
+        //                 } catch (error) {
+        //                 console.error('Error during exportation:', error);
+        //                 alert('Error during export, please try again or use another format.');
+        //                 }
+        //             });
                 
-                    cancelButton.addEventListener('click', function () {
-                        dialog.remove();
-                    });
+        //             cancelButton.addEventListener('click', function () {
+        //                 dialog.remove();
+        //             });
                 
-                });
-            });
+        //         });
+        //     });
+        // }
+
+
+
+        
+const downloadButton = document.getElementById('downloadResults');
+if (downloadButton) {
+    downloadButton.addEventListener('click', async function () {
+
+        const $tableContainer = $('#tableContainer');
+        const chartCanvas = document.getElementById('myChart');
+
+        const tableVisible = $tableContainer.is(':visible') && $tableContainer.find('table tbody tr').length > 0;
+        const chartVisible = !tableVisible
+            && chartCanvas
+            && typeof myChart !== 'undefined'
+            && myChart
+            && chartCanvas.width > 0
+            && chartCanvas.height > 0;
+
+        let exportTarget = null;
+        let canvasElement = null;
+        let hasTable = false;
+
+        if (tableVisible) {
+            exportTarget = $tableContainer[0];
+            captureTarget = document.getElementById('dataTable_wrapper');
+            if (!captureTarget) {
+                console.error('No DataTable_wrapper element not found in the DOM.');
+            }
+            else {
+                exportTarget = captureTarget;
+            }
+            hasTable = true;
+        } else if (chartVisible) {
+            exportTarget = chartCanvas;
+            canvasElement = chartCanvas;
+        } else {
+            alert('No content to export.');
+            return;
         }
+
+        // Create Modal Selection Dialog
+        const dialog = document.createElement('div');
+        Object.assign(dialog.style, {
+            position: 'fixed',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #ccc',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+            zIndex: '1000',
+            borderRadius: '8px'
+        });
+
+        const formatSelection = document.createElement('select');
+
+        const formats = [
+            { label: 'PDF', value: 'pdf' },
+            { label: 'PNG', value: 'png' },
+            { label: 'JPEG', value: 'jpeg' }
+        ];
+
+        // CSV only if datatable
+        if (hasTable) {
+            formats.push({ label: 'CSV (Visible)', value: 'csv' });
+            formats.push({ label: 'CSV (Full Report)', value: 'full_csv' });
+        }
+
+        formats.forEach(f => {
+            const option = document.createElement('option');
+            option.value = f.value;
+            option.textContent = f.label;
+            formatSelection.appendChild(option);
+        });
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Export';
+        confirmButton.style.marginLeft = '10px';
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.style.marginLeft = '10px';
+
+        dialog.appendChild(document.createTextNode('Choose export format: '));
+        dialog.appendChild(formatSelection);
+        dialog.appendChild(confirmButton);
+        dialog.appendChild(cancelButton);
+        document.body.appendChild(dialog);
+
+        // Event Handling
+        confirmButton.addEventListener('click', async function () {
+            const selectedFormat = formatSelection.value;
+            dialog.remove();
+
+            try {
+                if (selectedFormat === 'full_csv') {
+                    alert('Full report export functionality will be implemented here.');
+                    return;
+                }
+
+                // ==========================================
+                // CSV EXPORT
+                // ==========================================
+                if (selectedFormat === 'csv') {
+                    const rows = exportTarget.querySelectorAll('tbody tr, thead tr');
+                    let csvLines = [];
+
+                    rows.forEach(row => {
+                        if (row.offsetParent === null && row.offsetHeight === 0) return;
+
+                        const cols = row.querySelectorAll('th, td');
+                        const rowData = Array.from(cols).map(col => {
+                            let text = col.innerText || col.textContent || '';
+                            text = text.replace(/"/g, '""');
+                            return `"${text.trim()}"`;
+                        }).join(',');
+
+                        if (rowData.trim().length > 0) {
+                            csvLines.push(rowData);
+                        }
+                    });
+
+                    const uniqueCsvLines = [...new Set(csvLines)];
+                    const csvContent = uniqueCsvLines.join('\r\n');
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    downloadFile(url, 'exported-content.csv');
+                    return;
+                }
+
+                // ==========================================
+                // IMAGE / PDF EXPORT
+                // ==========================================
+                let canvas;
+
+                if (canvasElement) {
+                    // Direct screenshot of canvas Chart.js, render empty for canvas
+                    canvas = canvasElement;
+                } else {
+                    if (!captureTarget) {
+                        throw new Error('Element to export not found (dataTable_wrapper).');
+                    }
+                    // Table : Screenshot DOM classical with html2canvas
+                    canvas = await html2canvas(exportTarget, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        allowTaint: true
+                    });
+                }
+
+                if (!canvas || !canvas.width || !canvas.height) {
+                    throw new Error('Error during export content.');
+                }
+
+                if (selectedFormat === 'pdf') {
+                    let imgData;
+                    try {
+                        imgData = canvas.toDataURL('image/png');
+                    } catch (e) {
+                        throw new Error('Error: Impossible to read the canvas');
+                    }
+
+                    const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+                    if (!jsPDFClass) {
+                        throw new Error('jsPDF library is not loaded on the page.');
+                    }
+
+                    const pdf = new jsPDFClass('landscape', 'pt', 'a4');
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+
+                    const margin = 20;
+                    const maxImgWidth = pageWidth - (margin * 2);
+                    const ratio = maxImgWidth / canvas.width;
+                    const renderWidth = maxImgWidth;
+                    const renderHeight = canvas.height * ratio;
+
+                    pdf.addImage(imgData, 'PNG', margin, margin, renderWidth, renderHeight);
+                    pdf.save('exported-content.pdf');
+                } else {
+                    const mimeType = selectedFormat === 'jpeg' ? 'image/jpeg' : 'image/png';
+                    let imageData;
+                    try {
+                        imageData = canvas.toDataURL(mimeType);
+                    } catch (e) {
+                        throw new Error('Error: Impossible to read canvas.');
+                    }
+                    downloadFile(imageData, `exported-content.${selectedFormat}`);
+                }
+
+            } catch (error) {
+                console.error('Error during exportation:', error);
+                alert('Error during export: ' + error.message);
+            }
+        });
+
+        cancelButton.addEventListener('click', function () {
+            dialog.remove();
+        });
+    });
+}
+
+
+
+
+
+
+
+
+
+        // Utility function to trigger browser file download
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
 });
 
 // Function to get selected indexes, tenants, and technologies
@@ -188,6 +412,7 @@ function renderJsonAsExpandableHtml(data) {
     if (Array.isArray(data)) {
         return `
             <details>
+                <summary style="cursor: pointer;">Details</summary>
                 <ul style="padding-left: 20px; list-style-type: none;">
                     ${data.map((item, index) => `
                         <li>
@@ -206,12 +431,13 @@ function renderJsonAsExpandableHtml(data) {
     } else {
         return `
             <details>
+                <summary style="cursor: pointer;">Details</summary>
                 <ul style="padding-left: 20px; list-style-type: none;">
                     ${Object.entries(data).map(([key, value]) => `
                         <li>
                             ${typeof value === 'object' && value !== null
                                 ? renderJsonAsExpandableHtml(value).replace(
-                                    '<details>',
+                                    '<details><summary style="cursor: pointer;">Details</summary>',
                                     `<details><summary style="cursor: pointer;">${key}</summary>`
                                 )
                                 : `<strong>${key}</strong>: ${renderJsonAsExpandableHtml(value)}`

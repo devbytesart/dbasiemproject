@@ -37,7 +37,7 @@ DOCUMENT: configuration
                 <!-- Left menu -->
                 {% include "menu.html" %}
 
-                <label for="configuration-path">Configuration Path:</label>
+                <label for="configuration-path">Configuration Path:</label><br/>
                 <select id="configuration-path">
                     <option value="uiconfiguration" {% if selected_option == 'uiconfiguration' %}selected{% endif %}>User Interface Configuration</option>
                     <option value="globalconfiguration" {% if selected_option == 'globalconfiguration' %}selected{% endif %}>Global Configuration</option>
@@ -59,8 +59,10 @@ DOCUMENT: configuration
         </main>
 
         <aside id="menu">
+            <button id="collapse-config-btn" class="toggle-btn toggle-right-collapse" title="Réduire/Agrandir">></button>
+            <button id="expand-config-btn" class="toggle-btn toggle-right-expand" title="Recourir/Restaurer"><<</button>
             <div id="group-element-selector-globalconfiguration">
-                <h4>Select Element Type</h4>
+                <h4>Select Element Type</h4><br/>
                 <select id="element-selector-globalconfiguration">
                     <option value="">-- Select Element --</option>
                     <option value="slavecoordinators">Slave coordinators</option>
@@ -78,7 +80,7 @@ DOCUMENT: configuration
             </div>
 
             <div id="group-element-selector-globalauthorisation">
-                <h4>Select Permissions</h4>
+                <h4>Select Permissions</h4><br/>
                 <select id="element-selector-globalauthorisation">
                     <option value="">-- Select Element --</option>
                     <option value="users">Users</option>
@@ -89,7 +91,7 @@ DOCUMENT: configuration
 
             <!-- Slave Coordinator Selection -->
             <div id="slave-selector">
-                <h4>Select a Slave Coordinator</h4>
+                <h4>Select a Slave Coordinator</h4><br/>
                 <select id="slave-coordinator">
                     <option value="">-- Select a Slave Coordinator --</option>
                 </select>
@@ -97,7 +99,7 @@ DOCUMENT: configuration
 
             <!-- Slave Coordinator Selection -->
             <div id="authenticator-selector">
-                <h4>Select an Authenticator</h4>
+                <h4>Select an Authenticator</h4><br/>
                 <select id="authenticator">
                     <option value="">-- Select an Authenticator --</option>
                 </select>

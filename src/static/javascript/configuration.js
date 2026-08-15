@@ -216,7 +216,7 @@ function createType(type, name, defaultValue = "", isReadonly = false, path = []
                     <button type="button" id="${uniqueId}_add">Add ${name}</button>
                     <button type="button" id="${uniqueId}_remove">Remove Last ${name}</button>
                     <div class="list-object-fields"></div>
-                </div>
+                </div><br/>
             `);
 
             const fieldContainer = $(`#${containerId} .list-object-fields`);

@@ -35,10 +35,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function displaySuggestions(suggestions) {
         suggestionsContainer.innerHTML = '';
         suggestions.forEach(suggestion => {
+            console.log("suggestion:" + suggestion);
             const suggestionItem = document.createElement('div');
             suggestionItem.classList.add('suggestion-item');
             suggestionItem.textContent = suggestion;
             suggestionsContainer.appendChild(suggestionItem);
+
+            // Add color red if parameter is required
+            if (suggestion.required) {
+                suggestionItem.innerHTML = `<span style="color: red;">${suggestion.name}*</span> - ${suggestion.description}`;
+            } else {
+                suggestionItem.textContent = `${suggestion.name} - ${suggestion.description}`;
+            }
 
             // Add event on click to complete the suggestion
             suggestionItem.addEventListener('click', () => {

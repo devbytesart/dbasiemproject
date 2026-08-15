@@ -405,8 +405,9 @@ class SOAR(ServiceBase):
                         suggestion = {
                             "name": pname,
                             "type": param.get("type", ""),
-                            "description": param.get("description", ""),
-                            "default": param.get("default", None)
+                            "description": param.get("description",""),
+                            "default": param.get("default", None),
+                            "required": param.get("required", False)
                         }
                         suggestions.append(suggestion)
 
@@ -418,7 +419,6 @@ class SOAR(ServiceBase):
                     },
                     "parameters": suggestions
                 }
-
             return []
 
         except Exception:

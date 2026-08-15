@@ -47,23 +47,23 @@ def schedule_task(self: Any, task_name: str, context_name:str, index:str, tenant
         raise Exception(f"Error while scheduling task {traceback.format_exc()}")
 
 
-def schedule_playbook(self: Any, name: str, playbook:str, instance: str, index: str, tenant:str, run_date: str=None, interval: str=None, cron: str=None):
-    """ Schedule a playbook to run it at a specific date, interval or cron
-    params:
-    name: str => Task name
-    playbook: str => Playbook name
-    instance: str => vault instance credentials name
-    index: str => index name where to find the playbook
-    tenant: str => tenant name where to find the playbook
-    run_date: str => date to run the task (format: YYYY-MM-DD HH:MM:SS)
-    interval: dict => interval
-    cron: dict => cron
-    """
-    try:
-        self.task_scheduler.schedule_playbook(name, playbook, instance, index, tenant, run_date=run_date, interval_str=interval, cron_str=cron)
-        return "Playbook scheduled"
-    except:
-        raise Exception(f"Error while scheduling playbook {traceback.format_exc()}")
+# def schedule_playbook(self: Any, name: str, playbook:str, instance: str, index: str, tenant:str, run_date: str=None, interval: str=None, cron: str=None):
+#     """ Schedule a playbook to run it at a specific date, interval or cron
+#     params:
+#     name: str => Task name
+#     playbook: str => Playbook name
+#     instance: str => vault instance credentials name
+#     index: str => index name where to find the playbook
+#     tenant: str => tenant name where to find the playbook
+#     run_date: str => date to run the task (format: YYYY-MM-DD HH:MM:SS)
+#     interval: dict => interval
+#     cron: dict => cron
+#     """
+#     try:
+#         self.task_scheduler.schedule_playbook(name, playbook, instance, index, tenant, run_date=run_date, interval_str=interval, cron_str=cron)
+#         return "Playbook scheduled"
+#     except:
+#         raise Exception(f"Error while scheduling playbook {traceback.format_exc()}")
 
 
 def schedule_task_list(self: Any):

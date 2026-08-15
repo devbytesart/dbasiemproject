@@ -117,52 +117,115 @@ class CommandLoader:
         doc = func.__doc__ or ""
         param_descriptions = {}
 
-        # Research of section "params:" in the docstring
-        match = re.search(r"params:\s*(.*)", doc, re.DOTALL | re.IGNORECASE)
-        if match:
-            lines = match.group(1).splitlines()
-            for line in lines:
-                line = line.strip()
-                if not line.startswith("-"):
-                    continue
-                # Ex: - param: type => description
-                m = re.match(r"-\s*(\w+)\s*:\s*([\w\[\], ]+)\s*=>\s*(.+)", line)
-                if m:
-                    name, typ, desc = m.groups()
-                    param_descriptions[name] = {
-                        "type": typ.strip(),
-                        "description": desc.strip()
-                    }
+        # # Research of section "params:" in the docstring
+        # match = re.search(r"params:\s*(.*)", doc, re.DOTALL | re.IGNORECASE)
+        # if match:
+        #     lines = match.group(1).splitlines()
+        #     for line in lines:
+        #         line = line.strip()
+        #         if not line.startswith("-"):
+        #             continue
+        #         # Ex: - param: type => description
+        #         m = re.match(r"-\s*(\w+)\s*:\s*([\w\[\], ]+)\s*=>\s*(.+)", line)
+        #         if m:
+        #             name, typ, desc = m.groups()
+        #             param_descriptions[name] = {
+        #                 "type": typ.strip(),
+        #                 "description": desc.strip()
+        #             }
+
+
+        if doc:
+            # Get only content under params: in text
+            params_section = re.search(r"params:\s*(.*?)(?=\n\w+:|\Z)", doc, re.DOTALL | re.IGNORECASE)
+            if params_section:
+                lines = params_section.group(1).splitlines()
+                current_name = None
+                for line in lines:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    # Pattern: - name : type => description
+                    m = re.match(r"^\s*(\w+)\s*:\s*([^=>]+)=>\s*(.+)$", line)
+                    if m:
+                        name, typ, desc = m.groups()
+                        current_name = name.strip()
+                        param_descriptions[current_name] = {
+                            "type": typ.strip(),
+                            "description": desc.strip()
+                        }
+                    # Multiline treatment
+                    elif current_name and not line.startswith("-"):
+                        param_descriptions[current_name]["description"] += " " + line
 
         for name, param in inspect.signature(func).parameters.items():
-            if name == "self":
+            # Ignore 'self' and 'cls' (méthod instance and class)
+            if name in ("self", "cls"):
                 continue
 
-            # Type priority from annotation, else from docstring, else "str"
+            # Type management
             if param.annotation != inspect.Parameter.empty:
                 if isinstance(param.annotation, str):
                     param_type = param.annotation
                 elif hasattr(param.annotation, "__name__"):
                     param_type = param.annotation.__name__
                 else:
-                    param_type = str(param.annotation)
-            elif name in param_descriptions:
+                    param_type = str(param.annotation).replace("typing.", "")
+            elif name in param_descriptions and param_descriptions[name].get("type"):
                 param_type = param_descriptions[name]["type"]
             else:
                 param_type = "str"
 
+            # Extract description
+            desc = param_descriptions.get(name, {}).get("description", "")
+
             param_info = {
                 "name": name,
                 "type": param_type,
-                "description": param_descriptions.get(name, {}).get("description", "")
+                "description": desc,
+                "required": param.default == inspect.Parameter.empty or "*" in desc
             }
 
+            # Convert default
             if param.default != inspect.Parameter.empty:
-                param_info["default"] = param.default
+                if isinstance(param.default, (int, float, bool, str, list, dict, type(None))):
+                    param_info["default"] = param.default
+                else:
+                    param_info["default"] = str(param.default)
 
             params.append(param_info)
 
         return params
+
+        # for name, param in inspect.signature(func).parameters.items():
+        #     if name == "self":
+        #         continue
+
+        #     # Type priority from annotation, else from docstring, else "str"
+        #     if param.annotation != inspect.Parameter.empty:
+        #         if isinstance(param.annotation, str):
+        #             param_type = param.annotation
+        #         elif hasattr(param.annotation, "__name__"):
+        #             param_type = param.annotation.__name__
+        #         else:
+        #             param_type = str(param.annotation)
+        #     elif name in param_descriptions:
+        #         param_type = param_descriptions[name]["type"]
+        #     else:
+        #         param_type = "str"
+
+        #     param_info = {
+        #         "name": name,
+        #         "type": param_type,
+        #         "description": param_descriptions.get(name, {}).get("description", "")
+        #     }
+
+        #     if param.default != inspect.Parameter.empty:
+        #         param_info["default"] = param.default
+
+        #     params.append(param_info)
+
+        # return params
 
 
 

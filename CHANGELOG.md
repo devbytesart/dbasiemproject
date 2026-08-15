@@ -34,6 +34,26 @@ Major.Minor.Patch
 **Patch** - Security or bug fixed on the application
 
 ---
+## [01.003.002] - YYYY-MM-DD
+
+### Added
+
+- Layout increase/decrease menu and formular
+
+### Changed
+
+- Suggestions command: change color code for mandatory parameters on the suggestions commands parameters.
+
+### Fixed
+
+- Troubleshoot rules creations
+- Langage errors
+- Troubleshoot export in search page
+
+### Security
+
+
+---
 
 
 ## [01.002.002] - 2026-08-09
@@ -95,7 +115,7 @@ Realease note version 01.001.001
 
 ## [01.000.000] - 2026-07-13
 
-This is the first official stable release (Production Ready) of the application!
+This is the first official stable release of the application!
 
 ### Added
 

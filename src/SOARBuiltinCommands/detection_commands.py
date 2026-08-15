@@ -34,7 +34,7 @@ def _detection_create_alert(self: Any, name: str, type: str, severity: str, stat
     - type: str => custom type of alert such as soar_alert, siem_alert, real_time_alert ...
     - severity: str => custom severity of the alert such as Low, Medium, High, Critical ...
     - status: str => custom status of the alert such as active, closed, pending ...
-    - triggered: list => data to store in the alert in format of siem result (list of json ...)
+    - triggered: list => Results of the rules to store in the alert in the format of siem logs
     - index: str => index where to store the alert
     - tenant: str => tenant where to store the alert in the index
     - technology: str => technology where to store the alert in the index
@@ -42,7 +42,6 @@ def _detection_create_alert(self: Any, name: str, type: str, severity: str, stat
     - date: str => datetime of the alert format %Y-%m-%d %H:%M:%S.%f
     """
     try:
-        print("results: " + str(triggered))
         triggered_data = json.loads(triggered).get("data", [])
         reference_id = []
         reference = []
@@ -64,6 +63,7 @@ def _detection_create_alert(self: Any, name: str, type: str, severity: str, stat
             return log.get("data", {}).get("parsed")
         if group:
             for res in triggered_data:
+                print("res:",str(res))
                 reference_id.append(res.get("id"))
                 reference.append(res)
             return create_and_enqueue_log()
@@ -81,38 +81,38 @@ def _detection_create_alert(self: Any, name: str, type: str, severity: str, stat
         raise Exception("Failed to create alert")
 
 
-def detection_create_rule(self:Any, name: str, description: str, query:str, index:list, tenant:list, technology: list, instance:str, loopback: str, index_alert:str = "soar", tenant_alert:str = "alerts", technology_alert:str = "soar_alerts", info:dict = {}, severity: str = "high", status: str = "creation",  version: int = 1,group:bool=True, id:str=None):
+def detection_create_rule(self:Any, name: str, description: str, query:str, index:list, tenant:list, instance:str, loopback: str, technology: list = [], index_alert:str = "soar", tenant_alert:str = "alerts", technology_alert:str = "soar_alerts", info:dict = {}, severity: str = "high", status: str = "creation", type: str="query_alert", version: int = 1,group:bool=True, id:str=None):
     """
     Create a detection rule in a playbook or a context that it is possible to launch with a schedule task.
 
     params:
     - name: str => Name of the detection rule
-    - type: str => Type of detection rule 
+    - type: str => Type of detection rule (Default query alert)
     - version: int => Version of the rule
     - status: str => Status of the rule (creation, testing, production, disabled, deleted)
     - description: str => Description of the rule
     - info: dict => json of others information added by the user
     - query: str => Query of the research
-    - index: list => Index list for the query
-    - index_alert: str => Index where to store the alert
-    - tenant: list => Tenant list for the query
-    - tenant_alert: str => Tenant list to store the alert
-    - technology: list => Technology list for the query
-    - technology_alert: str => Technology to store the alert
+    - index: list => Index list for the query to get data
+    - index_alert: str => Index where to store the alert (default:soar)
+    - tenant: list => Tenant list for the query to get data
+    - tenant_alert: str => Tenant list to store the alert (default:alerts)
+    - technology: list => Technology list for the query (can be empty)
+    - technology_alert: str => Technology to store the alert (default: soar_alerts)
     - instance: str => Name of the instance in the vault to query the siem
-    - loopback: str => Time period (plan a buffer if scheduled task) for the query of the siem
-    - id: str => id of the siem if rewrite in the siem
+    - loopback: str => Time period (plan a buffer if scheduled task) for the query of the siem (ex: 1 day ago, 2 hours ago)
+    - id: str => id of the siem to modify the alert id and not create another log
     """
     try:
         # What to do with others information
         # Interpret loopback
         _start = dateparser.parse(loopback)
-        _start = _start.strftime("%Y-%m-%d %H:%M:%S.%f")
+        _start = _start.strftime("%Y-%m-%d %H:%M:%S")
         # SIEM Search
         results = self.commands["siem_search"]["function"](query, index, tenant, technology, instance=instance, start_time=_start)
         print("results detection create rule: " + str(results))
         # Create detection alert
-        return self.commands["_detection_create_alert"]["function"](name, type, severity, status, results, index_alert, tenant_alert, technology_alert, group)
+        return self.commands["_detection_create_alert"]["function"](name, type, severity, "Active", results, index_alert, tenant_alert, technology_alert, group)
     except:
         self.logger.log("error",f"Failed to create the detection rule {traceback.format_exc()}")
         raise Exception("Failed to create rule")
