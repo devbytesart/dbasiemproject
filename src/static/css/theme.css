@@ -45,7 +45,7 @@ body {
     height: 100vh;
     display: grid;
     place-items: center;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 /* .layout {
@@ -69,14 +69,31 @@ aside#menu, .config-zone {
     white-space: nowrap;
 }
 
+aside#menu-right, .config-zone {
+    /* overflow: hidden; */
+    white-space: nowrap;
+}
 
 /* Styles for menu zone */
 #menu {
     background-color: var(--background-menu-color);
     color: white;
     padding: 1rem;
-    overflow: auto;
+    /* overflow: auto; */
+    position: relative;
+    overflow: visible !important;
 }
+
+#menu-right {
+    background-color: var(--background-menu-color);
+    color: white;
+    padding: 1rem;
+    /* overflow: auto; */
+    position: relative;
+    overflow: visible !important;
+    padding-top: 60px !important;
+}
+
 
 /* Styles for content zone */
 #content {
@@ -387,4 +404,55 @@ body.no-menu .layout {
     flex-grow: 1; 
     text-align: center; 
     margin-right: calc(32px + 20px);
+}
+
+/* Hide all children inside #menu when collapsed, except the toggle button */
+#menu.collapsed > *:not(#toggle-menu-btn):not(:has(#toggle-menu-btn)) {
+    display: none !important;
+}
+
+#menu.collapsed nav,
+#menu.collapsed ul,
+#menu.collapsed .menu-content,
+#menu.collapsed .header-menu-container
+{
+    display: none !important;
+}
+
+
+/* --- MENU RIGHT--- */
+#menu-right.collapsed > *:not(#collapse-config-btn):not(#expand-config-btn):not(:has(#collapse-config-btn)):not(:has(#expand-config-btn)) {
+    display: none !important;
+}
+
+#menu-right.collapsed nav,
+#menu-right.collapsed ul,
+#menu-right.collapsed .menu-right-content 
+{
+    display: none !important;
+}
+
+#toggle-menu-btn {
+    position: absolute;
+    top: 10px;             
+    right: 10px;          
+    z-index: 100;          
+}
+
+#collapse-config-btn,
+#expand-config-btn {
+    position: absolute;
+    top: 10px;             
+    left: 10px;           
+    z-index: 100;
+}
+
+#expand-config-btn {
+    top: 42px;             /* 15px + 32px (hauteur du premier) + 5px d'écart */
+}
+
+/* Table style */
+.table-container {
+    margin-top: 20px;
+    padding: 10px;
 }

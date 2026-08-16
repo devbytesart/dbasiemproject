@@ -163,10 +163,10 @@ function createType(type, name, defaultValue = "", isReadonly = false, path = []
             let subContainer = targetElement.find(`#${key}`);
             if (subContainer.length === 0) {
                 targetElement.append(`
-                    <button class="ui button collapsible">${key}</button>
-                    <div id="${key}" class="ui segment collapsed-content">
-                        <h4>${key.charAt(0).toUpperCase() + key.slice(1)}</h4>
-                    </div>
+                    <button class="ui button collapsible" style="width:90%;">${key}</button>
+                    <div id="${key}" class="ui segment collapsed-content" style="width:90%;">
+                        <h4 style="color:white">${key.charAt(0).toUpperCase() + key.slice(1)}</h4>
+                    </div><br/>
                 `);
                 subContainer = targetElement.find(`#${key}`);
             }
@@ -178,19 +178,19 @@ function createType(type, name, defaultValue = "", isReadonly = false, path = []
 
         if (type === "text") {
             targetElement.append(`
-                <label for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label>
+                <label style="color:white" for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label><br/>
                 <input type="text" id="${uniqueId}" name="${uniqueId}" data-json-name="${jsonPath}" ${placeholderAttribute} ${readonlyAttribute} value="${defaultValue}">
                 <br/>
             `);
         } else if (type === "number") {
             targetElement.append(`
-                <label for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label>
+                <label style="color:white" for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label><br/>
                 <input type="number" id="${uniqueId}" name="${uniqueId}" data-json-name="${jsonPath}" ${placeholderAttribute} ${readonlyAttribute} value="${defaultValue}">
                 <br/>
             `);
         } else if (type === "boolean") {
             targetElement.append(`
-                <label for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label>
+                <label style="color:white" for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)}:</label><br/>
                 <select id="${uniqueId}" name="${uniqueId}" data-json-name="${jsonPath}" ${readonlyAttribute}>
                     <option value="false" ${defaultValue === "false" ? "selected" : ""}>False</option>
                     <option value="true" ${defaultValue === "true" ? "selected" : ""}>True</option>
@@ -199,7 +199,7 @@ function createType(type, name, defaultValue = "", isReadonly = false, path = []
             `);
         } else if (type === "list") {
             targetElement.append(`
-                <label for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)} (comma-separated):</label>
+                <label style="color:white" for="${uniqueId}">${name.charAt(0).toUpperCase() + name.slice(1)} (comma-separated):</label><br/>
                 <input type="list" id="${uniqueId}" name="${uniqueId}" data-json-name="${jsonPath}" ${placeholderAttribute} ${readonlyAttribute} value="${defaultValue}">
                 <br/>
             `);

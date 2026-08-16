@@ -34,7 +34,7 @@ Major.Minor.Patch
 **Patch** - Security or bug fixed on the application
 
 ---
-## [01.003.002] - YYYY-MM-DD
+## [01.003.002] - 2026-08-16
 
 ### Added
 
@@ -49,6 +49,8 @@ Major.Minor.Patch
 - Troubleshoot rules creations
 - Langage errors
 - Troubleshoot export in search page
+- Troubleshoot column selector button to selectall/selectnone
+- Fixed formular configuration color and format style
 
 ### Security
 

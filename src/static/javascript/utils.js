@@ -224,8 +224,8 @@ if (downloadButton) {
 
         // CSV only if datatable
         if (hasTable) {
-            formats.push({ label: 'CSV (Visible)', value: 'csv' });
-            formats.push({ label: 'CSV (Full Report)', value: 'full_csv' });
+            formats.push({ label: 'CSV', value: 'csv' });
+            //formats.push({ label: 'CSV (Full Report)', value: 'full_csv' });
         }
 
         formats.forEach(f => {
@@ -237,11 +237,13 @@ if (downloadButton) {
 
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Export';
-        confirmButton.style.marginLeft = '10px';
+        confirmButton.style.padding = '10px';
+        confirmButton.classList.add("styled-button");
 
         const cancelButton = document.createElement('button');
         cancelButton.textContent = 'Cancel';
-        cancelButton.style.marginLeft = '10px';
+        cancelButton.style.padding = '10px';
+        cancelButton.classList.add("styled-button");
 
         dialog.appendChild(document.createTextNode('Choose export format: '));
         dialog.appendChild(formatSelection);

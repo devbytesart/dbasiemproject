@@ -78,7 +78,7 @@ DOCUMENT: dashboard
                 {% include "menu.html" %}
 
         </aside>
-        <main id="content" style="width: 120%;">
+        <main id="content">
             <!-- Header -->
             {% include "header.html" %}
             
@@ -151,11 +151,17 @@ DOCUMENT: dashboard
         </div>
         <div id="dashboard-zone" class="dashboard-zone"></div>
         </main>
+        <aside id="menu-right"></aside>
+        <script>
+            //To have the right menu reduced
+            const root = document.documentElement;
+            root.style.setProperty('--right-width', '50px');
+        </script>
     </div>
-    <script>
-        $('button.collapsible').on('click', function() {
-            $(this).next('.collapsed-content').slideToggle();
-        });
-    </script>
+    <!-- <script>
+        // $('button.collapsible').on('click', function() {
+        //     $(this).next('.collapsed-content').slideToggle();
+        // });
+    </script> -->
 </body>
 </html>

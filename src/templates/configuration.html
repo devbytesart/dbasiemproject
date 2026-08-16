@@ -58,9 +58,13 @@ DOCUMENT: configuration
             </div>
         </main>
 
-        <aside id="menu">
-            <button id="collapse-config-btn" class="toggle-btn toggle-right-collapse" title="Réduire/Agrandir">></button>
-            <button id="expand-config-btn" class="toggle-btn toggle-right-expand" title="Recourir/Restaurer"><<</button>
+        <aside id="menu-right">
+            <button class="toggle-btn toggle-right-collapse img-button" id="collapse-config-btn" type="button" class="img-button" title="Increase/Decrease" style="padding:0px;width: 32px;height: 32px;">
+                <img src="/static/media/next.png" alt="Increase/Decrease">
+            </button>
+            <button class="toggle-btn toggle-right-expand img-button" id="expand-config-btn" type="button" class="img-button" title="FullDisplay/Hide" style="padding:0px;width: 32px;height: 32px;">
+                <img src="/static/media/first.png" alt="FullDisplay/Hide">
+            </button>
             <div id="group-element-selector-globalconfiguration">
                 <h4>Select Element Type</h4><br/>
                 <select id="element-selector-globalconfiguration">

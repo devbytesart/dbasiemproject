@@ -52,7 +52,7 @@ body {
     padding: 0 18px;
     /* background-color: white; */
     display: none;
-    overflow: hidden;
+    overflow-x: auto;
     border-top: 1px solid #ccc;
 }
 

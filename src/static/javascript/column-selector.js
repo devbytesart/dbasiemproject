@@ -30,7 +30,8 @@ $(document).ready(function() {
             $(this).prop('checked', targetState);
             
             // Retrieve the text from the main parent label
-            const columnName = $(this).closest('label').text().trim();
+            //const columnName = $(this).closest('label').text().trim();
+            const columnName = $(this).data('column');
             
             if (columnName) {
                 columnVisibility[columnName] = targetState;
@@ -90,13 +91,13 @@ function createColumnSelector(fieldsProjected, keepSelected = false) {
             columnVisibility[key] = true;
         }
 
-        const item = $('<div class="item"></div>');
+        const item = $('<div class="item"></div>')
         const label = $('<label></label>').text(key);
 
         const toggleContainer = $('<label class="toggle-container"><span class="toggle-slider"><p> </p></span></label>');
-        const input = $('<input type="checkbox">');
-
-        input.prop('checked', columnVisibility[key]);
+        const input = $('<input type="checkbox">')
+            .attr('data-column', key)
+            .prop('checked', columnVisibility[key]);
 
         input.on('change', function() {
             columnVisibility[key] = this.checked;

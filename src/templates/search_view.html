@@ -82,7 +82,7 @@ DOCUMENT: search view
                 <div class="ui list" id="columnSelector"></div>
             </div>
         </aside>
-        <main id="content" style="width: 120%;">
+        <main id="content">
                 <!-- Header -->
                 {% include "header.html" %}
 
@@ -176,6 +176,12 @@ DOCUMENT: search view
                 <div id="result"></div>
             </div>
         </main>   
+        <aside id="menu-right"></aside>
+        <script>
+            //To have the right menu reduced
+            const root = document.documentElement;
+            root.style.setProperty('--right-width', '50px');
+        </script>
     </div>
 </body>
 </html>
