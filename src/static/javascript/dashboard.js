@@ -67,7 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "params": {},
             "method": "POST",
             "multiple": false,
-            "last": true
+            "last": true,
+            "enable": true
         }
     ], () => dashboardManager.refreshDashboard(), dashboardManager.page_id);
 

@@ -146,9 +146,14 @@ class CommandLoader:
                     if not line:
                         continue
                     # Pattern: - name : type => description
-                    m = re.match(r"^\s*(\w+)\s*:\s*([^=>]+)=>\s*(.+)$", line)
+                    #m = re.match(r"^.*(\w+)\s*:\s*([^=>]+)=>\s*(.+)$", line)
+                    print("LINE.",str(line))
+                    m = re.match(r"^\s*[-]*\s*(\w+)\s*:\s*(\w+)\s*=>\s*(.*)",line)
                     if m:
                         name, typ, desc = m.groups()
+                        print("NAME:",name)
+                        print("TYPE:",typ)
+                        print("DESC:",desc)
                         current_name = name.strip()
                         param_descriptions[current_name] = {
                             "type": typ.strip(),

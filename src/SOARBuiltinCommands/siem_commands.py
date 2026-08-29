@@ -183,7 +183,7 @@ def siem_get_available_technologies(self: Any, instance: str=None, token: str=No
     """
     Get the available technologies in the SIEM system
     params:
-    -  instance: str => instance of the vault for index list
+    - instance: str => instance of the vault for index list
     - token: str => token of the user (must be used if instance empty)
     """
     try:

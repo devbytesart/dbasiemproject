@@ -28,17 +28,17 @@ from typing import Any
 def schedule_task(self: Any, task_name: str, context_name:str, index:str, tenant:str, instance:str, is_playbook:bool=True, display:bool=True, new_context_name: str=None, run_date: str=None, interval: str=None, cron: str=None):
     """ Schedule a task to run at a specific date, interval or cron
     params:
-    task_name: str => Name of the task to retrieve in the logs
-    context_name: str => Name of the context/Playbook where the function are found
-    index: str => index name required to find the context/playbook in the logs
-    tenant: str => tenant name required to find the context/playbook in the logs
-    instance: str => instance name required to find the context/playbook in the logs
-    is_playbook: bool => if the task is a playbook or a context to play
-    display: bool => if the task must be quiet or displayed in the history
-    cron: str => crontab function to schedule the task
-    interval: str => interval to schedule the task (30s, 30m, 1h, 5d...)
-    run_date: str => date to run the task (format: YYYY-MM-DD HH:MM:SS)
-    new_context_name: str => new context name to create if the task is a playbook
+    - task_name: str => Name of the task to retrieve in the logs
+    - context_name: str => Name of the context/Playbook where the function are found
+    - index: str => index name required to find the context/playbook in the logs
+    - tenant: str => tenant name required to find the context/playbook in the logs
+    - instance: str => instance name required to find the context/playbook in the logs
+    - is_playbook: bool => if the task is a playbook or a context to play
+    - display: bool => if the task must be quiet or displayed in the history
+    - cron: str => crontab function to schedule the task
+    - interval: str => interval to schedule the task (30s, 30m, 1h, 5d...)
+    - run_date: str => date to run the task (format: YYYY-MM-DD HH:MM:SS)
+    - new_context_name: str => new context name to create if the task is a playbook
     """
     try:
         self.task_scheduler.schedule_task(task_name, context_name, index=index, tenant=tenant, instance=instance, is_playbook=is_playbook, display=display, new_context_name=new_context_name, run_date=run_date, interval_str=interval, cron_str=cron)
@@ -79,7 +79,7 @@ def schedule_task_list(self: Any):
 def schedule_task_stop(self: Any, name: str):
     """ Stop a task that is registered 
     params:
-    name: str => name of the task to stop
+    - name: str => name of the task to stop
     """
     try:
         self.task_scheduler.stop_task(name)
@@ -91,7 +91,7 @@ def schedule_task_stop(self: Any, name: str):
 def schedule_task_restart(self: Any, name: str):
     """ Restart a task that is registered
     params:
-    name: str => name of the task to restart
+    - name: str => name of the task to restart
     """
     try:
         self.task_scheduler.restart_task(name)
@@ -104,7 +104,7 @@ def schedule_task_restart(self: Any, name: str):
 def schedule_task_remove(self: Any, name: str):
     """ Remove a task that is registered
     params:
-    name: str => name of the task to remove
+    - name: str => name of the task to remove
     """
     try:
         self.task_scheduler.remove_task(name)

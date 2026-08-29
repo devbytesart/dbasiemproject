@@ -80,7 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             "method": "POST",
             "multiple": false,
-            "last": true
+            "last": true,
+            "enable": true
         }
     ], loadDashboard, page_id)
     tagInputSystem.init();

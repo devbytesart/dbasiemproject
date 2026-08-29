@@ -34,6 +34,24 @@ Major.Minor.Patch
 **Patch** - Security or bug fixed on the application
 
 ---
+
+## [01.004.002] - xxxx-xx-xx
+
+### Added
+
+### Changed
+
+- Limit display tags when only one available to improve user ergonomy
+- Propose first tag selected for the value of the parameter in the command parameter when select the parameter in the suggestions list
+
+### Fixed
+
+- Description of parameters in soar suggestions
+
+### Security
+
+---
+
 ## [01.003.002] - 2026-08-16
 
 ### Added

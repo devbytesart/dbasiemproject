@@ -67,13 +67,35 @@ fetchSuggestions(showAll = false) {
     }
 
     insertParameterAtEnd(param) {
+        typeof param;
         const text = this.getInputValue().trim();
         let newText = text;
         if (!text.endsWith(' ') && !text.endsWith(';') && text.length > 0) {
             newText += ' ';
         }
-        if(this.search_suggestions === false)
-            newText += `${param}=`;
+
+        if(this.search_suggestions === false) {
+            // Check if tag exists
+            const tagInputs = {
+                'index': indexInput,
+                'tenant': tenantInput,
+                'instance': vaultInput
+            };
+
+            //Normalise
+            const paramKey = param.toLowerCase();
+            const targetTagInput = tagInputs[paramKey];
+            const selectedTags = targetTagInput ? targetTagInput.getSelectedValues() : [];
+
+            if (selectedTags.length > 0) {
+                // Get first tag
+                const tagValue = selectedTags[0];
+                newText += `${param}="${tagValue}"`;
+            } else {
+                // No tag selected -> empty
+                newText += `${param}=`;
+            }
+        }
         else
             newText += " "
         this.setInputValue(newText);
@@ -249,55 +271,6 @@ fetchSuggestions(showAll = false) {
 
         return row;
     }
-
-
-    // createParamRow(param) {
-    //     const row = document.createElement('div');
-    //     row.classList.add('suggestion-item', 'param-row');
-
-    //     // Column name 
-    //     const nameCol = document.createElement('div');
-    //     nameCol.classList.add('param-name', 'bold');
-    //     nameCol.textContent = param.name;
-
-    //     // Column type + default value
-    //     const typeCol = document.createElement('div');
-    //     typeCol.classList.add('param-type');
-    //     typeCol.innerHTML = `${param.type}<br/><span>${param.default ?? ''}</span>`;
-
-    //     // Column description
-    //     const descCol = document.createElement('div');
-    //     descCol.classList.add('param-description');
-    //     descCol.innerHTML = (param.description || '').replace(/\n/g, '<br/>');
-
-    //     // Standardize example
-    //     const rawExamples = param.examples || param.example;
-    //     const examples = Array.isArray(rawExamples) 
-    //         ? rawExamples 
-    //         : (rawExamples ? [rawExamples] : []);
-
-    //     // If examples, we add description
-    //     if (examples.length > 0) {
-    //         const examplesList = examples
-    //             .map(ex => `<code>${this.escapeHtml(ex)}</code>`)
-    //             .join(', ');
-
-    //         descHtml += `<div class="param-examples"><strong>Ex:</strong> ${examplesList}</div>`;
-    //     }
-
-    //     // Add columns
-    //     row.appendChild(nameCol);
-    //     row.appendChild(typeCol);
-    //     row.appendChild(descCol);
-
-    //     // Add event click
-    //     row.addEventListener('click', () => {
-    //         this.insertParameterAtEnd(param.name); 
-    //         this.clearSuggestions();                
-    //     });
-
-    //     return row;
-    // }
 
     escapeHtml(str) {
     return String(str)

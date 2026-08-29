@@ -27,7 +27,7 @@ document: soar
         variables: {}
     };
     let jsonEditorInstance = null;
-    let indexInput, tenantInput, historyInput; //vaultInput, 
+    let indexInput, tenantInput, historyInput, vaultInput;
 
 
     // Export Function
@@ -405,8 +405,8 @@ $(document).ready(function () {
     // Instantiate TagInputList
     indexInput = new TagInputList("Index", "/search_available_index", "selectindex", false, {}, 'GET');
     tenantInput = new TagInputList("Tenant", "/search_available_tenant", "selecttenant", false, {}, 'GET');
-    // vaultInput = new TagInputList("Vault Instance", "/search_available_vault_instances", "selectinstance", false, {}, 'GET');
-    historyInput = new TagInputList("Context Name", "/get_history_list", "selectname", false, () => ({
+    vaultInput = new TagInputList("Instance", "/search_available_vault_instances", "selectinstance", false, {}, 'GET');
+    historyInput = new TagInputList("Context Name", "/get_history_list", "selectname", false, true, () => ({
         index: indexInput.getSelectedValues()[0] || "",
         tenant: tenantInput.getSelectedValues()[0] || "",
         // vault: vaultInput.getSelectedValues()[0] || ""
@@ -418,7 +418,7 @@ const urlParams = new URLSearchParams(window.location.search);
 // Collect parameters
 const paramIndex = urlParams.get("index");
 const paramTenant = urlParams.get("tenant");
-// const paramVault = urlParams.get("vault");
+const paramVault = "";
 const paramHistory = urlParams.get("history");
 
 const promises = [];
@@ -454,19 +454,19 @@ if (paramTenant) {
 }
 
 // VAULT
-// if (paramVault) {
-//     vaultInput.setSelectedValues(paramVault);
-// } else {
-//     promises.push(
-//         vaultInput.loadData().then(() => {
-//             if (selectedVault && vaultInput.suggestions.includes(selectedVault)) {
-//                 vaultInput.setSelectedValues(selectedVault);
-//             } else if (vaultInput.suggestions.length > 0) {
-//                 vaultInput.setSelectedValues(vaultInput.suggestions[0]);
-//             }
-//         })
-//     );
-// }
+if (paramVault) {
+    vaultInput.setSelectedValues(paramVault);
+} else {
+    promises.push(
+        vaultInput.loadData().then(() => {
+            if (selectedVault && vaultInput.suggestions.includes(selectedVault)) {
+                vaultInput.setSelectedValues(selectedVault);
+            } else if (vaultInput.suggestions.length > 0) {
+                vaultInput.setSelectedValues(vaultInput.suggestions[0]);
+            }
+        })
+    );
+}
 
 // HISTORY - wait for the others to be changed
 Promise.all(promises).then(() => {

@@ -20,7 +20,7 @@ document: tags
 */
 
 class TagInputList {
-    constructor(label, endpoint, targetId, isMultiple = true, queryParams = {}, method = 'POST', enable = true) {
+    constructor(label, endpoint, targetId, isMultiple = true, queryParams = {}, method = 'POST', enable = false) {
         this.label = label;
         this.endpoint = endpoint;
         this.targetId = targetId;
@@ -33,11 +33,13 @@ class TagInputList {
         this.containerId = `${this.targetId}_tag_container`;
         this.dropdownId = `${this.targetId}_suggestions`;
         this.isEnabled = enable;
+        this.default_enabled = enable;
         this.init();
     }
 
-    init() {
+    async init() {
         this.createInputHTML();
+        await this.loadData();
     }
 
     createInputHTML() {
@@ -101,14 +103,20 @@ class TagInputList {
 
     // Enable component
     enable() {
-        this.isEnabled = true;
+        if (this.suggestions.length > 1 || this.default_enabled) {
+            this.isEnabled = true;
+        } else {
+            this.isEnabled = false;
+        }
         this.updateVisualState();
     }
 
     // Disable components
     disable() {
-        this.isEnabled = false;
-        this.updateVisualState();
+        if(!this.default_enabled) {
+            this.isEnabled = false;
+            this.updateVisualState();
+        }
     }
 
     // Manage style
@@ -171,7 +179,19 @@ class TagInputList {
                 }
 
                 this.suggestions = [...new Set(data)];
-                this.applyDefaultSelection();
+
+                if (this.suggestions.length === 1) {
+                    // Only one element -> Default tag selected and component blocked
+                    this.addTag(this.suggestions[0]);
+                    this.disable();
+                } else if (this.suggestions.length > 1) {
+                    // Several elements -> Enable component and aply url is present
+                    this.applyDefaultSelection();
+                    this.enable();
+                } else {
+                    // None element -> disable
+                    this.disable();
+                }
 
             } catch (err) {
                 console.error(`Failed to fetch from ${this.endpoint}:`, err);
@@ -353,6 +373,7 @@ class TagsSystem {
 
         json_data.forEach(tag => {
             // Create component TagInputList
+            const enable = tag.enable ?? false;
             this.tags[tag.name] = new TagInputList(
                 tag.name, 
                 tag.url, 
@@ -360,6 +381,7 @@ class TagsSystem {
                 tag.multiple, 
                 tag.params, 
                 tag.method,
+                enable
             );
 
             // Save if last one
